@@ -462,15 +462,16 @@ function getDiffDesc(idx, caseId) {
   // Arranca con clasificación bancaria → gross profit alto → NOF extremo como sorpresa
   if (caseId === 5) return [
     'nu_classify',            // Clasificar cuentas de un banco digital
-    'grossProfit', 'margenBruto',
-    'ebit',
-    'nopat', 'margenNopat',
-    'nof', 'mc_nu_nof',       // NOF −$11,900M: ¡los depósitos financian todo!
-    'ci',
-    'rotacion', 'roic',
-    'roa', 'roe',             // ROA << ROE: la magia del apalancamiento bancario
+    'grossProfit',            // Margen bruto 45%: spread de tasas
+    'mc_nu_spread',           // ¿Qué determina el Gross Profit de un banco?
+    'ebit', 'nopat',
+    'nof',                    // NOF −$11,900M
+    'mc_nu_depositos',        // Decisión: ¿subir la tasa de depósitos?
+    'ci', 'rotacion',
+    'roic', 'roa', 'roe',
+    'mc_nu_roa_vs_roic',      // ¿Por qué ROA 2.6% pero ROIC 28%?
     'spread', 'eva',
-    'mc_nu_modelo',           // ¿Por qué el banco digital crea más valor que un banco tradicional?
+    'mc_nu_expansion',        // ¿Expandirse a Argentina con inflación alta?
     'ffl'
   ];
   if (caseId === 4) return [
@@ -494,9 +495,9 @@ function getDiffDesc(idx, caseId) {
     '18 pasos · Sin fórmulas ni pistas · 2 intentos · ×2 puntos'
   ][idx] || '';
   if (caseId === 5) return [
-    '16 pasos · Banco Digital · NOF negativo extremo · Fórmulas visibles · 5 intentos',
-    '16 pasos · Banco Digital · Análisis completo · Fórmulas al clic · 3 intentos',
-    '16 pasos · Sin fórmulas ni pistas · 2 intentos · ×2 puntos'
+    '18 pasos · Banco Digital · Spread bancario + decisiones · Fórmulas visibles · 5 intentos',
+    '18 pasos · Banco Digital · Análisis completo · Fórmulas al clic · 3 intentos',
+    '18 pasos · Sin fórmulas ni pistas · 2 intentos · ×2 puntos'
   ][idx] || '';
   if (idx === 3) return '⏱️ Sin fórmulas · Sin pistas · 1 intento · Cronómetro · ×3 puntos';
   return [
@@ -521,15 +522,16 @@ function getStepSequence(diffKey, caseId) {
   // Arranca con clasificación bancaria → gross profit alto → NOF extremo como sorpresa
   if (caseId === 5) return [
     'nu_classify',            // Clasificar cuentas de un banco digital
-    'grossProfit', 'margenBruto',
-    'ebit',
-    'nopat', 'margenNopat',
-    'nof', 'mc_nu_nof',       // NOF −$11,900M: ¡los depósitos financian todo!
-    'ci',
-    'rotacion', 'roic',
-    'roa', 'roe',             // ROA << ROE: la magia del apalancamiento bancario
+    'grossProfit',            // Margen bruto 45%: spread de tasas
+    'mc_nu_spread',           // ¿Qué determina el Gross Profit de un banco?
+    'ebit', 'nopat',
+    'nof',                    // NOF −$11,900M
+    'mc_nu_depositos',        // Decisión: ¿subir la tasa de depósitos?
+    'ci', 'rotacion',
+    'roic', 'roa', 'roe',
+    'mc_nu_roa_vs_roic',      // ¿Por qué ROA 2.6% pero ROIC 28%?
     'spread', 'eva',
-    'mc_nu_modelo',           // ¿Por qué el banco digital crea más valor que un banco tradicional?
+    'mc_nu_expansion',        // ¿Expandirse a Argentina con inflación alta?
     'ffl'
   ];
   if (caseId === 4) return [
@@ -693,7 +695,6 @@ function getClassBadge(stepId) {
       nopat:          '📊 Bloque 1 · Estructura de ingresos',
       margenNopat:    '📊 Bloque 1 · Estructura de ingresos',
       nof:            '🔑 Bloque 2 · El secreto de los depósitos',
-      mc_nu_nof:      '🔑 Bloque 2 · El secreto de los depósitos',
       ci:             '💼 Bloque 3 · Capital Invertido sin activos físicos',
       rotacion:       '💼 Bloque 3 · Capital Invertido sin activos físicos',
       roic:           '⚗️ Bloque 4 · Rentabilidad',
@@ -701,8 +702,11 @@ function getClassBadge(stepId) {
       roe:            '⚗️ Bloque 4 · Rentabilidad',
       spread:         '⚗️ Bloque 4 · Rentabilidad',
       eva:            '⚗️ Bloque 4 · Rentabilidad',
-      mc_nu_modelo:   '🚀 Bloque 5 · Banco digital vs. banco tradicional',
-      ffl:            '💸 Bloque 6 · Flujo de Fondos'
+      ffl:            '💸 Bloque 6 · Flujo de Fondos',
+      mc_nu_spread:       '💰 Bloque 1 · ¿De dónde viene el margen?',
+      mc_nu_depositos:    '📐 Bloque 2 · NOF y ROIC',
+      mc_nu_roa_vs_roic:  '🔬 Bloque 4 · ROA vs. ROIC',
+      mc_nu_expansion:    '🔄 Bloque 5 · Banco Digital vs. Costco',
     };
     return t6[stepId] || '🏦 Banco Digital LatAm · Fintech';
   }
@@ -1240,8 +1244,8 @@ function verifyNuClassify() {
 
 function renderDataRoomCase6(c, sid) {
   const hlER = ['grossProfit','margenBruto','ebit','nopat','margenNopat'].includes(sid);
-  const hlWC = ['nof','mc_nu_nof'].includes(sid);
-  const hlLP = ['ci','rotacion','roic','roa','roe','spread','eva','ffl','mc_nu_modelo'].includes(sid);
+  const hlWC = ['nof','mc_nu_depositos'].includes(sid);
+  const hlLP = ['ci','rotacion','roic','roa','roe','spread','eva','ffl','mc_nu_expansion'].includes(sid);
 
   document.getElementById('dataRoom').innerHTML =
     '<div class="dr-title">&#128202; Data Room &mdash; Banco Digital LatAm</div>' +
@@ -2399,42 +2403,80 @@ function getAllMCDefs(c) {
       ]
     },
     // ── NUBANK (id=5) ──
-    mc_nu_nof: {
-      title: '🏦 ¿Por Qué el NOF es −$11,900M?',
-      task: 'El banco tiene NOF = −$11,900M, el más negativo de todos los casos. ¿Cuál es la explicación correcta?',
-      concept: 'AO corriente = Créditos a clientes $17,600M · PO corriente = Depósitos $28,300M + Otros $1,200M = $29,500M · NOF = $17,600M − $29,500M = −$11,900M',
+    mc_nu_spread: {
+      title: '💰 ¿De Dónde Viene el Gross Profit de un Banco?',
+      task: 'El banco tiene Gross Profit de $5,240M (45.6%). En una empresa industrial GP = Revenue − COGS de producción. En un banco, ¿qué representa ese Gross Profit?',
+      concept: 'Revenue = $11,500M (intereses cobrados + comisiones) · COGS = $6,260M (costo de fondeo + mora) · Gross Profit = $5,240M · Tasa activa ~18% · Tasa pasiva ~8%',
       correctIdx: 2,
-      feedbackCorrect: 'Los depósitos son pasivos operativos gratuitos (los clientes pagan casi nada por depositar). Financian los créditos que generan ingresos. Es el modelo bancario: tomar depósitos baratos y prestarlos caro.',
+      feedbackCorrect: 'El Gross Profit bancario = ingresos por intereses − costo de fondeo − pérdidas por incobrables. El spread (diferencia entre tasa activa y pasiva) es el equivalente al margen bruto industrial.',
       options: [
-        'A) Porque el banco tiene pérdidas operativas que se acumulan en el balance',
-        'B) Porque no tiene inventario ni activos corrientes relevantes',
-        'C) Porque los depósitos de clientes ($28,300M) superan largamente los créditos corrientes ($17,600M)',
-        'D) Es un error contable — los depósitos deberían clasificarse como PF, no PO'
+        'A) La diferencia entre el valor de mercado de los créditos y su costo contable',
+        'B) Los ingresos por comisiones descontados los gastos de procesamiento',
+        'C) Los intereses cobrados a deudores menos el costo de fondeo y las pérdidas por mora',
+        'D) El valor de los depósitos menos los créditos otorgados'
       ],
       explanations: [
-        '❌ El NOF negativo no tiene nada que ver con pérdidas. el banco es rentable (NOPAT $1,206M).',
-        '❌ Sí tiene activos corrientes: $17,600M en créditos a clientes.',
-        '✅ Exacto. Los depósitos ($28,300M) son PO → financian gratis los créditos ($17,600M). El exceso ($11,900M) es capital de trabajo negativo a favor del banco.',
-        '❌ Los depósitos son PO porque surgen del negocio bancario. No son deuda financiera elegida.'
+        '❌ Los bancos no reconocen ganancias por valor de mercado en sus créditos hasta que se realizan.',
+        '❌ Las comisiones son solo una parte del Revenue. El componente principal son los intereses cobrados.',
+        '✅ Correcto. Revenue = intereses cobrados + comisiones. COGS = intereses pagados a depositantes + pérdidas por mora. El spread entre tasa activa (~18%) y pasiva (~8%) es el motor del negocio bancario.',
+        '❌ Eso describe el NOF, no el Gross Profit del Estado de Resultados.'
       ]
     },
-    mc_nu_modelo: {
-      title: '🚀 Banco Digital vs. Banco Tradicional',
-      task: 'El banco tiene ROIC 28% vs. un banco tradicional con ROIC ~8%. ¿Cuál es la razón principal de la diferencia?',
-      concept: 'Banco Digital: AFN = $30M · CI = $4,300M · ROIC = 28% · Sin sucursales · 110M clientes · Banco tradicional: AFN ~$5,000M+ · ROIC ~8%',
-      correctIdx: 1,
-      feedbackCorrect: 'Sin sucursales ni cajeros, el AFN es $30M vs miles de millones en un banco físico. Eso comprime el CI, dispara la rotación y multiplica el ROIC.',
+    mc_nu_depositos: {
+      title: '📐 ¿Qué Pasa con el ROIC si los Depósitos Crecen 20%?',
+      task: 'Los depósitos crecen de $28,300M a $33,960M (+20%), manteniendo el mismo NOPAT. ¿Cómo afecta al ROIC?',
+      concept: 'NOF actual = AO $17,600M − PO $29,500M = −$11,900M · CI actual = $4,300M · ROIC actual = 28% · Si PO sube $5,660M → nuevo NOF = 17,600 − 35,160 = −$17,560M → nuevo CI se reduce',
+      correctIdx: 2,
+      feedbackCorrect: 'Más depósitos → PO más grande → NOF más negativo → CI más pequeño → mismo NOPAT sobre menos capital → ROIC sube. Esta es la palanca de crecimiento del modelo bancario digital.',
       options: [
-        'A) Porque el banco cobra tasas más altas que los bancos tradicionales',
-        'B) Porque sin sucursales el AFN es mínimo ($30M), el CI es pequeño y la rotación es muy alta',
-        'C) Porque el WACC del banco es más bajo al ser una empresa tecnológica',
-        'D) Porque los depósitos digitales generan mayores márgenes que los depósitos tradicionales'
+        'A) El ROIC no cambia porque los depósitos son PO y no afectan el NOPAT',
+        'B) El ROIC baja porque hay más pasivos operativos que administrar',
+        'C) El ROIC sube: más PO → NOF más negativo → CI más pequeño → mismo NOPAT sobre menos capital',
+        'D) No se puede saber sin conocer la tasa de interés de los nuevos depósitos'
       ],
       explanations: [
-        '❌ El banco compite en parte por precio (sin comisiones). El margen es similar a banca tradicional.',
-        '✅ La clave es el CI pequeño. Rotación = $11,500M / $4,300M = 2.67x. Un banco tradicional físico tiene 10-20x más CI en sucursales. Mismo NOPAT, CI menor = ROIC mayor.',
-        '❌ El WACC del banco (15%) es más alto que banca tradicional por el riesgo de crecimiento.',
-        '❌ Los márgenes de interés son similares. La diferencia está en los costos operativos.'
+        '❌ Los depósitos no afectan el NOPAT aquí, pero sí afectan el CI a través del NOF. ROIC = NOPAT / CI.',
+        '❌ Más PO reduce el NOF (más negativo), lo que reduce el CI. El ROIC sube, no baja.',
+        '✅ Nuevo NOF = 17,600 − 35,160 = −17,560M → CI se comprime → ROIC = mismo NOPAT / CI menor = sube. Es la palanca clave del modelo: cada nuevo depositante reduce el CI y amplifica el ROIC.',
+        '❌ En este análisis asumimos NOPAT constante. La pregunta evalúa el impacto del NOF sobre el CI y el ROIC.'
+      ]
+    },
+    mc_nu_roa_vs_roic: {
+      title: '🔬 ROA 2.6% vs. ROIC 28% — ¿Cómo es Posible?',
+      task: 'El banco tiene ROA = 2.6% y ROIC = 28%. ¿Cuál es la explicación correcta de esta diferencia de 10x?',
+      concept: 'Total Assets = $68,000M · CI = $4,300M · EBIT = $1,800M · NOPAT = $1,206M · ROA = EBIT / Total Assets = 1,800 / 68,000 = 2.6% · ROIC = NOPAT / CI = 1,206 / 4,300 = 28%',
+      correctIdx: 3,
+      feedbackCorrect: 'Los depósitos ($28,300M) están en Total Assets pero NO en el CI. El CI solo incluye el capital aportado por accionistas y acreedores financieros. Los depósitos inflan el denominador del ROA sin inflar el del ROIC — por eso ROA/ROIC ≈ CI/Total Assets.',
+      options: [
+        'A) Porque el ROA usa EBIT y el ROIC usa NOPAT — la diferencia es solo el impuesto',
+        'B) Porque el banco tiene mucha deuda financiera que infla el Total Assets',
+        'C) Porque el ROA es incorrecto para bancos y no debe calcularse',
+        'D) Porque los depósitos ($28,300M) inflan el Total Assets pero no el CI — el denominador del ROA es 15x mayor que el del ROIC'
+      ],
+      explanations: [
+        '❌ La diferencia de impuesto explica poco. El impacto principal está en el denominador: Total Assets vs CI.',
+        '❌ La deuda financiera es solo $800M. Lo que infla el balance son los depósitos operativos ($28,300M).',
+        '❌ El ROA es válido, pero mide algo diferente: eficiencia sobre todos los activos. Para medir retorno sobre capital propio + deuda financiera, el ROIC es más preciso.',
+        '✅ Total Assets = $68,000M incluye $28,300M de depósitos. CI = $4,300M los excluye. Ratio = 68,000 / 4,300 ≈ 16x, similar a la diferencia ROIC/ROA = 28% / 2.6% ≈ 11x.'
+      ]
+    },
+    mc_nu_expansion: {
+      title: '🔄 Banco Digital vs. Costco — Dos NOF Negativos Distintos',
+      task: 'Banco Digital y Costco tienen NOF muy negativos, pero por razones distintas. ¿Cuál es la diferencia clave?',
+      concept: 'Banco Digital: NOF = −$11,900M · PO principal = Depósitos $28,300M · AO = Créditos $17,600M · Costco: NOF = −$7,783M · PO principal = CxP proveedores $19,421M + Cuotas $2,501M · AO = Inventario $18,647M',
+      correctIdx: 3,
+      feedbackCorrect: 'En Costco el NOF negativo es ventaja comercial: paga tarde a proveedores y cobra cuotas adelantadas. En el banco es estructura del negocio: los depósitos son el insumo necesario para operar. Mismo resultado contable, lógica opuesta.',
+      options: [
+        'A) No hay diferencia: en ambos casos proveedores y depositantes financian el negocio sin costo',
+        'B) Costco tiene más ventaja porque su poder de negociación con proveedores es más sostenible',
+        'C) El banco tiene más ventaja porque los depósitos son más predecibles que las cuentas por pagar',
+        'D) En Costco es ventaja comercial (pagar tarde, cobrar antes). En el banco es la estructura del negocio: los depósitos son el insumo necesario para prestar, no una ventaja negociada'
+      ],
+      explanations: [
+        '❌ Los depósitos del banco no son gratis — tienen un costo de interés. En Costco las CxP sí son sin costo explícito.',
+        '❌ Lo relevante no es cuál ventaja es más sostenible sino cuál es el origen del NOF negativo en cada modelo.',
+        '❌ La estabilidad es operativa, no explica la diferencia de origen del NOF negativo.',
+        '✅ Exacto. Costco negocia activamente 31 días de DPO con sus proveedores y cobra cuotas antes → ventaja comercial. El banco recibe depósitos porque eso es su negocio (intermediación) → estructura del modelo. Mismo número, lógica completamente diferente.'
       ]
     }
   };
