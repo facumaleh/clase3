@@ -374,22 +374,24 @@ const CASES = [
 // ═══════════════════════════════════════════════════════════
 const DIFF_KEYS = ['facil','intermedio','avanzado'];
 const DIFFICULTY = {
-  facil:      {label:'📗 Fácil',      maxAttempts:5, formulaOpen:true,  hideFormula:false, hints:true,  multiplier:1.0, showSolution:true},
-  intermedio: {label:'📙 Intermedio', maxAttempts:3, formulaOpen:false, hideFormula:false, hints:true,  multiplier:1.5, showSolution:true},
-  avanzado:   {label:'📕 Avanzado',   maxAttempts:2, formulaOpen:false, hideFormula:true,  hints:false, multiplier:2.0, showSolution:false}
+  facil:      {label:'📗 Fácil',      maxAttempts:5, formulaOpen:true,  hideFormula:false, hints:true,  multiplier:1.0, showSolution:true,  examMode:false},
+  intermedio: {label:'📙 Intermedio', maxAttempts:3, formulaOpen:false, hideFormula:false, hints:true,  multiplier:1.5, showSolution:true,  examMode:false},
+  avanzado:   {label:'📕 Avanzado',   maxAttempts:2, formulaOpen:false, hideFormula:true,  hints:false, multiplier:2.0, showSolution:false, examMode:false},
+  examen:     {label:'📝 Examen',     maxAttempts:1, formulaOpen:false, hideFormula:true,  hints:false, multiplier:3.0, showSolution:false, examMode:true,  stepSeconds:180}
 };
+const DIFF_KEYS_PLAY = ['facil','intermedio','avanzado'];
 const cardDifficulty = [1, 1, 1, 1, 1]; // default: intermedio
 
 function getDiffDesc(idx, caseId) {
   if (caseId === 4) return [
-    '17 pasos · PharmaCore · Alto margen + CI intensivo · Fórmulas visibles · 5 intentos',
-    '17 pasos · PharmaCore · Análisis completo · Fórmulas al clic · 3 intentos',
-    '17 pasos · Sin fórmulas ni pistas · 2 intentos · ×2 puntos'
+    '18 pasos · PharmaCore · Márgenes + CI en patentes + adquisición · Fórmulas visibles · 5 intentos',
+    '18 pasos · PharmaCore · Fórmulas al clic · 3 intentos',
+    '18 pasos · Sin fórmulas ni pistas · 2 intentos · ×2 puntos'
   ][idx] || '';
   if (caseId === 3) return [
-    '13 pasos · LatiCommerce · NOF y CCC negativos · Fórmulas visibles · 5 intentos',
-    '15 pasos · LatiCommerce · E-commerce + fintech · Fórmulas al clic · 3 intentos',
-    '16 pasos · Sin fórmulas ni pistas · 2 intentos · ×2 puntos'
+    '17 pasos · LatiCommerce · Clasificación + NOF negativo + CCC · Fórmulas visibles · 5 intentos',
+    '17 pasos · LatiCommerce · Fórmulas al clic · 3 intentos',
+    '17 pasos · Sin fórmulas ni pistas · 2 intentos · ×2 puntos'
   ][idx] || '';
   if (caseId === 2) return [
     '21 pasos · Costco real · Clasificación + análisis integrador · Fórmulas visibles · 5 intentos',
@@ -401,6 +403,7 @@ function getDiffDesc(idx, caseId) {
     '18 pasos · Clasificación de cuentas + análisis · Fórmulas al clic · 3 intentos',
     '18 pasos · Sin fórmulas ni pistas · 2 intentos · ×2 puntos'
   ][idx] || '';
+  if (idx === 3) return '⏱️ Sin fórmulas · Sin pistas · 1 intento · Cronómetro · ×3 puntos';
   return [
     '14 pasos · Fórmulas visibles · Pistas disponibles · 5 intentos',
     '16 pasos · Fórmulas al hacer clic · Pistas · 3 intentos',
@@ -415,24 +418,35 @@ function getDiffDesc(idx, caseId) {
 // avanzado   (17): + EBIT + Margen EBIT + Spread
 // ═══════════════════════════════════════════════════════════
 function getStepSequence(diffKey, caseId) {
-  // Caso 5 — PharmaCore: 17 pasos (alto margen, bajo ROIC por CI intensivo)
+  // Caso 5 — PharmaCore: 18 pasos
+  // Identidad: margen altísimo pero ROIC comprimido por CI en patentes
+  // Arranca con estructura de resultados completa → CI pesado → tensión margen/ROIC → adquisición
   if (caseId === 4) return [
-    'grossProfit', 'margenBruto', 'ebit',
-    'nopat', 'margenNopat',
-    'nof', 'ci', 'mc_pharma_ci_alto',
-    'rotacion', 'roic', 'spread', 'eva',
-    'mc_pharma_adquisicion',
-    'dso', 'dio', 'dpo', 'ccc',
-    'ffl', 'mc_pharma_ffl'
+    'grossProfit', 'margenBruto',  // margen bruto 70%: primer WOW
+    'ebit', 'margenEbit',          // estructura de costos con I+D
+    'nopat',                       // NOPAT limpio
+    'mc_pharma_ci_alto',           // MC antes del CI: "¿por qué el ROIC va a ser bajo?"
+    'nof', 'ci',                   // CI enorme por patentes
+    'rotacion',                    // rotación bajísima → la explicación del ROIC
+    'roic', 'spread', 'eva',       // revelación: ROIC < margen
+    'mc_pharma_adquisicion',       // decisión: ¿comprar biotech?
+    'dso', 'dio', 'dpo', 'ccc',    // CCC positivo: distinto a LatiCommerce
+    'ffl', 'mc_pharma_ffl'         // FFL comprimido por ΔCI
   ];
-  // Caso 4 — LatiCommerce: NOF negativo, CCC negativo, DIO=0, sin inventario
+  // Caso 4 — LatiCommerce: 17 pasos
+  // Identidad: marketplace con NOF negativo y CCC negativo
+  // Arranca con clasificación propia → NOF como gran revelación → CCC → decisión
   if (caseId === 3) return [
-    'grossProfit', 'margenBruto', 'ebit',
-    'nopat', 'margenNopat',
-    'nof', 'mc_lati_nof_sign',
-    'ci', 'rotacion', 'roic', 'spread', 'eva',
-    'dso', 'dpo', 'ccc', 'mc_lati_ccc_sign',
-    'ffl', 'mc_lati_decision'
+    'lati_classify',         // Clasificar 5 cuentas típicas del marketplace
+    'nof',                   // Gran revelación: NOF negativo
+    'mc_lati_nof_sign',      // ¿Qué significa?
+    'dso', 'dpo', 'ccc',     // CCC antes que ROIC → el ciclo es el corazón
+    'mc_lati_ccc_sign',      // ¿Es bueno el CCC negativo?
+    'grossProfit', 'nopat', 'margenNopat',
+    'ci', 'rotacion',
+    'roic', 'spread', 'eva',
+    'ffl',
+    'mc_lati_decision'       // ¿Expandirse?
   ];
   // Caso 3 — Costco: 21 pasos, estructura temática (¿cuánto? ¿en qué? ¿resultado? ¿rentabilidad? ¿flujo?)
   if (caseId === 2) return [
@@ -510,6 +524,54 @@ function getClassBadge(stepId) {
     };
     return t3[stepId] || '📚 Análisis Integrador · Costco FY2024';
   }
+  // Caso 4 — LatiCommerce: badges por bloque temático
+  if (state.currentCase && state.currentCase.id === 3) {
+    const t4 = {
+      lati_classify:  '🛒 Bloque 0 · ¿Quién financia a quién?',
+      nof:            '🔑 Bloque 1 · El corazón del modelo',
+      mc_lati_nof_sign:'🔑 Bloque 1 · El corazón del modelo',
+      dso:            '⏱️ Bloque 2 · El ciclo de caja',
+      dpo:            '⏱️ Bloque 2 · El ciclo de caja',
+      ccc:            '⏱️ Bloque 2 · El ciclo de caja',
+      mc_lati_ccc_sign:'⏱️ Bloque 2 · El ciclo de caja',
+      grossProfit:    '📊 Bloque 3 · Resultados',
+      nopat:          '📊 Bloque 3 · Resultados',
+      margenNopat:    '📊 Bloque 3 · Resultados',
+      ci:             '💼 Bloque 4 · Capital Invertido',
+      rotacion:       '💼 Bloque 4 · Capital Invertido',
+      roic:           '💰 Bloque 5 · Rentabilidad',
+      spread:         '💰 Bloque 5 · Rentabilidad',
+      eva:            '💰 Bloque 5 · Rentabilidad',
+      ffl:            '💸 Bloque 6 · Flujo de Fondos',
+      mc_lati_decision:'🚀 Bloque 7 · Decisión estratégica'
+    };
+    return t4[stepId] || '📦 LatiCommerce · E-Commerce & Fintech';
+  }
+  // Caso 5 — PharmaCore: badges por bloque temático
+  if (state.currentCase && state.currentCase.id === 4) {
+    const t5 = {
+      grossProfit:       '💊 Bloque 1 · Estructura de márgenes',
+      margenBruto:       '💊 Bloque 1 · Estructura de márgenes',
+      ebit:              '💊 Bloque 1 · Estructura de márgenes',
+      margenEbit:        '💊 Bloque 1 · Estructura de márgenes',
+      nopat:             '💊 Bloque 1 · Estructura de márgenes',
+      mc_pharma_ci_alto: '🔬 Bloque 2 · La trampa del CI',
+      nof:               '🔬 Bloque 2 · La trampa del CI',
+      ci:                '🔬 Bloque 2 · La trampa del CI',
+      rotacion:          '🔬 Bloque 2 · La trampa del CI',
+      roic:              '⚗️ Bloque 3 · La gran revelación',
+      spread:            '⚗️ Bloque 3 · La gran revelación',
+      eva:               '⚗️ Bloque 3 · La gran revelación',
+      mc_pharma_adquisicion:'💰 Bloque 4 · Decisión de adquisición',
+      dso:               '⏱️ Bloque 5 · Ciclo operativo',
+      dio:               '⏱️ Bloque 5 · Ciclo operativo',
+      dpo:               '⏱️ Bloque 5 · Ciclo operativo',
+      ccc:               '⏱️ Bloque 5 · Ciclo operativo',
+      ffl:               '💸 Bloque 6 · Flujo de Fondos',
+      mc_pharma_ffl:     '💸 Bloque 6 · Flujo de Fondos'
+    };
+    return t5[stepId] || '💊 PharmaCore · Farmacéutica';
+  }
   return map[stepId] || '📚 Finanzas Corporativas';
 }
 
@@ -532,6 +594,9 @@ function showScreen(id) {
   const el = document.getElementById(id);
   el.style.display = 'flex';
   requestAnimationFrame(() => el.classList.add('active'));
+  // Show/hide exam timer bar
+  const tw = document.getElementById('examTimerWrap');
+  if (tw) tw.style.display = (id === 'gameScreen' && state.difficulty && state.difficulty.examMode) ? 'flex' : 'none';
 }
 function showHome() { renderHome(); showScreen('homeScreen'); }
 function confirmBack() {
@@ -569,6 +634,7 @@ function renderHome() {
         <button class="diff-pill dp-f ${cardDifficulty[c.id]===0?'active':''}" onclick="selectDiff(${c.id},0)">📗 Fácil</button>
         <button class="diff-pill dp-a ${cardDifficulty[c.id]===1?'active':''}" onclick="selectDiff(${c.id},1)">📙 Intermedio</button>
         <button class="diff-pill dp-s ${cardDifficulty[c.id]===2?'active':''}" onclick="selectDiff(${c.id},2)">📕 Avanzado</button>
+        <button class="diff-pill dp-e ${cardDifficulty[c.id]===3?'active':''}" onclick="selectDiff(${c.id},3)">📝 Examen</button>
       </div>
       <div class="diff-desc" id="diffDesc${c.id}">${getDiffDesc(cardDifficulty[c.id], c.id)}</div>
       <button class="btn-start"
@@ -584,7 +650,8 @@ function renderHome() {
 // INICIAR CASO
 // ═══════════════════════════════════════════════════════════
 function startCase(id) {
-  const diffKey = DIFF_KEYS[cardDifficulty[id]];
+  const diffIdx = cardDifficulty[id];
+  const diffKey = diffIdx === 3 ? 'examen' : DIFF_KEYS_PLAY[diffIdx];
   state.difficulty = DIFFICULTY[diffKey];
   state.diffKey    = diffKey;
   state.steps      = getStepSequence(diffKey, id);
@@ -594,6 +661,8 @@ function startCase(id) {
   state.stepAttempts = state.steps.map(() => 0);
   state.stepScores   = state.steps.map(() => 0);
   state.notebook   = {};
+  examStepTimes    = state.steps.map(() => 0);
+  if (examTimer) { clearInterval(examTimer); examTimer = null; }
 
   const c = state.currentCase;
   document.getElementById('hdrIcon').textContent = c.icon;
@@ -608,6 +677,8 @@ function startCase(id) {
     ? 'background:rgba(34,197,94,.12);color:#22C55E;border:1px solid rgba(34,197,94,.3);padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700'
     : D === DIFFICULTY.intermedio
     ? 'background:rgba(245,197,24,.12);color:#F5C518;border:1px solid rgba(245,197,24,.3);padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700'
+    : D === DIFFICULTY.examen
+    ? 'background:rgba(139,92,246,.14);color:#A78BFA;border:1px solid rgba(139,92,246,.35);padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700'
     : 'background:rgba(239,68,68,.12);color:#EF4444;border:1px solid rgba(239,68,68,.3);padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700';
 
   document.getElementById('headerScore').textContent = '0';
@@ -616,6 +687,208 @@ function startCase(id) {
   renderProgressDots();
   renderStep();
   showScreen('gameScreen');
+}
+
+
+
+// ═══════════════════════════════════════════════════════════
+// LATICOMMERCE — CLASIFICADOR PROPIO (5 cuentas clave)
+// Foco: entender qué hace que el NOF sea negativo
+// ═══════════════════════════════════════════════════════════
+function stepLatiClassify(c, sn, badge) {
+  state.latiClsChoices = {};
+  state.latiClsLocked  = {};
+
+  const items = [
+    {id:'cxc',    label:'Cuentas por Cobrar (usuarios pagan con wallet)',  val:'$350M',   correct:'AO',
+     tip:'Cobro digital casi inmediato → AO corriente. DSO muy bajo.'},
+    {id:'cxp',    label:'CxP — Lo que le debe a los vendedores del marketplace', val:'$1,400M', correct:'PO',
+     tip:'Los vendedores esperan 100+ días para cobrar → financia el negocio gratis → PO.'},
+    {id:'dev',    label:'Devoluciones diferidas + cuotas fintech pendientes', val:'$490M',  correct:'PO',
+     tip:'Obligación operativa de devolver o acreditar dinero → PO corriente.'},
+    {id:'datactr',label:'Data centers y logística propia (PP&E neto)',      val:'$2,800M', correct:'AO',
+     tip:'Activo fijo operativo → genera el resultado → AO no corriente → va al AFN.'},
+    {id:'deuda',  label:'Deuda financiera (bonos emitidos)',                val:'$2,800M', correct:'PF',
+     tip:'Decisión de financiamiento, no del ciclo operativo → PF.'}
+  ];
+
+  const rows = items.map(it => `
+    <div class="classify-row" id="lticls_${it.id}">
+      <div class="cls-info">
+        <span class="cls-label">${it.label}</span>
+        <span class="cls-amount">${it.val}</span>
+      </div>
+      <div class="cls-btns">
+        <button class="cls-cat-btn sel-AO" data-cat="AO" onclick="selectLatiCls('${it.id}','AO')">AO</button>
+        <button class="cls-cat-btn sel-PO" data-cat="PO" onclick="selectLatiCls('${it.id}','PO')">PO</button>
+        <button class="cls-cat-btn sel-PF" data-cat="PF" onclick="selectLatiCls('${it.id}','PF')">PF</button>
+      </div>
+      <div class="cls-tip" id="lticlstip_${it.id}"></div>
+    </div>`).join('');
+
+  state._latiClsItems = items;
+
+  return `
+    <div class="step-header">
+      <div class="step-number">${sn}</div>
+      <div class="step-badge">${badge}</div>
+      <div class="step-title">¿Qué financia a quién?</div>
+      <div class="step-task">En un marketplace, la magia está en <strong>quién paga primero y quién cobra después</strong>. Clasificá estas 5 cuentas clave de LatiCommerce en AO (Activo Operativo), PO (Pasivo Operativo) o PF (Pasivo Financiero).</div>
+    </div>
+    <div class="concept-box">
+      <strong>Clave del modelo marketplace:</strong> LatiCommerce cobra a los usuarios <em>antes</em> de pagarle a los vendedores. Eso crea pasivos operativos enormes → el NOF se vuelve negativo → los proveedores financian el negocio.
+    </div>
+    <div class="cls-legend">
+      <span class="cls-leg-item sel-AO">AO = Activo Operativo</span>
+      <span class="cls-leg-item sel-PO">PO = Pasivo Operativo</span>
+      <span class="cls-leg-item sel-PF">PF = Pasivo Financiero</span>
+    </div>
+    <div class="classify-container">${rows}</div>
+    <div class="cls-progress" id="ltiClsProgress">0 / ${items.length} clasificadas</div>
+    <div class="answer-row" style="margin-top:4px">
+      <button class="btn-verify" onclick="verifyLatiClassify()">Verificar →</button>
+      ${state.difficulty.hints ? '<button class="btn-hint" onclick="toggleHint()">💡 Pista</button>' : ''}
+    </div>
+    <div class="attempts-row" id="attemptsRow">${fmtDots()}</div>
+    <div class="hint-box" id="hintBox">Preguntate: ¿esta cuenta surge del ciclo cobrar-producir-pagar? → Operativa. ¿Es deuda bancaria o financiera? → PF. En el marketplace, la CxP con vendedores es enorme porque LatiCommerce los hace esperar.</div>
+    <div class="feedback-box" id="feedbackBox"></div>
+    <button class="btn-next" id="btnNext" onclick="nextStep()">Siguiente paso →</button>`;
+}
+
+function selectLatiCls(id, cat) {
+  if (state.latiClsLocked && state.latiClsLocked[id]) return;
+  state.latiClsChoices[id] = cat;
+  const row = document.getElementById('lticls_' + id);
+  if (!row) return;
+  row.querySelectorAll('.cls-cat-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.cat === cat));
+  const total = state._latiClsItems.filter(it =>
+    state.latiClsChoices[it.id] || (state.latiClsLocked && state.latiClsLocked[it.id])).length;
+  const prog = document.getElementById('ltiClsProgress');
+  if (prog) prog.textContent = `${total} / ${state._latiClsItems.length} clasificadas`;
+}
+
+function verifyLatiClassify() {
+  const items   = state._latiClsItems;
+  const choices = state.latiClsChoices || {};
+  const si      = state.currentStep;
+  if (!state.latiClsLocked) state.latiClsLocked = {};
+
+  const pending = items.filter(it => !state.latiClsLocked[it.id] && !choices[it.id]);
+  if (pending.length > 0) {
+    showFeedback(`Clasificá todas las cuentas primero (${pending.length} pendientes).`, 'wrong');
+    return;
+  }
+
+  const att = ++state.stepAttempts[si];
+  markAttemptDot(att - 1);
+  const maxA = state.difficulty.maxAttempts;
+  let correctTotal = Object.keys(state.latiClsLocked).length;
+  const newWrong = [];
+
+  items.forEach(it => {
+    if (state.latiClsLocked[it.id]) return;
+    const row   = document.getElementById('lticls_' + it.id);
+    const tipEl = document.getElementById('lticlstip_' + it.id);
+    if (choices[it.id] === it.correct) {
+      correctTotal++;
+      state.latiClsLocked[it.id] = true;
+      if (row) { row.classList.remove('cls-wrong'); row.classList.add('cls-correct'); }
+      row && row.querySelectorAll('.cls-cat-btn').forEach(b => b.disabled = true);
+    } else {
+      newWrong.push(it);
+      if (row) { row.classList.remove('cls-correct'); row.classList.add('cls-wrong'); }
+      if (tipEl) { tipEl.textContent = '💡 ' + (it.tip || `Correcta: ${it.correct}.`); tipEl.style.display = 'block'; }
+    }
+  });
+
+  if (correctTotal === items.length) {
+    awardPoints(si, att);
+    document.querySelector('.btn-verify').disabled = true;
+    showFeedback(`✅ Perfecto. ${items.length}/${items.length} correctas. Ahora vas a ver cómo estas cuentas generan un NOF negativo.`, 'correct');
+    showNextBtn();
+  } else if (att >= maxA) {
+    items.forEach(it => {
+      if (state.latiClsLocked[it.id]) return;
+      const row   = document.getElementById('lticls_' + it.id);
+      const tipEl = document.getElementById('lticlstip_' + it.id);
+      if (row) { row.classList.remove('cls-wrong'); row.classList.add('cls-revealed'); }
+      row && row.querySelectorAll('.cls-cat-btn').forEach(b => b.disabled = true);
+      if (tipEl) { tipEl.textContent = `✓ Respuesta: ${it.correct}. ${it.tip||''}`; tipEl.style.display = 'block'; }
+    });
+    awardPoints(si, maxA + 1);
+    document.querySelector('.btn-verify').disabled = true;
+    showFeedback(`Sin puntos. Respuestas reveladas.`, 'wrong');
+    showNextBtn();
+  } else {
+    showFeedback(`${correctTotal}/${items.length} correctas. ${newWrong.length} incorrectas — revisá los tips. Intentos restantes: ${maxA - att}.`, 'wrong');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// EXAM MODE — TIMER ENGINE
+// ═══════════════════════════════════════════════════════════
+let examTimer = null;
+let examStepStartTime = null;
+let examStepTimes = []; // seconds spent per step
+
+function examStartStepTimer() {
+  if (!state.difficulty.examMode) return;
+  examStepStartTime = Date.now();
+  const secs = state.difficulty.stepSeconds || 180;
+  let remaining = secs;
+  updateTimerDisplay(remaining);
+
+  examTimer = setInterval(() => {
+    remaining--;
+    updateTimerDisplay(remaining);
+    if (remaining <= 10) {
+      const bar = document.getElementById('examTimerBar');
+      if (bar) bar.style.background = 'var(--red)';
+    }
+    if (remaining <= 0) {
+      clearInterval(examTimer);
+      examTimer = null;
+      examTimeUp();
+    }
+  }, 1000);
+}
+
+function examStopStepTimer() {
+  if (examTimer) { clearInterval(examTimer); examTimer = null; }
+  const elapsed = examStepStartTime ? Math.round((Date.now() - examStepStartTime) / 1000) : 0;
+  examStepTimes[state.currentStep] = elapsed;
+  examStepStartTime = null;
+}
+
+function updateTimerDisplay(secs) {
+  const el = document.getElementById('examTimerLabel');
+  const bar = document.getElementById('examTimerBar');
+  if (!el) return;
+  const m = Math.floor(secs / 60), s = secs % 60;
+  el.textContent = `⏱️ ${m}:${s.toString().padStart(2,'0')}`;
+  const total = state.difficulty.stepSeconds || 180;
+  const pct = Math.max(0, secs / total * 100);
+  if (bar) {
+    bar.style.width = pct + '%';
+    bar.style.background = secs <= 10 ? 'var(--red)' : secs <= 30 ? 'var(--yellow)' : 'var(--teal)';
+  }
+}
+
+function examTimeUp() {
+  // Force wrong answer and move forward
+  const si = state.currentStep;
+  state.stepAttempts[si] = state.difficulty.maxAttempts;
+  state.stepScores[si] = 0;
+  showFeedback('⏰ Tiempo agotado para este paso.', 'wrong');
+  // disable inputs
+  const inp = document.getElementById('answerInput');
+  if (inp) { inp.disabled = true; }
+  const vbtn = document.querySelector('.btn-verify');
+  if (vbtn) vbtn.disabled = true;
+  // disable MC options
+  document.querySelectorAll('.mc-option').forEach(b => b.disabled = true);
+  showNextBtn();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1233,6 +1506,7 @@ function genericVerify(opts) {
 // RENDERIZADO DE PASOS
 // ═══════════════════════════════════════════════════════════
 function renderStep() {
+  examStopStepTimer();
   renderDataRoom();
   renderProgressDots();
   const sid = state.steps[state.currentStep];
@@ -1246,6 +1520,7 @@ function renderStep() {
     if (tb) tb.classList.add('open');
   }
   cc.scrollTop = 0;
+  examStartStepTimer();
 }
 
 
@@ -1495,9 +1770,9 @@ function getAllMCDefs(c) {
 
     // ── PHARMACORE (id=4) ─────────────────────────────
     mc_pharma_ci_alto: {
-      title: '🔬 ¿Por Qué el ROIC es Menor al Margen Sugerido?',
-      task: `PharmaCore tiene un Margen NOPAT del ${c.nopatMargin}% pero un ROIC de solo ${c.roic}%. ¿Cuál es la explicación?`,
-      concept: `Margen NOPAT = ${c.nopatMargin}% · CI = $${fmt(c.ci)}M (AFN $${fmt(c.afn)}M + AIN $${fmt(c.ain)}M + NOF $${fmt(c.nof)}M) · Rotación = ${c.rotacion}x`,
+      title: '🔬 Antes de Calcular el CI — Una Pregunta',
+      task: `PharmaCore tiene un Margen NOPAT del ${c.nopatMargin}% y un Margen Bruto del ${c.grossMargin}%. Muchos esperarían un ROIC altísimo. ¿Qué elemento del balance podría comprimirlo?`,
+      concept: `Margen Bruto = ${c.grossMargin}% · Margen NOPAT = ${c.nopatMargin}% · Sector: Farmacéutico · I+D en SG&A · Patentes y plantas como activos principales`,
       correctIdx: 0,
       feedbackCorrect: `CI = $${c.ci}M principalmente por patentes ($${c.ain}M) y plantas ($${c.afn}M). Esto comprime la rotación a ${c.rotacion}x y limita el ROIC a ${c.roic}%.`,
       options: [
@@ -1581,6 +1856,7 @@ function buildStep(sid, c) {
     case 'dpo':          return stepDpo(c, sn, badge);
     case 'ccc':          return stepCcc(c, sn, badge);
     case 'ffl':          return stepFfl(c, sn, badge);
+    case 'lati_classify': return stepLatiClassify(c, sn, badge);
     // MC steps — multiple choice
     default: {
       if (sid.startsWith('mc_')) {
@@ -1593,6 +1869,7 @@ function buildStep(sid, c) {
 }
 
 function nextStep() {
+  examStopStepTimer();
   state.currentStep++;
   if (state.currentStep >= state.steps.length) {
     showResults();
@@ -1657,7 +1934,9 @@ function infoBoxes(items) {
 function stepGrossProfit(c, sn, badge) {
   return baseStep(sn, badge,
     'Gross Profit — Primer Margen',
-    `Calculá el Gross Profit de ${c.name}. Es lo que queda del revenue después de los costos directos de producción (COGS).`,
+    c.id === 4
+      ? `Calculá el Gross Profit de ${c.name}. En farmacéutica, el costo de producción de los medicamentos (COGS) es bajísimo respecto al revenue — la mayor parte del costo está en I+D y patentes, que van en SG&A.`
+      : `Calculá el Gross Profit de ${c.name}. Es lo que queda del revenue después de los costos directos de producción (COGS).`,
     `Gross Profit = Revenue − COGS\n= $${fmt(c.revenue)}M − $${fmt(c.cogs)}M = $${fmt(c.grossProfit)}M`,
     `Restá COGS del Revenue: ${fmt(c.revenue)} − ${fmt(c.cogs)}.`,
     'Gross Profit ($M)', '$M', 'verifyGrossProfit',
@@ -1670,7 +1949,9 @@ function verifyGrossProfit() {
   genericVerify({
     correct: c.grossProfit, tolerance: 5,
     nbKey: 'grossProfit', nbVal: c.grossProfit,
-    feedbackCorrect: `✅ Gross Profit = $${fmt(c.grossProfit)}M. Margen Bruto = ${c.grossMargin}%. De cada $100 de ventas, $${c.grossMargin} quedan después de los costos directos.`,
+    feedbackCorrect: c.id === 4
+      ? `✅ Gross Profit = $${fmt(c.grossProfit)}M. Margen Bruto = ${c.grossMargin}% — altísimo para cualquier industria. En pharma el COGS es bajo porque fabricar el medicamento es barato; el costo real está en los años de I+D para llegar a ese medicamento.`
+      : `✅ Gross Profit = $${fmt(c.grossProfit)}M. Margen Bruto = ${c.grossMargin}%. De cada $100 de ventas, $${c.grossMargin} quedan después de los costos directos.`,
     feedbackWrong:   `Respuesta: $${fmt(c.grossProfit)}M → Revenue − COGS = ${fmt(c.revenue)} − ${fmt(c.cogs)}.`,
     tryAgain: 'GP = Revenue − COGS.'
   });
@@ -1808,6 +2089,8 @@ function verifyMargenNopat() {
 function stepNof(c, sn, badge) {
   const taskExtra = c.id === 2
     ? ` AO = CxC ($${fmt(c.ar)}M) + Inv ($${fmt(c.inventory)}M) = $${fmt(c.totalAO)}M. PO = CxP ($${fmt(c.ap)}M) + Gastos devengados ($${fmt(c.accrued)}M) + Cuotas membresía ($${fmt(c.membershipFees)}M) = $${fmt(c.totalPO)}M. ¡Las cuotas de membresía son la clave!`
+    : c.id === 3
+    ? ` Ya clasificaste las cuentas: AO corriente = CxC ($${fmt(c.ar)}M). PO corriente = CxP vendedores ($${fmt(c.ap)}M) + Devoluciones/cuotas diferidas ($${fmt(c.accrued)}M) = $${fmt(c.totalPO)}M. Ahora calculá la diferencia.`
     : c.id === 1
     ? ` Los AO corrientes son CxC + Inv + Anticipo = $${fmt(c.totalAO)}M. Los PO son CxP + Nómina a pagar + Ing. diferidos = $${fmt(c.totalPO)}M.`
     : '';
@@ -1883,7 +2166,9 @@ function stepRotacion(c, sn, badge) {
   const ci = state.notebook.ci !== undefined ? state.notebook.ci : c.ci;
   return baseStep(sn, badge,
     'Rotación del Activo Neto',
-    `¿Cuántos pesos de revenue genera cada peso de Capital Invertido? Es la "velocidad" del negocio. Expresá como múltiplo con 1 decimal.`,
+    c.id === 4
+      ? `¿Cuántos pesos de revenue genera cada peso de Capital Invertido? En PharmaCore, el CI es enorme por las patentes y plantas. Esto va a explicar por qué el ROIC es mucho más bajo que el margen NOPAT. Expresá como múltiplo con 1 decimal.`
+      : `¿Cuántos pesos de revenue genera cada peso de Capital Invertido? Es la "velocidad" del negocio. Expresá como múltiplo con 1 decimal.`,
     `Rotación = Revenue / Capital Invertido\n= ${fmt(c.revenue)} / ${fmt(ci)} = ${c.rotacion}x`,
     `Dividí Revenue entre CI: ${fmt(c.revenue)} / ${fmt(ci)}.`,
     'Rotación (múltiplo)', 'x', 'verifyRotacion',
@@ -1896,7 +2181,9 @@ function verifyRotacion() {
   genericVerify({
     correct: c.rotacion, tolerance: 0.05,
     nbKey: 'rotacion', nbVal: c.rotacion,
-    feedbackCorrect: `✅ Rotación = ${c.rotacion}x. Por cada $1 de CI, ${c.name} genera $${c.rotacion} de revenue.`,
+    feedbackCorrect: c.id === 4
+      ? `✅ Rotación = ${c.rotacion}x. Por cada $1 de CI, PharmaCore genera solo $${c.rotacion} de revenue. Es una rotación muy baja — el capital "trabaja lento". Combinado con el margen NOPAT, esto determina el ROIC final.`
+      : `✅ Rotación = ${c.rotacion}x. Por cada $1 de CI, ${c.name} genera $${c.rotacion} de revenue.`,
     feedbackWrong:   `Respuesta: ${c.rotacion}x → Revenue/CI = ${c.revenue}/${c.ci}.`,
     tryAgain: 'Rotación = Revenue / CI.'
   });
@@ -1912,6 +2199,8 @@ function stepRoic(c, sn, badge) {
     'ROIC — La Identidad DuPont',
     c.id === 2
       ? `Con un margen NOPAT de solo ${margen}%, ¿cómo puede Costco tener un ROIC del ${c.roic}%? La respuesta está en la Rotación. Calculá el ROIC via DuPont. Expresá en % con 1 decimal.`
+      : c.id === 4
+      ? `Momento clave: PharmaCore tiene un Margen NOPAT de ${margen}% pero una Rotación de solo ${rot}x. ¿Qué ROIC resulta? Este es el número que determina si la empresa crea valor para sus accionistas. Expresá en % con 1 decimal.`
       : `El ROIC mide la rentabilidad real del negocio. Calculalo usando la identidad DuPont: Margen NOPAT × Rotación. Expresá en % con 1 decimal.`,
     `ROIC = Margen NOPAT × Rotación AN\n= ${margen}% × ${rot}x = ${c.roic}%`,
     `Multiplicá el Margen NOPAT (${margen}%) por la Rotación (${rot}x).`,
@@ -1925,7 +2214,9 @@ function verifyRoic() {
   genericVerify({
     correct: c.roic, tolerance: 0.6,
     nbKey: 'roic', nbVal: c.roic,
-    feedbackCorrect: `✅ ROIC = ${c.roic}% vs WACC = ${c.wacc}%. ${c.roic > c.wacc ? '🟢 ROIC > WACC → la empresa CREA valor económico.' : '🔴 ROIC < WACC → destruye valor.'}`,
+    feedbackCorrect: c.id === 4
+      ? `✅ ROIC = ${c.roic}% — mucho menor que el Margen NOPAT de ${c.nopatMargin}%. ¿Por qué? Por la baja rotación (${c.rotacion}x) causada por el CI enorme en patentes ($${fmt(c.ain)}M). Aun así, ROIC ${c.roic}% > WACC ${c.wacc}% → crea valor.`
+      : `✅ ROIC = ${c.roic}% vs WACC = ${c.wacc}%. ${c.roic > c.wacc ? '🟢 ROIC > WACC → la empresa CREA valor económico.' : '🔴 ROIC < WACC → destruye valor.'}`,
     feedbackWrong:   `Respuesta: ${c.roic}% → Margen × Rotación = ${c.nopatMargin}% × ${c.rotacion}.`,
     tryAgain: 'ROIC = Margen NOPAT (%) × Rotación (x).'
   });
@@ -2559,6 +2850,40 @@ function showResults() {
   document.getElementById('finalRank').textContent  = rank;
   document.getElementById('scoreMax').textContent   =
     `${state.score} de ${Math.round(maxScore)} pts posibles (${Math.round(pct*100)}%)`;
+
+  // Exam mode: detailed step breakdown
+  const examBreakdown = document.getElementById('examBreakdown');
+  if (examBreakdown) {
+    if (state.difficulty.examMode) {
+      examBreakdown.style.display = 'block';
+      const rows = state.steps.map((sid, i) => {
+        const pts   = state.stepScores[i] || 0;
+        const atts  = state.stepAttempts[i] || 0;
+        const secs  = examStepTimes[i] || 0;
+        const m     = Math.floor(secs/60), s = secs%60;
+        const icon  = pts > 0 ? '✅' : (atts > 0 ? '❌' : '⏰');
+        const label = sid.startsWith('mc_') ? '💡 ' + (sid.replace('mc_','').replace(/_/g,' ')) : sid;
+        return `<tr>
+          <td style="color:var(--muted);font-size:.75rem">${i+1}</td>
+          <td style="font-size:.78rem">${label}</td>
+          <td style="text-align:center">${icon}</td>
+          <td style="font-family:'JetBrains Mono',monospace;color:var(--yellow);text-align:center">${pts}</td>
+          <td style="font-family:'JetBrains Mono',monospace;color:var(--muted);text-align:center">${m}:${s.toString().padStart(2,'0')}</td>
+        </tr>`;
+      }).join('');
+      examBreakdown.innerHTML = `
+        <h3 style="font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:14px">📋 Detalle por paso — Modo Examen</h3>
+        <table class="results-table" style="margin-bottom:0">
+          <thead><tr>
+            <th>#</th><th>Paso</th><th style="text-align:center">Resultado</th>
+            <th style="text-align:center">Pts</th><th style="text-align:center">Tiempo</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    } else {
+      examBreakdown.style.display = 'none';
+    }
+  }
 
   showScreen('resultsScreen');
 }
