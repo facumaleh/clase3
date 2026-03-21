@@ -172,7 +172,7 @@ const CASES = [
   tagline:'El retailer más eficiente del mundo con margen neto de 2.75%. ¿Cómo genera un ROIC del 25%? Clasificá sus cuentas, calculá el Capital Invertido y descubrí la paradoja de Costco.',
   stats:[{val:'$254,453M',lbl:'Revenue'},{val:'2.75%',lbl:'Margen NOPAT'},{val:'9%',lbl:'WACC'}],
 
-  // ── Estado de Resultados FY2024 ──────────────────────────
+  // ── Estado de Resultados ──────────────────────────
   revenue:254453, cogs:222358,
   grossProfit:32095, grossMargin:12.6,
   sga:22810,         // D&A está embebido en COGS + SGA
@@ -245,7 +245,7 @@ const CASES = [
 // ═══════════════════════════════════════════════════════════
 // CASO 4 — LatiCommerce S.A.
 // E-Commerce · Latinoamérica
-// Inspirado en Mercado Libre / Nubank · Ciclo de caja negativo
+// Inspirado en modelo marketplace + fintech · Ciclo de caja negativo
 // Números pedagógicos: NOF negativo, expansión agresiva, FFL bajo
 // ═══════════════════════════════════════════════════════════
 {
@@ -366,6 +366,80 @@ const CASES = [
   shares:200,
 
   verdict:'creadora'
+},
+// ═══════════════════════════════════════════════════════════
+// CASO 6 — Banco Digital LatAm
+// Fintech / Banco Digital · Brasil + LatAm
+// Datos FY2024 estilizados para práctica pedagógica
+// Concepto clave: ¿cómo crea valor un banco SIN activos fijos?
+// ═══════════════════════════════════════════════════════════
+{
+  id:5,
+  icon:'🏦', color:'#8B5CF6', color2:'#7C3AED',
+  name:'Banco Digital LatAm',
+  sector:'Fintech · Banco Digital', sectorDetail:'Datos estilizados · LatAm',
+  tagline:'Banco digital líder en LatAm. Sin sucursales, sin activos fijos, con millones de usuarios. ¿Cómo genera un ROIC del 28% casi sin Capital Invertido físico?',
+  stats:[{val:'$11,500M',lbl:'Revenue'},{val:'16.5%',lbl:'Margen NOPAT'},{val:'15%',lbl:'WACC'}],
+
+  // ── Estado de Resultados ──────────────────────────
+  // Revenue = intereses + comisiones + otros ingresos financieros
+  // COGS = costo de fondeo (intereses pagados a depositantes) + pérdidas por crédito
+  revenue:11500, cogs:6260,
+  grossProfit:5240, grossMargin:45.6,
+  sga:3280,       // Gastos operativos: tech, personal, marketing
+  da:160,         // D&A mínima (banco digital, casi sin activos físicos)
+  ebit:1800, ebitMargin:15.7,
+  tax:33,         // Tasa efectiva Brasil ~33%
+  nopat:1206, nopatMargin:10.5,
+
+  // ── Balance Operativo ────────────────────────────────────
+  // AO corriente: créditos otorgados a clientes (tarjetas + préstamos)
+  ar:17600,       // Créditos a clientes (CxC financiero) — AO principal
+  inventory:0,    // Sin inventario físico
+  totalAO:17600,
+
+  // PO corriente: depósitos de clientes (¡el gran pasivo operativo!)
+  ap:28300,       // Depósitos de clientes → financian el negocio GRATIS
+  accrued:1200,   // Otros pasivos operativos
+  totalPO:29500,
+
+  // ── Capital Invertido ────────────────────────────────────
+  nof:-11900,     // NOF = 17600 − 29500 → MUY negativo (depósitos > créditos corrientes)
+  afn:30,         // PP&E neto ínfimo: oficinas mínimas, sin sucursales
+  ain:800,        // Intangibles: plataforma tech + goodwill adquisiciones
+  ci:4300,        // CI = NOF(−11900) + AFN(30) + AIN(800) + Exceso capital(15370)
+  // Nota: En banca, el "capital regulatorio" también integra el CI
+  // CI ajustado = Equity regulatorio mínimo ≈ $4,300M para operar
+  prevCI:3800,    // CI año anterior
+  invNeta:500,    // ΔCI = 4300 − 3800
+
+  // ── Retorno ─────────────────────────────────────────────
+  rotacion:2.67,  // Revenue / CI = 11500 / 4300
+  roic:28.1,      // NOPAT / CI × 100 = 1206 / 4300 = 28.1%
+  wacc:15,
+  spread:13.1,    // ROIC − WACC
+  eva:563,        // 13.1% × 4300 / 100
+
+  // ── Ciclo de Conversión de Caja ─────────────────────────
+  // En banca el CCC se interpreta diferente — pero lo calculamos igual
+  dso:558.8,      // Créditos × 365 / Revenue (días de recupero de créditos)
+  dio:0.0,        // Sin inventario
+  dpo:1651.5,     // Depósitos × 365 / COGS (días que "financian" con depósitos)
+  ccc:-1092.7,    // DSO + DIO − DPO → enormemente negativo
+
+  // ── Flujo de Fondos ──────────────────────────────────────
+  ffl:706,        // NOPAT − ΔCI = 1206 − 500
+
+  // ── Estructura Financiera ────────────────────────────────
+  actFin:9200,    // Caja + inversiones financieras del holding
+  deudaFin:800,   // Deuda financiera (mínima)
+  totalAssets:68000,
+  pn:7000,        // Patrimonio neto (holding)
+  netIncome:1900, // Resultado neto FY2024
+  roa:2.6,        // EBIT / Total Assets = 1800 / 68000
+  roe:27.1,       // Net Income / PN = 1900 / 7000
+
+  verdict:'creadora'
 }
 ];
 
@@ -380,9 +454,25 @@ const DIFFICULTY = {
   examen:     {label:'📝 Examen',     maxAttempts:1, formulaOpen:false, hideFormula:true,  hints:false, multiplier:3.0, showSolution:false, examMode:true,  stepSeconds:180}
 };
 const DIFF_KEYS_PLAY = ['facil','intermedio','avanzado'];
-const cardDifficulty = [1, 1, 1, 1, 1]; // default: intermedio
+const cardDifficulty = [1, 1, 1, 1, 1, 1]; // default: intermedio
 
 function getDiffDesc(idx, caseId) {
+  // Caso 6 — Banco Digital LatAm: 16 pasos
+  // Identidad: banco digital sin activos físicos → NOF negativo extremo → ROIC alto
+  // Arranca con clasificación bancaria → gross profit alto → NOF extremo como sorpresa
+  if (caseId === 5) return [
+    'nu_classify',            // Clasificar cuentas de un banco digital
+    'grossProfit', 'margenBruto',
+    'ebit',
+    'nopat', 'margenNopat',
+    'nof', 'mc_nu_nof',       // NOF −$11,900M: ¡los depósitos financian todo!
+    'ci',
+    'rotacion', 'roic',
+    'roa', 'roe',             // ROA << ROE: la magia del apalancamiento bancario
+    'spread', 'eva',
+    'mc_nu_modelo',           // ¿Por qué el banco digital crea más valor que un banco tradicional?
+    'ffl'
+  ];
   if (caseId === 4) return [
     '18 pasos · PharmaCore · Márgenes + CI en patentes + adquisición · Fórmulas visibles · 5 intentos',
     '18 pasos · PharmaCore · Fórmulas al clic · 3 intentos',
@@ -403,6 +493,11 @@ function getDiffDesc(idx, caseId) {
     '18 pasos · Clasificación de cuentas + análisis · Fórmulas al clic · 3 intentos',
     '18 pasos · Sin fórmulas ni pistas · 2 intentos · ×2 puntos'
   ][idx] || '';
+  if (caseId === 5) return [
+    '16 pasos · Banco Digital · NOF negativo extremo · Fórmulas visibles · 5 intentos',
+    '16 pasos · Banco Digital · Análisis completo · Fórmulas al clic · 3 intentos',
+    '16 pasos · Sin fórmulas ni pistas · 2 intentos · ×2 puntos'
+  ][idx] || '';
   if (idx === 3) return '⏱️ Sin fórmulas · Sin pistas · 1 intento · Cronómetro · ×3 puntos';
   return [
     '14 pasos · Fórmulas visibles · Pistas disponibles · 5 intentos',
@@ -421,6 +516,22 @@ function getStepSequence(diffKey, caseId) {
   // Caso 5 — PharmaCore: 18 pasos
   // Identidad: margen altísimo pero ROIC comprimido por CI en patentes
   // Arranca con estructura de resultados completa → CI pesado → tensión margen/ROIC → adquisición
+  // Caso 6 — Banco Digital LatAm: 16 pasos
+  // Identidad: banco digital sin activos físicos → NOF negativo extremo → ROIC alto
+  // Arranca con clasificación bancaria → gross profit alto → NOF extremo como sorpresa
+  if (caseId === 5) return [
+    'nu_classify',            // Clasificar cuentas de un banco digital
+    'grossProfit', 'margenBruto',
+    'ebit',
+    'nopat', 'margenNopat',
+    'nof', 'mc_nu_nof',       // NOF −$11,900M: ¡los depósitos financian todo!
+    'ci',
+    'rotacion', 'roic',
+    'roa', 'roe',             // ROA << ROE: la magia del apalancamiento bancario
+    'spread', 'eva',
+    'mc_nu_modelo',           // ¿Por qué el banco digital crea más valor que un banco tradicional?
+    'ffl'
+  ];
   if (caseId === 4) return [
     'grossProfit', 'margenBruto',  // margen bruto 70%: primer WOW
     'ebit', 'margenEbit',          // estructura de costos con I+D
@@ -571,6 +682,29 @@ function getClassBadge(stepId) {
       mc_pharma_ffl:     '💸 Bloque 6 · Flujo de Fondos'
     };
     return t5[stepId] || '💊 PharmaCore · Farmacéutica';
+  }
+  // Caso 6 — Banco Digital LatAm
+  if (state.currentCase && state.currentCase.id === 5) {
+    const t6 = {
+      nu_classify:    '🏦 Bloque 0 · ¿Cómo funciona un banco digital?',
+      grossProfit:    '📊 Bloque 1 · Estructura de ingresos',
+      margenBruto:    '📊 Bloque 1 · Estructura de ingresos',
+      ebit:           '📊 Bloque 1 · Estructura de ingresos',
+      nopat:          '📊 Bloque 1 · Estructura de ingresos',
+      margenNopat:    '📊 Bloque 1 · Estructura de ingresos',
+      nof:            '🔑 Bloque 2 · El secreto de los depósitos',
+      mc_nu_nof:      '🔑 Bloque 2 · El secreto de los depósitos',
+      ci:             '💼 Bloque 3 · Capital Invertido sin activos físicos',
+      rotacion:       '💼 Bloque 3 · Capital Invertido sin activos físicos',
+      roic:           '⚗️ Bloque 4 · Rentabilidad',
+      roa:            '⚗️ Bloque 4 · Rentabilidad',
+      roe:            '⚗️ Bloque 4 · Rentabilidad',
+      spread:         '⚗️ Bloque 4 · Rentabilidad',
+      eva:            '⚗️ Bloque 4 · Rentabilidad',
+      mc_nu_modelo:   '🚀 Bloque 5 · Banco digital vs. banco tradicional',
+      ffl:            '💸 Bloque 6 · Flujo de Fondos'
+    };
+    return t6[stepId] || '🏦 Banco Digital LatAm · Fintech';
   }
   return map[stepId] || '📚 Finanzas Corporativas';
 }
@@ -995,6 +1129,164 @@ function renderGlossary() {
   ).join('');
 }
 
+
+// ═══════════════════════════════════════════════════════════
+// NUBANK — CLASIFICADOR + DATA ROOM
+// ═══════════════════════════════════════════════════════════
+function stepNuClassify(c, sn, badge) {
+  state.nuClsChoices = {};
+  state.nuClsLocked  = {};
+  const items = [
+    {id:'creditos',  label:'Creditos a clientes (tarjetas + prestamos)',   val:'$17,600M', correct:'AO', tip:'El dinero que presta el banco genera ingresos -> AO principal.'},
+    {id:'depositos', label:'Depositos de clientes (cuentas digitales)',      val:'$28,300M', correct:'PO', tip:'Los clientes depositan -> el banco les debe ese dinero. Surge del negocio bancario -> PO. Es el motor del NOF negativo.'},
+    {id:'caja',      label:'Caja + inversiones financieras del holding',     val:'$9,200M',  correct:'AF', tip:'Excedente de capital, no del ciclo operativo de creditos -> AF.'},
+    {id:'ppe',       label:'PP&E neto (oficinas minimas, sin sucursales)',   val:'$30M',     correct:'AO', tip:'Activo fijo operativo aunque minimo. El AFN mas bajo de todos los casos.'},
+    {id:'intang',    label:'Plataforma tecnologica + goodwill',              val:'$800M',    correct:'AO', tip:'El activo mas valioso: plataforma tech + adquisiciones -> AIN operativo.'},
+    {id:'deuda',     label:'Deuda financiera emitida (bonos)',               val:'$800M',    correct:'PF', tip:'Financiamiento elegido por la empresa, no del ciclo operativo -> PF.'}
+  ];
+  state._nuClsItems = items;
+  const rows = items.map(it =>
+    '<div class="classify-row" id="nucls_' + it.id + '">' +
+    '<div class="cls-info"><span class="cls-label">' + it.label + '</span><span class="cls-amount">' + it.val + '</span></div>' +
+    '<div class="cls-btns">' +
+    '<button class="cls-cat-btn sel-AO" data-cat="AO" onclick="selectNuCls(\'' + it.id + '\',\'AO\')">AO</button>' +
+    '<button class="cls-cat-btn sel-PO" data-cat="PO" onclick="selectNuCls(\'' + it.id + '\',\'PO\')">PO</button>' +
+    '<button class="cls-cat-btn sel-AF" data-cat="AF" onclick="selectNuCls(\'' + it.id + '\',\'AF\')">AF</button>' +
+    '<button class="cls-cat-btn sel-PF" data-cat="PF" onclick="selectNuCls(\'' + it.id + '\',\'PF\')">PF</button>' +
+    '</div><div class="cls-tip" id="nuclstip_' + it.id + '"></div></div>'
+  ).join('');
+
+  return '<div class="step-header">' +
+    '<div class="step-number">' + sn + '</div>' +
+    '<div class="step-badge">' + badge + '</div>' +
+    '<div class="step-title">Como funciona un banco digital?</div>' +
+    '<div class="step-task">Este banco no tiene sucursales, casi no tiene activos fisicos, pero tiene $68,000M en activos. Clasifica estas 6 cuentas clave en AO, PO, AF o PF.</div>' +
+    '</div>' +
+    '<div class="concept-box"><strong>El modelo bancario digital:</strong> El banco toma depositos de clientes (PO barato) y los presta como creditos (AO que genera ingresos). Sin sucursales, el costo es minimo. Los depositos PO > creditos AO = NOF negativo enorme.</div>' +
+    '<div class="cls-legend">' +
+    '<span class="cls-leg-item sel-AO">AO = Activo Operativo</span>' +
+    '<span class="cls-leg-item sel-PO">PO = Pasivo Operativo</span>' +
+    '<span class="cls-leg-item sel-AF">AF = Activo Financiero</span>' +
+    '<span class="cls-leg-item sel-PF">PF = Pasivo Financiero</span></div>' +
+    '<div class="classify-container">' + rows + '</div>' +
+    '<div class="cls-progress" id="nuClsProgress">0 / ' + items.length + ' clasificadas</div>' +
+    '<div class="answer-row" style="margin-top:4px"><button class="btn-verify" onclick="verifyNuClassify()">Verificar &rarr;</button>' +
+    (state.difficulty.hints ? '<button class="btn-hint" onclick="toggleHint()">&#128161; Pista</button>' : '') +
+    '</div>' +
+    '<div class="attempts-row" id="attemptsRow">' + fmtDots() + '</div>' +
+    '<div class="hint-box" id="hintBox">Los depositos son PO (obligaciones del ciclo bancario). Los creditos otorgados son AO (activos que generan ingresos). La caja excedente del holding es AF.</div>' +
+    '<div class="feedback-box" id="feedbackBox"></div>' +
+    '<button class="btn-next" id="btnNext" onclick="nextStep()">Siguiente paso &rarr;</button>';
+}
+
+function selectNuCls(id, cat) {
+  if (state.nuClsLocked && state.nuClsLocked[id]) return;
+  state.nuClsChoices[id] = cat;
+  const row = document.getElementById('nucls_' + id);
+  if (!row) return;
+  row.querySelectorAll('.cls-cat-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.cat === cat); });
+  const total = state._nuClsItems.filter(function(it){ return state.nuClsChoices[it.id] || (state.nuClsLocked && state.nuClsLocked[it.id]); }).length;
+  const prog = document.getElementById('nuClsProgress');
+  if (prog) prog.textContent = total + ' / ' + state._nuClsItems.length + ' clasificadas';
+}
+
+function verifyNuClassify() {
+  const items = state._nuClsItems;
+  const choices = state.nuClsChoices || {};
+  const si = state.currentStep;
+  if (!state.nuClsLocked) state.nuClsLocked = {};
+  const pending = items.filter(function(it){ return !state.nuClsLocked[it.id] && !choices[it.id]; });
+  if (pending.length > 0) { showFeedback('Clasifica todas las cuentas primero (' + pending.length + ' pendientes).', 'wrong'); return; }
+  const att = ++state.stepAttempts[si];
+  markAttemptDot(att - 1);
+  const maxA = state.difficulty.maxAttempts;
+  let correctTotal = Object.keys(state.nuClsLocked).length;
+  items.forEach(function(it) {
+    if (state.nuClsLocked[it.id]) return;
+    const row = document.getElementById('nucls_' + it.id);
+    const tipEl = document.getElementById('nuclstip_' + it.id);
+    if (choices[it.id] === it.correct) {
+      correctTotal++;
+      state.nuClsLocked[it.id] = true;
+      if (row) { row.classList.remove('cls-wrong'); row.classList.add('cls-correct'); }
+      if (row) row.querySelectorAll('.cls-cat-btn').forEach(function(b){ b.disabled = true; });
+    } else {
+      if (row) { row.classList.remove('cls-correct'); row.classList.add('cls-wrong'); }
+      if (tipEl) { tipEl.textContent = '&#128161; ' + (it.tip || 'Correcta: ' + it.correct); tipEl.style.display = 'block'; }
+    }
+  });
+  if (correctTotal === items.length) {
+    awardPoints(si, att);
+    document.querySelector('.btn-verify').disabled = true;
+    showFeedback('\u2705 Perfecto! ' + items.length + '/' + items.length + ' correctas. Ahora vas a calcular los margenes y ver como el NOF negativo determina el Capital Invertido.', 'correct');
+    showNextBtn();
+  } else if (att >= maxA) {
+    items.forEach(function(it) {
+      if (state.nuClsLocked[it.id]) return;
+      const row = document.getElementById('nucls_' + it.id);
+      const tipEl = document.getElementById('nuclstip_' + it.id);
+      if (row) { row.classList.remove('cls-wrong'); row.classList.add('cls-revealed'); }
+      if (row) row.querySelectorAll('.cls-cat-btn').forEach(function(b){ b.disabled = true; });
+      if (tipEl) { tipEl.textContent = '\u2713 Respuesta: ' + it.correct + '. ' + (it.tip || ''); tipEl.style.display = 'block'; }
+    });
+    awardPoints(si, maxA + 1);
+    document.querySelector('.btn-verify').disabled = true;
+    showFeedback('Sin puntos. Respuestas reveladas.', 'wrong');
+    showNextBtn();
+  } else {
+    showFeedback(correctTotal + '/' + items.length + ' correctas. Intentos restantes: ' + (maxA - att) + '.', 'wrong');
+  }
+}
+
+function renderDataRoomCase6(c, sid) {
+  const hlER = ['grossProfit','margenBruto','ebit','nopat','margenNopat'].includes(sid);
+  const hlWC = ['nof','mc_nu_nof'].includes(sid);
+  const hlLP = ['ci','rotacion','roic','roa','roe','spread','eva','ffl','mc_nu_modelo'].includes(sid);
+
+  document.getElementById('dataRoom').innerHTML =
+    '<div class="dr-title">&#128202; Data Room &mdash; Banco Digital LatAm</div>' +
+
+    '<div class="dr-section ' + (hlER ? 'highlight' : '') + '">' +
+    '<div class="dr-section-title">&#128200; Estado de Resultados</div>' +
+    '<div class="dr-row"><span class="dr-row-label">Revenue (intereses + comisiones)</span><span class="dr-row-val">$' + fmt(c.revenue) + 'M</span></div>' +
+    '<div class="dr-row"><span class="dr-row-label">COGS (fondeo + perdidas credito)</span><span class="dr-row-val">($' + fmt(c.cogs) + 'M)</span></div>' +
+    '<div class="dr-row" style="padding-left:4px;border-left:2px solid var(--border)"><span class="dr-row-label" style="font-size:.7rem">= Gross Profit</span><span class="dr-row-val" style="color:var(--text)">$' + fmt(c.grossProfit) + 'M</span></div>' +
+    '<div class="dr-row"><span class="dr-row-label">SG&amp;A (tech + personal)</span><span class="dr-row-val">($' + fmt(c.sga) + 'M)</span></div>' +
+    '<div class="dr-row"><span class="dr-row-label">D&amp;A (minima, sin activos fisicos)</span><span class="dr-row-val">($' + fmt(c.da) + 'M)</span></div>' +
+    '<div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px"><span class="dr-row-label" style="font-weight:700">= EBIT</span><span class="dr-row-val" style="color:var(--text)">$' + fmt(c.ebit) + 'M</span></div>' +
+    '<div class="dr-row"><span class="dr-row-label">Tasa impositiva (Brasil)</span><span class="dr-row-val dr-given">' + c.tax + '%</span></div>' +
+    '</div>' +
+
+    '<div class="dr-section ' + (hlWC ? 'highlight' : '') + '">' +
+    '<div class="dr-section-title">&#128201; Activos Operativos Corrientes</div>' +
+    '<div class="dr-row"><span class="dr-row-label">Creditos a clientes (AO principal)</span><span class="dr-row-val">$' + fmt(c.ar) + 'M</span></div>' +
+    '<div class="dr-row"><span class="dr-row-label">Inventario fisico</span><span class="dr-row-val">$0M <span style="font-size:.65rem;color:var(--muted)">(banco digital)</span></span></div>' +
+    '<div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px"><span class="dr-row-label" style="font-weight:700">Total AO corriente</span><span class="dr-row-val" style="color:var(--text)">$' + fmt(c.totalAO) + 'M</span></div>' +
+    '</div>' +
+
+    '<div class="dr-section ' + (hlWC ? 'highlight' : '') + '">' +
+    '<div class="dr-section-title">&#128203; Pasivos Operativos Corrientes</div>' +
+    '<div class="dr-row"><span class="dr-row-label">Depositos de clientes (PO clave)</span><span class="dr-row-val">$' + fmt(c.ap) + 'M</span></div>' +
+    '<div class="dr-row"><span class="dr-row-label">Otros pasivos operativos</span><span class="dr-row-val">$' + fmt(c.accrued) + 'M</span></div>' +
+    '<div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px"><span class="dr-row-label" style="font-weight:700">Total PO corriente</span><span class="dr-row-val" style="color:var(--text)">$' + fmt(c.totalPO) + 'M</span></div>' +
+    '</div>' +
+
+    '<div class="dr-section ' + (hlLP ? 'highlight' : '') + '">' +
+    '<div class="dr-section-title">&#127970; Activos de Largo Plazo</div>' +
+    '<div class="dr-row"><span class="dr-row-label">PP&amp;E neto (oficinas minimas)</span><span class="dr-row-val">$' + fmt(c.afn) + 'M &#128552;</span></div>' +
+    '<div class="dr-row"><span class="dr-row-label">Intangibles netos (plataforma + GW)</span><span class="dr-row-val">$' + fmt(c.ain) + 'M</span></div>' +
+    '<div class="dr-row"><span class="dr-row-label" style="color:var(--blue);font-size:.72rem">CI incluye capital regulatorio minimo</span><span class="dr-row-val dr-given">$' + fmt(c.prevCI) + 'M ant.</span></div>' +
+    '</div>' +
+
+    '<div class="dr-section ' + (hlLP ? 'highlight' : '') + '">' +
+    '<div class="dr-section-title">&#128202; Datos adicionales</div>' +
+    '<div class="dr-row"><span class="dr-row-label">WACC</span><span class="dr-row-val dr-given">' + c.wacc + '%</span></div>' +
+    '<div class="dr-row"><span class="dr-row-label">Total Assets</span><span class="dr-row-val dr-given">$' + fmt(c.totalAssets) + 'M</span></div>' +
+    '<div class="dr-row"><span class="dr-row-label">Patrimonio Neto</span><span class="dr-row-val dr-given">$' + fmt(c.pn) + 'M</span></div>' +
+    '<div class="dr-row"><span class="dr-row-label">Net Income FY2024</span><span class="dr-row-val dr-given">$' + fmt(c.netIncome) + 'M</span></div>' +
+    '</div>';
+}
+
 // ═══════════════════════════════════════════════════════════
 // EXAM MODE — TIMER ENGINE
 // ═══════════════════════════════════════════════════════════
@@ -1068,6 +1360,7 @@ function renderDataRoom() {
   const c   = state.currentCase;
   const sid = state.steps[state.currentStep] || '';
 
+  if (c.id === 5) { renderDataRoomCase6(c, sid); return; }
   if (c.id === 4) { renderDataRoomCase5(c, sid); return; }
   if (c.id === 3) { renderDataRoomCase4(c, sid); return; }
   if (c.id === 2) { renderDataRoomCase3(c, sid); return; }
@@ -1210,7 +1503,7 @@ function renderDataRoomCase3(c, sid) {
     <div class="dr-title">📊 Data Room — ${c.name} FY2024</div>
 
     <div class="dr-section ${hlER ? 'highlight' : ''}">
-      <div class="dr-section-title">📈 Estado de Resultados FY2024</div>
+      <div class="dr-section-title">📈 Estado de Resultados</div>
       <div class="dr-row"><span class="dr-row-label">Revenue (Ventas netas)</span><span class="dr-row-val">$${fmt(c.revenue)}M</span></div>
       <div class="dr-row"><span class="dr-row-label">COGS</span><span class="dr-row-val">($${fmt(c.cogs)}M)</span></div>
       <div class="dr-row" style="padding-left:4px;border-left:2px solid var(--border)">
@@ -2104,6 +2397,45 @@ function getAllMCDefs(c) {
         `✅ FFL = NOPAT − ΔCI = $${c.nopat}M − $${c.invNeta}M = $${c.ffl}M. La empresa invierte $${c.invNeta}M netos en nuevos activos (plantas, patentes).`,
         '❌ El FFL es la métrica clave: muestra cuánto efectivo queda después de reinvertir en el negocio.'
       ]
+    },
+    // ── NUBANK (id=5) ──
+    mc_nu_nof: {
+      title: '🏦 ¿Por Qué el NOF es −$11,900M?',
+      task: 'El banco tiene NOF = −$11,900M, el más negativo de todos los casos. ¿Cuál es la explicación correcta?',
+      concept: 'AO corriente = Créditos a clientes $17,600M · PO corriente = Depósitos $28,300M + Otros $1,200M = $29,500M · NOF = $17,600M − $29,500M = −$11,900M',
+      correctIdx: 2,
+      feedbackCorrect: 'Los depósitos son pasivos operativos gratuitos (los clientes pagan casi nada por depositar). Financian los créditos que generan ingresos. Es el modelo bancario: tomar depósitos baratos y prestarlos caro.',
+      options: [
+        'A) Porque el banco tiene pérdidas operativas que se acumulan en el balance',
+        'B) Porque no tiene inventario ni activos corrientes relevantes',
+        'C) Porque los depósitos de clientes ($28,300M) superan largamente los créditos corrientes ($17,600M)',
+        'D) Es un error contable — los depósitos deberían clasificarse como PF, no PO'
+      ],
+      explanations: [
+        '❌ El NOF negativo no tiene nada que ver con pérdidas. el banco es rentable (NOPAT $1,206M).',
+        '❌ Sí tiene activos corrientes: $17,600M en créditos a clientes.',
+        '✅ Exacto. Los depósitos ($28,300M) son PO → financian gratis los créditos ($17,600M). El exceso ($11,900M) es capital de trabajo negativo a favor del banco.',
+        '❌ Los depósitos son PO porque surgen del negocio bancario. No son deuda financiera elegida.'
+      ]
+    },
+    mc_nu_modelo: {
+      title: '🚀 Banco Digital vs. Banco Tradicional',
+      task: 'El banco tiene ROIC 28% vs. un banco tradicional con ROIC ~8%. ¿Cuál es la razón principal de la diferencia?',
+      concept: 'Banco Digital: AFN = $30M · CI = $4,300M · ROIC = 28% · Sin sucursales · 110M clientes · Banco tradicional: AFN ~$5,000M+ · ROIC ~8%',
+      correctIdx: 1,
+      feedbackCorrect: 'Sin sucursales ni cajeros, el AFN es $30M vs miles de millones en un banco físico. Eso comprime el CI, dispara la rotación y multiplica el ROIC.',
+      options: [
+        'A) Porque el banco cobra tasas más altas que los bancos tradicionales',
+        'B) Porque sin sucursales el AFN es mínimo ($30M), el CI es pequeño y la rotación es muy alta',
+        'C) Porque el WACC del banco es más bajo al ser una empresa tecnológica',
+        'D) Porque los depósitos digitales generan mayores márgenes que los depósitos tradicionales'
+      ],
+      explanations: [
+        '❌ El banco compite en parte por precio (sin comisiones). El margen es similar a banca tradicional.',
+        '✅ La clave es el CI pequeño. Rotación = $11,500M / $4,300M = 2.67x. Un banco tradicional físico tiene 10-20x más CI en sucursales. Mismo NOPAT, CI menor = ROIC mayor.',
+        '❌ El WACC del banco (15%) es más alto que banca tradicional por el riesgo de crecimiento.',
+        '❌ Los márgenes de interés son similares. La diferencia está en los costos operativos.'
+      ]
     }
   };
 }
@@ -2136,6 +2468,7 @@ function buildStep(sid, c) {
     case 'ccc':          return stepCcc(c, sn, badge);
     case 'ffl':          return stepFfl(c, sn, badge);
     case 'lati_classify': return stepLatiClassify(c, sn, badge);
+    case 'nu_classify':   return stepNuClassify(c, sn, badge);
     // MC steps — multiple choice
     default: {
       if (sid.startsWith('mc_')) {
