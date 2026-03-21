@@ -598,13 +598,17 @@ function showScreen(id) {
   const tw = document.getElementById('examTimerWrap');
   if (tw) tw.style.display = (id === 'gameScreen' && state.difficulty && state.difficulty.examMode) ? 'flex' : 'none';
 }
-function showHome() { renderHome(); showScreen('homeScreen'); }
+function showHome() {
+  renderHome();
+  showScreen('homeScreen');
+}
 function confirmBack() {
   if (state.currentStep > 0) {
     if (!confirm('¿Salir? Perderás el progreso actual.')) return;
   }
   showHome();
 }
+
 
 // ═══════════════════════════════════════════════════════════
 // HOME
@@ -616,19 +620,44 @@ function selectDiff(caseId, diffIdx) {
   document.getElementById(`diffDesc${caseId}`).textContent = getDiffDesc(diffIdx, caseId);
 }
 
+
+function renderProgressBadge(caseId) {
+  const p = getCaseProgress(caseId);
+  if (!p.attempts) return '';
+  const badge = p.completed
+    ? '<span style="background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.3);padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700">✅ Completado</span>'
+    : '<span style="background:rgba(245,197,24,.1);color:var(--yellow);border:1px solid rgba(245,197,24,.25);padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700">🔄 En progreso</span>';
+  const best = p.bestScore ? ' · Mejor: ' + p.bestScore + ' pts' : '';
+  return '<div style="margin-bottom:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">' + badge + '<span style="font-size:.7rem;color:var(--muted)">' + best + '</span></div>';
+}
+
 function renderHome() {
+  // Progress summary
+  const ps = document.getElementById('progressSummary');
+  if (ps) {
+    const data = loadProgress();
+    const completed = (data.cases||[]).filter(x=>x.completed).length;
+    const total = CASES.length;
+    if (completed > 0) {
+      ps.innerHTML = `${completed}/${total} casos completados · <button onclick="clearProgress()" style="background:none;border:none;color:var(--muted);font-size:.72rem;cursor:pointer;text-decoration:underline;padding:0">Borrar progreso</button>`;
+    } else {
+      ps.innerHTML = '';
+    }
+  }
   document.getElementById('casesGrid').innerHTML = CASES.map(c => `
     <div class="case-card" style="--accent-color:${c.color};--accent-color2:${c.color2}">
       <span class="case-icon">${c.icon}</span>
       <div class="case-meta"><span class="case-name">${c.name}</span></div>
       <div class="case-sector">${c.sector} · <span style="opacity:.7">${c.sectorDetail}</span></div>
       <div class="case-tagline">${c.tagline}</div>
+      ${renderProgressBadge(c.id)}
       <div class="case-stats">${c.stats.map(s=>`
         <div class="case-stat">
           <div class="val">${s.val}</div>
           <div class="lbl">${s.lbl}</div>
         </div>`).join('')}
       </div>
+      ${renderProgressBadge(c.id)}
       <div style="font-size:.72rem;color:var(--muted);margin:14px 0 4px;font-weight:600;letter-spacing:.04em;text-transform:uppercase">Dificultad</div>
       <div class="diff-selector" id="diffSel${c.id}" onclick="event.stopPropagation()">
         <button class="diff-pill dp-f ${cardDifficulty[c.id]===0?'active':''}" onclick="selectDiff(${c.id},0)">📗 Fácil</button>
@@ -823,6 +852,147 @@ function verifyLatiClassify() {
   } else {
     showFeedback(`${correctTotal}/${items.length} correctas. ${newWrong.length} incorrectas — revisá los tips. Intentos restantes: ${maxA - att}.`, 'wrong');
   }
+}
+
+
+
+// ═══════════════════════════════════════════════════════════
+// PROGRESO GUARDADO — localStorage
+// ═══════════════════════════════════════════════════════════
+
+function saveProgress() {
+  try {
+    const data = {
+      version: 2,
+      cases: CASES.map(c => {
+        const saved = loadProgress();
+        const prev = saved.cases ? saved.cases.find(x => x.id === c.id) : null;
+        return prev || { id: c.id, completed: false, bestScore: 0, bestDiff: null, attempts: 0 };
+      })
+    };
+    // Update current case
+    const ci = state.currentCase ? state.currentCase.id : null;
+    if (ci !== null) {
+      const entry = data.cases.find(x => x.id === ci);
+      if (entry) {
+        entry.attempts = (entry.attempts || 0) + 1;
+        if (state.score > (entry.bestScore || 0)) {
+          entry.bestScore = state.score;
+          entry.bestDiff  = state.diffKey;
+        }
+        if (state.currentStep >= state.steps.length - 1) {
+          entry.completed = true;
+        }
+      }
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch(e) {}
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : { cases: [] };
+  } catch(e) { return { cases: [] }; }
+}
+
+function getCaseProgress(caseId) {
+  const data = loadProgress();
+  return (data.cases || []).find(x => x.id === caseId) || { completed: false, bestScore: 0, bestDiff: null, attempts: 0 };
+}
+
+function clearProgress() {
+  if (confirm('¿Borrar todo el progreso guardado?')) {
+    localStorage.removeItem(STORAGE_KEY);
+    renderHome();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// GLOSARIO INTEGRADO
+// ═══════════════════════════════════════════════════════════
+const GLOSSARY = [
+  { term: 'Revenue (Ventas)', def: 'Ingresos totales por la venta de productos o servicios. Punto de partida del Estado de Resultados.' },
+  { term: 'COGS', def: 'Cost of Goods Sold — costo directo de producción o adquisición de lo que se vende. Excluye gastos operativos generales.' },
+  { term: 'Gross Profit', def: 'Revenue − COGS. Mide la rentabilidad antes de los gastos operativos. Margen alto = ventaja competitiva en costos o pricing.' },
+  { term: 'SG&A', def: 'Selling, General & Administrative expenses. Gastos operativos que no son costo de producción directa: ventas, marketing, administración, I+D.' },
+  { term: 'D&A', def: 'Depreciación (activos físicos) y Amortización (activos intangibles). Gasto contable que no implica salida de caja.' },
+  { term: 'EBIT', def: 'Earnings Before Interest and Taxes — resultado operativo puro. Excluye el efecto de deuda e impuestos. Permite comparar empresas con distinta estructura financiera.' },
+  { term: 'NOPAT', def: 'Net Operating Profit After Tax = EBIT − Impuesto Operativo = EBIT × (1 − t). Utilidad operativa después de impuestos, como si la empresa no tuviera deuda. Base del ROIC, EVA y FFL.' },
+  { term: 'NOF', def: 'Necesidades Operativas de Fondos = AO corriente − PO corriente. Capital "atrapado" en el ciclo operativo. Puede ser negativo (ventaja competitiva).' },
+  { term: 'AFN', def: 'Activo Fijo Neto = PP&E bruto − Depreciación acumulada. Inversión en planta, equipos y propiedades que generan el negocio.' },
+  { term: 'AIN', def: 'Activo Intangible Neto = Intangibles brutos − Amortización. Incluye patentes, marcas, goodwill, software activado.' },
+  { term: 'Capital Invertido (CI)', def: 'CI = NOF + AFN + AIN. Todo el capital comprometido en la operación del negocio. Denominador del ROIC.' },
+  { term: 'Rotación del AN', def: 'Revenue / CI. Mide la "velocidad" del negocio — cuántos pesos de revenue genera cada peso invertido. Alto en retail, bajo en farmacéutica.' },
+  { term: 'ROIC', def: 'Return on Invested Capital = NOPAT / CI × 100 = Margen NOPAT × Rotación (DuPont). Rentabilidad real del negocio operativo.' },
+  { term: 'WACC', def: 'Weighted Average Cost of Capital. Costo promedio del capital (deuda + equity). Si ROIC > WACC → la empresa crea valor.' },
+  { term: 'Spread', def: 'ROIC − WACC. Exceso de rentabilidad sobre el costo de capital. Positivo = crea valor. Negativo = destruye valor aunque tenga ganancias.' },
+  { term: 'EVA', def: 'Economic Value Added = Spread × CI / 100. Valor económico creado en el período. Es el veredicto final sobre si la empresa enriquece a sus accionistas.' },
+  { term: 'DSO', def: 'Días de Cobranzas = (Cuentas por Cobrar − Ingresos Diferidos) × 365 / Ventas. Días promedio que tarda la empresa en cobrar. Menor = mejor (cobra más rápido). Si no hay ingresos diferidos en CxC, se usa CxC × 365 / Ventas.' },
+  { term: 'DIO', def: 'Days Inventory Outstanding = Inventario × 365 / COGS. Días que el inventario permanece en stock. Menor = menos capital inmovilizado.' },
+  { term: 'DPO', def: 'Days Payable Outstanding = CxP × 365 / COGS. Días que tarda la empresa en pagar a proveedores. Mayor = mejor (retiene más caja).' },
+  { term: 'CCC', def: 'Ciclo de Conversión de Caja = Días de cobranzas + Días de inventario − Días de pago. Días que la empresa necesita financiar su operación. Negativo = modelo de financiamiento invertido (Amazon, Costco, Zara).' },
+  { term: 'FFL', def: 'Flujo de Fondos Libre = EBIT − Impuesto Operativo − ΔActivo Operativo Neto = NOPAT − ΔCI. Efectivo real generado después de reinvertir en el negocio. Si FFL > 0: puede pagar deuda o dividendos.' },
+  { term: 'ΔCI', def: 'Inversión neta en Capital Invertido = CI actual − CI anterior. Cuánto creció el capital comprometido en el período.' },
+  { term: 'NOF negativo', def: 'Los Pasivos Operativos superan a los Activos Operativos. Los proveedores, clientes o empleados financian el ciclo operativo. Ventaja competitiva de capital de trabajo (Costco, Amazon, Mercado Libre).' },
+  { term: 'Identidad DuPont', def: 'ROIC = Margen NOPAT × Rotación Activo Neto. Un ROIC alto puede venir de margen alto (pharma) o rotación alta (retail). Ambos caminos son válidos.' },
+  // ── Estructura financiera y ratios ──────────────────────
+  { term: 'Ecuación Patrimonial', def: 'Activos − Pasivos = Patrimonio Neto. La identidad contable fundamental.' },
+  { term: 'Activo Operativo Neto', def: 'Capital Propio + Deuda Financiera Neta = Capital Invertido = NOF + AFN + AIN + Otros Neto. Es la base del ROIC.' },
+  { term: 'Margen Bruto', def: 'Resultado Bruto / Ventas. Lo que queda de cada peso de ventas después del costo directo de producción.' },
+  { term: 'Margen Operativo (EBIT)', def: 'EBIT / Ventas. Rentabilidad operativa pura, sin efecto de deuda ni impuestos.' },
+  { term: 'Margen Neto', def: 'Resultado Neto / Ventas. Incluye el efecto de intereses e impuestos.' },
+  { term: 'ROA', def: 'Return on Assets = EBIT / Activos. Retorno sobre activos totales. A diferencia del ROIC, incluye activos financieros (caja) en el denominador.' },
+  { term: 'ROE', def: 'Return on Equity = Resultado Neto / Patrimonio Neto. Retorno para el accionista. Puede ser alto por rentabilidad real o por apalancamiento.' },
+  { term: 'Ratio de Liquidez', def: 'Activo Corriente / Pasivo Corriente. Mide la capacidad de pagar obligaciones de corto plazo. > 1 es la referencia mínima.' },
+  { term: 'Debt Ratio', def: 'Total Liabilities / Total Assets. Porcentaje de activos financiados con deuda. Cuanto mayor, más apalancada la empresa.' },
+  { term: 'Interest Coverage Ratio', def: 'EBIT / Interest Expense. Cuántas veces el resultado operativo cubre los intereses. < 1.5× es señal de alerta.' },
+  { term: 'Debt Service Coverage Ratio', def: 'Operating Cash Flow / Debt Service. Capacidad de cubrir el servicio de deuda con flujo operativo.' },
+  { term: 'Tasa Impositiva Efectiva', def: 'Income Tax Expense / EBT. Tasa real pagada, a diferencia de la tasa nominal legal.' },
+  // ── Costo de capital ────────────────────────────────────
+  { term: 'CAPM', def: 'Capital Asset Pricing Model: Ke = Rf + (β × PRM) + Prima de Riesgo País. Modelo para calcular el retorno requerido por el accionista.' },
+  { term: 'Beta (β) Levered', def: 'Sensibilidad del retorno de la acción respecto al mercado, incluyendo el efecto del apalancamiento financiero. βL = Cov(Activo i; Ancla) / Var(Ancla).' },
+  { term: 'Beta (β) Unlevered', def: 'Beta sin efecto de deuda = βL / (1 + (1−t) × D/E). Refleja solo el riesgo operativo del negocio.' },
+  { term: 'Prima de Riesgo de Mercado (PRM)', def: 'PRM = R Mercado − Risk Free. Exceso de retorno del mercado sobre el activo libre de riesgo.' },
+  { term: 'Costo de Deuda (Kd)', def: 'Kd = Rf + δ, donde δ es el spread de crédito. El costo de la deuda se usa neto de impuestos (Kd × (1−t)) en el WACC.' },
+  { term: 'WACC', def: 'Weighted Average Cost of Capital = Ke × (E/EV) + Kd × (D/EV) × (1−t). Costo promedio ponderado de capital. Tasa de descuento para valuar la empresa.' },
+  // ── Valuación ───────────────────────────────────────────
+  { term: 'Enterprise Value (EV)', def: 'EV = Equity Value + Deuda − Caja. Valor total de la empresa independientemente de su estructura de financiamiento.' },
+  { term: 'Equity Value', def: 'EV − Deuda + Caja = Share Price × Shares Outstanding. Valor de mercado del patrimonio.' },
+  { term: 'Valor Residual', def: 'Free Cash Flow(n) × (1+g) / (r−g). Valor presente de los flujos desde el año n+1 en adelante, asumiendo crecimiento perpetuo g.' },
+  { term: 'Ratio de Sharpe', def: 'E(Rp) − Rf / σ(p). Mide el retorno ajustado por riesgo de un portafolio. Cuanto mayor, mejor la relación retorno/riesgo.' },
+  { term: 'Retorno Esperado del Portafolio', def: 'E(Rp) = Σ(E(Ri) × Wi). Suma ponderada de los retornos esperados de cada activo en el portafolio.' },
+];
+
+function openGlossary() {
+  document.getElementById('glossaryPanel').classList.add('open');
+  const overlay = document.getElementById('glossaryOverlay');
+  if (overlay) overlay.style.display = 'block';
+}
+function closeGlossary() {
+  document.getElementById('glossaryPanel').classList.remove('open');
+  const overlay = document.getElementById('glossaryOverlay');
+  if (overlay) overlay.style.display = 'none';
+}
+function toggleGlossary() {
+  const panel = document.getElementById('glossaryPanel');
+  if (panel.classList.contains('open')) closeGlossary();
+  else openGlossary();
+}
+function filterGlossary(q) {
+  const term = q.toLowerCase();
+  document.querySelectorAll('.gloss-item').forEach(el => {
+    el.style.display = el.dataset.term.includes(term) ? 'block' : 'none';
+  });
+}
+
+function renderGlossary() {
+  document.getElementById('glossaryList').innerHTML = GLOSSARY.map(g =>
+    `<div class="gloss-item" data-term="${g.term.toLowerCase()}">
+      <div class="gloss-term">${g.term}</div>
+      <div class="gloss-def">${g.def}</div>
+    </div>`
+  ).join('');
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1431,6 +1601,111 @@ function toggleHint() {
   if (h) h.classList.toggle('visible');
 }
 
+
+// ═══════════════════════════════════════════════════════════
+// FEEDBACK ADAPTATIVO — diagnose(val) por métrica
+// Recibe el valor ingresado, devuelve mensaje específico
+// ═══════════════════════════════════════════════════════════
+function diagnoseGrossProfit(val, c) {
+  if (Math.abs(val - c.revenue) < 10) return '📌 Pusiste el Revenue completo — recordá restar el COGS.';
+  if (Math.abs(val - c.cogs) < 10) return '📌 Eso es el COGS, no el Gross Profit. GP = Revenue − COGS.';
+  if (Math.abs(val - (c.revenue + c.cogs)) < 10) return '📌 Sumaste en vez de restar. GP = Revenue − COGS.';
+  if (val > c.revenue) return '📌 El Gross Profit no puede superar el Revenue.';
+  if (val < 0) return '📌 Un Gross Profit negativo significaría vender por debajo del costo — revisá los datos.';
+  return null;
+}
+
+function diagnoseMargen(val, correct, metrica) {
+  if (val > 100) return `📌 Un margen no puede superar 100%. ¿Dividiste bien por Revenue y multiplicaste por 100?`;
+  if (val < 0) return `📌 Este margen es positivo. Revisá los signos.`;
+  if (Math.abs(val - correct * 100) < 1) return `📌 Casi — parece que te faltó multiplicar por 100. El margen va en %, no en decimal.`;
+  if (Math.abs(val - correct / 100) < 0.01) return `📌 Dividiste de más. Margen = Resultado / Revenue × 100.`;
+  return null;
+}
+
+function diagnoseNopat(val, c) {
+  const ebit = c.ebit;
+  if (Math.abs(val - ebit) < 5) return `📌 Pusiste el EBIT sin restar el Impuesto Operativo. NOPAT = EBIT − (EBIT × t) = EBIT × (1 − ${c.tax}%).`;
+  if (Math.abs(val - ebit * c.tax / 100) < 5) return `📌 Eso es el Impuesto Operativo, no el NOPAT. NOPAT = EBIT − Impuesto Operativo = EBIT × (1 − t).`;
+  if (Math.abs(val - ebit * (1 + c.tax/100)) < 5) return `📌 Sumaste el factor en vez de restarlo. NOPAT = EBIT × (1 − t).`;
+  return null;
+}
+
+function diagnoseNof(val, c) {
+  if (Math.abs(val - c.totalAO) < 5) return `📌 Eso son solo los Activos Operativos. NOF = AO − PO, falta restar los Pasivos Operativos ($${fmt(c.totalPO)}M).`;
+  if (Math.abs(val - c.totalPO) < 5) return `📌 Eso son solo los Pasivos Operativos. NOF = AO − PO = $${fmt(c.totalAO)}M − $${fmt(c.totalPO)}M.`;
+  if (Math.abs(val - (c.totalAO + c.totalPO)) < 5) return `📌 Sumaste en vez de restar. NOF = AO − PO.`;
+  if (val > 0 && c.nof < 0) return `📌 El resultado debería ser negativo — los Pasivos Operativos superan a los Activos Operativos en este caso.`;
+  return null;
+}
+
+function diagnoseCi(val, c) {
+  if (Math.abs(val - (c.afn + c.ain)) < 5) return `📌 Olvidaste sumar el NOF ($${fmt(c.nof)}M). CI = NOF + AFN + AIN.`;
+  if (Math.abs(val - c.nof) < 5) return `📌 Eso es solo el NOF. CI = NOF + AFN + AIN.`;
+  if (Math.abs(val - (c.nof + c.afn)) < 5) return `📌 Falta sumar el AIN ($${fmt(c.ain)}M). CI = NOF + AFN + AIN.`;
+  if (Math.abs(val - (c.nof + c.ain)) < 5) return `📌 Falta sumar el AFN ($${fmt(c.afn)}M). CI = NOF + AFN + AIN.`;
+  return null;
+}
+
+function diagnoseRotacion(val, c) {
+  if (Math.abs(val - c.ci / c.revenue) < 0.05) return `📌 Dividiste al revés. Rotación = Revenue / CI, no CI / Revenue.`;
+  if (Math.abs(val - c.nopatMargin) < 0.5) return `📌 Eso es el Margen NOPAT. Rotación = Revenue / CI.`;
+  return null;
+}
+
+function diagnoseRoic(val, c) {
+  if (Math.abs(val - c.nopatMargin * c.rotacion) < 0.5) return null; // correct via different path
+  if (Math.abs(val - c.nopatMargin) < 0.5) return `📌 Eso es el Margen NOPAT, no el ROIC. ROIC = Margen NOPAT × Rotación.`;
+  if (Math.abs(val - c.nopat / c.ci) < 0.5) return `📌 Casi — pero el resultado tiene que estar en %. Multiplicá por 100.`;
+  if (Math.abs(val - c.rotacion) < 0.1) return `📌 Eso es la Rotación. ROIC = Margen NOPAT (%) × Rotación (x).`;
+  if (val > 100) return `📌 Un ROIC no puede superar 100% en condiciones normales. Revisá la fórmula.`;
+  return null;
+}
+
+function diagnoseEva(val, c) {
+  if (Math.abs(val - c.spread * c.ci) < 5) return `📌 El spread está en %, no en decimal. EVA = Spread% × CI / 100.`;
+  if (Math.abs(val - c.ci * c.roic / 100) < 5) return `📌 Eso es NOPAT de otra forma, no EVA. EVA = (ROIC − WACC) × CI / 100 = Spread × CI / 100.`;
+  if (val < 0 && c.eva > 0) return `📌 El EVA de esta empresa es positivo (ROIC > WACC). Revisá el spread.`;
+  return null;
+}
+
+function diagnoseDso(val, c) {
+  if (Math.abs(val - c.ar / c.revenue * 365) < 0.5) return null;
+  if (Math.abs(val - c.revenue / c.ar) < 0.5) return `📌 Eso es la rotación de CxC, no los días. DSO = CxC × 365 / Revenue.`;
+  if (Math.abs(val - c.ar * c.revenue / 365) < 5) return `📌 Multiplicaste CxC × Revenue en vez de dividir. DSO = CxC × 365 / Revenue.`;
+  if (val < 1) return `📌 El resultado debería ser en días (número entero o con 1 decimal). Revisá la fórmula.`;
+  return null;
+}
+
+function diagnoseDio(val, c) {
+  if (Math.abs(val - c.inventory / c.cogs * 365) < 0.5) return null;
+  if (Math.abs(val - c.cogs / c.inventory) < 0.5) return `📌 Eso es la rotación de inventario. DIO = Inventario × 365 / COGS.`;
+  if (Math.abs(val - c.inventory * c.revenue / 365) < 5) return `📌 Usaste Revenue en vez de COGS. DIO = Inventario × 365 / COGS.`;
+  return null;
+}
+
+function diagnoseDpo(val, c) {
+  if (Math.abs(val - c.ap / c.cogs * 365) < 0.5) return null;
+  if (Math.abs(val - c.ap / c.revenue * 365) < 0.5) return `📌 Usaste Revenue en vez de COGS. DPO = CxP × 365 / COGS.`;
+  if (Math.abs(val - c.cogs / c.ap) < 0.5) return `📌 Eso es la rotación de CxP. DPO = CxP × 365 / COGS.`;
+  return null;
+}
+
+function diagnoseCcc(val, c) {
+  if (Math.abs(val - (c.dso + c.dio + c.dpo)) < 1) return `📌 Sumaste el DPO en vez de restarlo. CCC = DSO + DIO − DPO.`;
+  if (Math.abs(val - (c.dso - c.dio - c.dpo)) < 1) return `📌 Restaste el DIO también. CCC = DSO + DIO − DPO.`;
+  if (val > 0 && c.ccc < 0) return `📌 El CCC de esta empresa es negativo (cobran antes de pagar). Revisá los signos.`;
+  return null;
+}
+
+function diagnoseFfl(val, c) {
+  if (Math.abs(val - c.nopat) < 5) return `📌 Pusiste el NOPAT solo, sin restar el ΔActivo Operativo Neto. FFL = NOPAT − ΔCI = $${fmt(c.nopat)}M − $${fmt(c.invNeta)}M.`;
+  if (Math.abs(val - c.invNeta) < 5) return `📌 Eso es el ΔCI (inversión neta). FFL = NOPAT − ΔCI.`;
+  if (Math.abs(val - (c.nopat + c.invNeta)) < 5) return `📌 Sumaste el ΔCI en vez de restarlo. FFL = NOPAT − ΔCI.`;
+  if (val > c.nopat) return `📌 El FFL no puede ser mayor que el NOPAT (a menos que el CI haya bajado). Revisá el ΔCI.`;
+  return null;
+}
+
 // ═══════════════════════════════════════════════════════════
 // VERIFICACIÓN GENÉRICA
 // ═══════════════════════════════════════════════════════════
@@ -1482,12 +1757,15 @@ function genericVerify(opts) {
     document.getElementById('answerInput').classList.add('wrong');
     setTimeout(() => document.getElementById('answerInput').classList.remove('wrong'), 500);
     const maxA = state.difficulty.maxAttempts;
+    // Feedback adaptativo: analizar qué error cometió
+    const adaptiveMsg = opts.diagnose ? opts.diagnose(val) : null;
     if (att >= maxA) {
       if (state.difficulty.showSolution) {
-        showFeedback(opts.feedbackWrong || `Respuesta correcta: ${opts.correct}`, 'wrong');
+        const base = opts.feedbackWrong || `Respuesta correcta: ${opts.correct}`;
+        showFeedback(adaptiveMsg ? `${adaptiveMsg} → ${base}` : base, 'wrong');
         document.getElementById('answerInput').value = opts.correct;
       } else {
-        showFeedback(`Límite de intentos alcanzado.`, 'wrong');
+        showFeedback(adaptiveMsg || `Límite de intentos alcanzado.`, 'wrong');
       }
       document.getElementById('answerInput').disabled = true;
       document.querySelector('.btn-verify').disabled  = true;
@@ -1497,7 +1775,8 @@ function genericVerify(opts) {
       if (opts.onCorrect) opts.onCorrect();
       showNextBtn();
     } else {
-      showFeedback(`Incorrecto. ${opts.tryAgain||''} Intentos restantes: ${maxA-att}`, 'wrong');
+      const tryMsg = adaptiveMsg || opts.tryAgain || '';
+      showFeedback(`${tryMsg}${tryMsg && ' · '}Intentos restantes: ${maxA-att}`, 'wrong');
     }
   }
 }
@@ -1948,6 +2227,7 @@ function verifyGrossProfit() {
   const c = state.currentCase;
   genericVerify({
     correct: c.grossProfit, tolerance: 5,
+    diagnose: diagnoseGrossProfit, diagnose: val => diagnoseGrossProfit(val, c),
     nbKey: 'grossProfit', nbVal: c.grossProfit,
     feedbackCorrect: c.id === 4
       ? `✅ Gross Profit = $${fmt(c.grossProfit)}M. Margen Bruto = ${c.grossMargin}% — altísimo para cualquier industria. En pharma el COGS es bajo porque fabricar el medicamento es barato; el costo real está en los años de I+D para llegar a ese medicamento.`
@@ -1962,7 +2242,7 @@ function stepMargenBruto(c, sn, badge) {
   return baseStep(sn, badge,
     'Margen Bruto %',
     `¿Qué porcentaje del revenue es Gross Profit? Expresá en % con 1 decimal.`,
-    `Margen Bruto = Gross Profit / Revenue × 100\n= ${fmt(gp)} / ${fmt(c.revenue)} × 100 = ${c.grossMargin}%`,
+    `Margen Bruto = Resultado Bruto / Ventas\n= $${fmt(gp)}M / $${fmt(c.revenue)}M × 100 = ${c.grossMargin}%`,
     `Dividí el Gross Profit entre Revenue y multiplicá por 100.`,
     'Margen Bruto (%)', '%', 'verifyMargenBruto',
     infoBoxes([['Gross Profit', `$${fmt(gp)}M`], ['Revenue', `$${fmt(c.revenue)}M`]])
@@ -1971,7 +2251,7 @@ function stepMargenBruto(c, sn, badge) {
 function verifyMargenBruto() {
   const c = state.currentCase;
   genericVerify({
-    correct: c.grossMargin, tolerance: 0.5,
+    correct: c.grossMargin, tolerance: 0.5, diagnose: val => diagnoseMargen(val, c.grossMargin, 'Margen Bruto'),
     nbKey: 'margenBruto', nbVal: c.grossMargin,
     feedbackCorrect: `✅ Margen Bruto = ${c.grossMargin}%. Por cada $100 de revenue, $${c.grossMargin} quedan tras los costos directos.`,
     feedbackWrong:   `Respuesta: ${c.grossMargin}% → ${c.grossProfit}/${c.revenue}×100.`,
@@ -2020,7 +2300,7 @@ function stepMargenEbit(c, sn, badge) {
   return baseStep(sn, badge,
     'Margen EBIT %',
     `¿Qué % del revenue es EBIT? Expresá en % con 1 decimal.`,
-    `Margen EBIT = EBIT / Revenue × 100\n= ${fmt(ebit)} / ${fmt(c.revenue)} × 100 = ${c.ebitMargin}%`,
+    `Margen Operativo = EBIT / Ventas\n= $${fmt(ebit)}M / $${fmt(c.revenue)}M × 100 = ${c.ebitMargin}%`,
     `Dividí EBIT entre Revenue y multiplicá por 100.`,
     'Margen EBIT (%)', '%', 'verifyMargenEbit',
     infoBoxes([['EBIT', `$${fmt(ebit)}M`], ['Revenue', `$${fmt(c.revenue)}M`]])
@@ -2029,7 +2309,7 @@ function stepMargenEbit(c, sn, badge) {
 function verifyMargenEbit() {
   const c = state.currentCase;
   genericVerify({
-    correct: c.ebitMargin, tolerance: 0.5,
+    correct: c.ebitMargin, tolerance: 0.5, diagnose: val => diagnoseMargen(val, c.ebitMargin, 'Margen EBIT'),
     nbKey: 'margenEbit', nbVal: c.ebitMargin,
     feedbackCorrect: `✅ Margen EBIT = ${c.ebitMargin}%.`,
     feedbackWrong:   `Respuesta: ${c.ebitMargin}% → ${c.ebit}/${c.revenue}×100.`,
@@ -2042,17 +2322,17 @@ function stepNopat(c, sn, badge) {
   return baseStep(sn, badge,
     'NOPAT — Resultado Operativo Neto de Impuestos',
     `El NOPAT elimina el efecto de la estructura financiera. Es la utilidad que generaría la empresa si operara sin deuda. EBIT = $${fmt(ebit)}M, tasa = ${c.tax}%.`,
-    `NOPAT = EBIT × (1 − t)\n= $${fmt(ebit)}M × (1 − ${c.tax}%) = $${fmt(c.nopat)}M`,
-    `Multiplicá el EBIT por (1 − ${c.tax}%): ${fmt(ebit)} × (1 − ${c.tax}/100).`,
+    `NOPAT = EBIT − Impuesto Operativo\n= EBIT × (1 − t) = $${fmt(ebit)}M × (1 − ${c.tax}%) = $${fmt(c.nopat)}M`,
+    `Impuesto Operativo = EBIT × t = $${fmt(ebit)}M × ${c.tax}% = $${Math.round(ebit*c.tax/100)}M → NOPAT = ${fmt(ebit)} − ${Math.round(ebit*c.tax/100)}.`,
     'NOPAT ($M)', '$M', 'verifyNopat',
-    infoBoxes([['EBIT', `$${fmt(ebit)}M`], ['Tasa impositiva', `${c.tax}%`]]),
+    infoBoxes([['EBIT', `$${fmt(ebit)}M`], ['Tasa impositiva (t)', `${c.tax}%`], ['Imp. Operativo', `$${Math.round(ebit*c.tax/100)}M`]]),
     `<strong>NOPAT</strong> (Net Operating Profit After Tax) es la base de todos los indicadores de valor: ROIC, EVA y FFL. Elimina la distorsión financiera del EBIT.`
   );
 }
 function verifyNopat() {
   const c = state.currentCase;
   genericVerify({
-    correct: c.nopat, tolerance: 5,
+    correct: c.nopat, tolerance: 5, diagnose: val => diagnoseNopat(val, c),
     nbKey: 'nopat', nbVal: c.nopat,
     feedbackCorrect: `✅ NOPAT = $${fmt(c.nopat)}M. Margen NOPAT = ${c.nopatMargin}%. Base del análisis de valor.`,
     feedbackWrong:   `Respuesta: $${fmt(c.nopat)}M → EBIT × (1−t) = ${c.ebit} × (1 − ${c.tax}/100).`,
@@ -2065,7 +2345,7 @@ function stepMargenNopat(c, sn, badge) {
   return baseStep(sn, badge,
     'Margen NOPAT %',
     `¿Qué % del revenue es NOPAT? Expresá en % con 1 decimal.`,
-    `Margen NOPAT = NOPAT / Revenue × 100\n= ${fmt(nopat)} / ${fmt(c.revenue)} × 100 = ${c.nopatMargin}%`,
+    `Margen NOPAT = NOPAT / Ventas\n= $${fmt(nopat)}M / $${fmt(c.revenue)}M × 100 = ${c.nopatMargin}%`,
     `Dividí NOPAT entre Revenue y multiplicá por 100.`,
     'Margen NOPAT (%)', '%', 'verifyMargenNopat',
     infoBoxes([['NOPAT', `$${fmt(nopat)}M`], ['Revenue', `$${fmt(c.revenue)}M`]]),
@@ -2075,7 +2355,7 @@ function stepMargenNopat(c, sn, badge) {
 function verifyMargenNopat() {
   const c = state.currentCase;
   genericVerify({
-    correct: c.nopatMargin, tolerance: 0.3,
+    correct: c.nopatMargin, tolerance: 0.3, diagnose: val => diagnoseMargen(val, c.nopatMargin, 'Margen NOPAT'),
     nbKey: 'margenNopat', nbVal: c.nopatMargin,
     feedbackCorrect: `✅ Margen NOPAT = ${c.nopatMargin}%. Por cada $100 de ventas, $${c.nopatMargin} son NOPAT. Con la Rotación van a componer el ROIC.`,
     feedbackWrong:   `Respuesta: ${c.nopatMargin}% → ${c.nopat}/${c.revenue}×100.`,
@@ -2114,6 +2394,7 @@ function verifyNof() {
     : `✅ NOF = $${fmt(c.nof)}M. NOF positivo: la empresa necesita $${fmt(c.nof)}M para financiar su ciclo operativo.`;
   genericVerify({
     correct: c.nof, tolerance: c.id === 2 ? 50 : 5,
+    diagnose: diagnoseNof, diagnose: val => diagnoseNof(val, c),
     nbKey: 'nof', nbVal: c.nof,
     feedbackCorrect: msg,
     feedbackWrong:   `Respuesta: $${fmt(c.nof)}M → AO − PO = ${c.totalAO} − ${c.totalPO}.`,
@@ -2149,6 +2430,7 @@ function verifyCi() {
     : `Respuesta: $${fmt(c.ci)}M → NOF + AFN + AIN = ${c.nof} + ${c.afn} + ${c.ain}.`;
   genericVerify({
     correct: c.ci, tolerance: c.id === 2 ? 200 : 5,
+    diagnose: diagnoseCi, diagnose: val => diagnoseCi(val, c),
     nbKey: 'ci', nbVal: c.ci,
     feedbackCorrect: `✅ CI = $${fmt(c.ci)}M. El Capital Invertido es la base del ROIC y del EVA.`,
     feedbackWrong:   wrongMsg,
@@ -2180,6 +2462,7 @@ function verifyRotacion() {
   const c = state.currentCase;
   genericVerify({
     correct: c.rotacion, tolerance: 0.05,
+    diagnose: diagnoseRotacion, diagnose: val => diagnoseRotacion(val, c),
     nbKey: 'rotacion', nbVal: c.rotacion,
     feedbackCorrect: c.id === 4
       ? `✅ Rotación = ${c.rotacion}x. Por cada $1 de CI, PharmaCore genera solo $${c.rotacion} de revenue. Es una rotación muy baja — el capital "trabaja lento". Combinado con el margen NOPAT, esto determina el ROIC final.`
@@ -2202,7 +2485,7 @@ function stepRoic(c, sn, badge) {
       : c.id === 4
       ? `Momento clave: PharmaCore tiene un Margen NOPAT de ${margen}% pero una Rotación de solo ${rot}x. ¿Qué ROIC resulta? Este es el número que determina si la empresa crea valor para sus accionistas. Expresá en % con 1 decimal.`
       : `El ROIC mide la rentabilidad real del negocio. Calculalo usando la identidad DuPont: Margen NOPAT × Rotación. Expresá en % con 1 decimal.`,
-    `ROIC = Margen NOPAT × Rotación AN\n= ${margen}% × ${rot}x = ${c.roic}%`,
+    `ROIC = NOPAT / Activo Neto = Margen × Rotación Activo Neto\n= ${margen}% × ${rot}x = ${c.roic}%`,
     `Multiplicá el Margen NOPAT (${margen}%) por la Rotación (${rot}x).`,
     'ROIC (%)', '%', 'verifyRoic',
     infoBoxes([['Margen NOPAT', `${margen}%`], ['Rotación', `${rot}x`], ['WACC', `${c.wacc}%`]]),
@@ -2213,6 +2496,7 @@ function verifyRoic() {
   const c = state.currentCase;
   genericVerify({
     correct: c.roic, tolerance: 0.6,
+    diagnose: diagnoseRoic, diagnose: val => diagnoseRoic(val, c),
     nbKey: 'roic', nbVal: c.roic,
     feedbackCorrect: c.id === 4
       ? `✅ ROIC = ${c.roic}% — mucho menor que el Margen NOPAT de ${c.nopatMargin}%. ¿Por qué? Por la baja rotación (${c.rotacion}x) causada por el CI enorme en patentes ($${fmt(c.ain)}M). Aun así, ROIC ${c.roic}% > WACC ${c.wacc}% → crea valor.`
@@ -2249,7 +2533,7 @@ function stepEva(c, sn, badge) {
   const ci     = state.notebook.ci       !== undefined ? state.notebook.ci       : c.ci;
   const formulaText = state.diffKey === 'facil'
     ? `EVA = (ROIC − WACC) × CI\n= (${c.roic}% − ${c.wacc}%) × $${fmt(ci)}M\n= ${c.spread}% × ${fmt(ci)} = $${fmt(c.eva)}M`
-    : `EVA = Spread × CI\n= ${spread}% × $${fmt(ci)}M = $${fmt(c.eva)}M`;
+    : `EVA = (ROIC − WACC) × Capital Invertido = Spread × CI\n= ${spread}% × $${fmt(ci)}M / 100 = $${fmt(c.eva)}M`;
   return baseStep(sn, badge,
     'EVA — Economic Value Added',
     `El EVA es el veredicto final de creación de valor: ¿${c.name} generó riqueza para sus accionistas este año? CI = $${fmt(ci)}M. Expresá en $M.`,
@@ -2264,6 +2548,7 @@ function verifyEva() {
   const c = state.currentCase;
   genericVerify({
     correct: c.eva, tolerance: 15,
+    diagnose: diagnoseEva, diagnose: val => diagnoseEva(val, c),
     nbKey: 'eva', nbVal: c.eva,
     feedbackCorrect: `✅ EVA = $${fmt(c.eva)}M. ${c.eva > 0 ? '🟢 EVA positivo: cada año, '+c.name+' CREA $'+fmt(c.eva)+'M de riqueza para sus accionistas.' : '🔴 EVA negativo: destruye valor.'}`,
     feedbackWrong:   `Respuesta: $${fmt(c.eva)}M → Spread × CI / 100 = ${c.spread}% × ${c.ci} / 100.`,
@@ -2275,23 +2560,36 @@ function verifyEva() {
 // PASOS — CICLO DE CONVERSIÓN DE CAJA
 // ═══════════════════════════════════════════════════════════
 function stepDso(c, sn, badge) {
+  // Fórmula del formulario: (CxC − Ingresos Diferidos) × 365 / Ventas
+  // Para casos sin ingresos diferidos en CxC, el término es 0
+  const unearned = c.membershipFees || 0; // Costco tiene cuotas diferidas
+  const arNet    = c.ar - unearned;
+  const formulaStr = unearned > 0
+    ? `DSO = (CxC − Ing. Diferidos) × 365 / Revenue\n= ($${fmt(c.ar)}M − $${fmt(unearned)}M) × 365 / $${fmt(c.revenue)}M = ${c.dso} días`
+    : `DSO = CxC × 365 / Revenue\n= $${fmt(c.ar)}M × 365 / $${fmt(c.revenue)}M = ${c.dso} días`;
+  const hintStr = unearned > 0
+    ? `(CxC − Ingresos Diferidos) × 365 / Revenue = (${fmt(c.ar)} − ${fmt(unearned)}) × 365 / ${fmt(c.revenue)}.`
+    : `CxC × 365 / Revenue = ${fmt(c.ar)} × 365 / ${fmt(c.revenue)}.`;
+  const boxes = unearned > 0
+    ? infoBoxes([['CxC', `$${fmt(c.ar)}M`], ['Ing. Diferidos', `$${fmt(unearned)}M`], ['Revenue', `$${fmt(c.revenue)}M`]])
+    : infoBoxes([['CxC (AR)', `$${fmt(c.ar)}M`], ['Revenue', `$${fmt(c.revenue)}M`]]);
   return baseStep(sn, badge,
-    'DSO — Days Sales Outstanding',
-    `¿Cuántos días tarda ${c.name} en cobrar a sus clientes? Cuanto menor, mejor: el efectivo entra antes. CxC = $${fmt(c.ar)}M. Expresá en días con 1 decimal.`,
-    `DSO = (CxC × 365) / Revenue\n= (${fmt(c.ar)} × 365) / ${fmt(c.revenue)} = ${c.dso} días`,
-    `Multiplicá CxC por 365 y dividí por Revenue: ${c.ar} × 365 / ${c.revenue}.`,
-    'DSO (días)', 'días', 'verifyDso',
-    infoBoxes([['CxC (AR)', `$${fmt(c.ar)}M`], ['Revenue', `$${fmt(c.revenue)}M`]])
+    'DSO — Días de Cobranzas',
+    `¿Cuántos días tarda ${c.name} en cobrar a sus clientes? Cuanto menor, mejor: el efectivo entra antes. Expresá en días con 1 decimal.`,
+    formulaStr, hintStr, 'DSO (días)', 'días', 'verifyDso', boxes
   );
 }
 function verifyDso() {
   const c = state.currentCase;
+  const unearned = c.membershipFees || 0;
   genericVerify({
-    correct: c.dso, tolerance: 0.5,
+    correct: c.dso, tolerance: 0.5, diagnose: val => diagnoseDso(val, c),
     nbKey: 'dso', nbVal: c.dso,
     feedbackCorrect: `✅ DSO = ${c.dso} días. ${c.name} tarda ${c.dso} días en cobrar. Cada día de reducción libera $${Math.round(c.revenue/365)}M de caja.`,
-    feedbackWrong:   `Respuesta: ${c.dso} días → CxC × 365 / Revenue = ${c.ar} × 365 / ${c.revenue}.`,
-    tryAgain: 'DSO = CxC × 365 / Revenue.'
+    feedbackWrong:   unearned > 0
+      ? `Respuesta: ${c.dso} días → (CxC − Ing.Dif.) × 365 / Revenue = (${c.ar} − ${unearned}) × 365 / ${c.revenue}.`
+      : `Respuesta: ${c.dso} días → CxC × 365 / Revenue = ${c.ar} × 365 / ${c.revenue}.`,
+    tryAgain: unearned > 0 ? 'DSO = (CxC − Ingresos Diferidos) × 365 / Revenue.' : 'DSO = CxC × 365 / Revenue.'
   });
 }
 
@@ -2299,7 +2597,7 @@ function stepDio(c, sn, badge) {
   return baseStep(sn, badge,
     'DIO — Days Inventory Outstanding',
     `¿Cuántos días tarda ${c.name} en rotar su inventario? Cuanto menor, menos capital inmovilizado. Inventario = $${fmt(c.inventory)}M. Expresá en días con 1 decimal.`,
-    `DIO = (Inventario × 365) / COGS\n= (${fmt(c.inventory)} × 365) / ${fmt(c.cogs)} = ${c.dio} días`,
+    `DIO = Inventario × 365 / Costo de Ventas\n= $${fmt(c.inventory)}M × 365 / $${fmt(c.cogs)}M = ${c.dio} días`,
     `Multiplicá Inventario por 365 y dividí por COGS: ${c.inventory} × 365 / ${c.cogs}.`,
     'DIO (días)', 'días', 'verifyDio',
     infoBoxes([['Inventario', `$${fmt(c.inventory)}M`], ['COGS', `$${fmt(c.cogs)}M`]])
@@ -2308,7 +2606,7 @@ function stepDio(c, sn, badge) {
 function verifyDio() {
   const c = state.currentCase;
   genericVerify({
-    correct: c.dio, tolerance: 0.5,
+    correct: c.dio, tolerance: 0.5, diagnose: val => diagnoseDio(val, c),
     nbKey: 'dio', nbVal: c.dio,
     feedbackCorrect: `✅ DIO = ${c.dio} días. El inventario rota cada ${c.dio} días. Cada día de reducción libera $${Math.round(c.cogs/365)}M de caja.`,
     feedbackWrong:   `Respuesta: ${c.dio} días → Inventario × 365 / COGS = ${c.inventory} × 365 / ${c.cogs}.`,
@@ -2320,7 +2618,7 @@ function stepDpo(c, sn, badge) {
   return baseStep(sn, badge,
     'DPO — Days Payable Outstanding',
     `¿Cuántos días tarda ${c.name} en pagar a sus proveedores? Cuanto mayor, más tiempo retiene el efectivo. CxP = $${fmt(c.ap)}M. Expresá en días con 1 decimal.`,
-    `DPO = (CxP × 365) / COGS\n= (${fmt(c.ap)} × 365) / ${fmt(c.cogs)} = ${c.dpo} días`,
+    `DPO = Cuentas por Pagar × 365 / Costo de Ventas\n= $${fmt(c.ap)}M × 365 / $${fmt(c.cogs)}M = ${c.dpo} días`,
     `Multiplicá CxP por 365 y dividí por COGS: ${c.ap} × 365 / ${c.cogs}.`,
     'DPO (días)', 'días', 'verifyDpo',
     infoBoxes([['CxP (AP)', `$${fmt(c.ap)}M`], ['COGS', `$${fmt(c.cogs)}M`]])
@@ -2329,7 +2627,7 @@ function stepDpo(c, sn, badge) {
 function verifyDpo() {
   const c = state.currentCase;
   genericVerify({
-    correct: c.dpo, tolerance: 0.5,
+    correct: c.dpo, tolerance: 0.5, diagnose: val => diagnoseDpo(val, c),
     nbKey: 'dpo', nbVal: c.dpo,
     feedbackCorrect: `✅ DPO = ${c.dpo} días. Cuanto mayor el DPO, más tiempo retiene el efectivo antes de pagar a proveedores.`,
     feedbackWrong:   `Respuesta: ${c.dpo} días → CxP × 365 / COGS = ${c.ap} × 365 / ${c.cogs}.`,
@@ -2344,7 +2642,7 @@ function stepCcc(c, sn, badge) {
   return baseStep(sn, badge,
     'CCC — Ciclo de Conversión de Caja',
     `El CCC mide cuántos días la empresa necesita financiar su operación. CCC negativo es una ventaja competitiva: los proveedores financian el negocio. Puede ser negativo.`,
-    `CCC = DSO + DIO − DPO\n= ${dso} + ${dio} − ${dpo} = ${c.ccc} días`,
+    `Ciclo de Conversión de Caja = Días de cobranzas + Días de inventario − Días de pago\n= ${dso} + ${dio} − ${dpo} = ${c.ccc} días`,
     `Sumá DSO y DIO, luego restá DPO: ${dso} + ${dio} − ${dpo}.`,
     'CCC (días, puede ser negativo)', 'días', 'verifyCcc',
     infoBoxes([['DSO', `${dso} días`], ['DIO', `${dio} días`], ['DPO', `${dpo} días`]]),
@@ -2358,6 +2656,7 @@ function verifyCcc() {
     : `✅ CCC = ${c.ccc} días. La empresa necesita ${c.ccc} días de financiamiento para su ciclo operativo.`;
   genericVerify({
     correct: c.ccc, tolerance: 1.0,
+    diagnose: diagnoseCcc, diagnose: val => diagnoseCcc(val, c),
     nbKey: 'ccc', nbVal: c.ccc,
     feedbackCorrect: msg,
     feedbackWrong:   `Respuesta: ${c.ccc} días → DSO + DIO − DPO = ${c.dso} + ${c.dio} − ${c.dpo}.`,
@@ -2373,11 +2672,11 @@ function stepFfl(c, sn, badge) {
   return baseStep(sn, badge,
     'FFL — Flujo de Fondos Libre',
     `El FFL (Free Cash Flow operativo) es el efectivo real que genera la empresa después de reinvertir en su crecimiento. ΔCI = CI − CI anterior = $${fmt(c.ci)}M − $${fmt(c.prevCI)}M = $${fmt(c.invNeta)}M.`,
-    `FFL = NOPAT − ΔCI\n= $${fmt(nopat)}M − $${fmt(c.invNeta)}M = $${fmt(c.ffl)}M`,
-    `Restá la inversión neta (ΔCI) del NOPAT: ${fmt(nopat)} − ${fmt(c.invNeta)}.`,
+    `FFL = EBIT − Impuesto Operativo − ΔActivo Operativo Neto\n= NOPAT − ΔCI = $${fmt(nopat)}M − $${fmt(c.invNeta)}M = $${fmt(c.ffl)}M`,
+    `ΔActivo Operativo Neto = ΔCI = CI actual − CI anterior = ${fmt(c.ci)} − ${fmt(c.prevCI)} = $${fmt(c.invNeta)}M → FFL = ${fmt(nopat)} − ${fmt(c.invNeta)}.`,
     'FFL ($M)', '$M', 'verifyFfl',
-    infoBoxes([['NOPAT', `$${fmt(nopat)}M`], ['ΔCI', `$${fmt(c.invNeta)}M`], ['CI ant.', `$${fmt(c.prevCI)}M`]]),
-    `<strong>FFL = NOPAT − Inversión Neta.</strong> Si FFL > 0: genera más de lo que invierte → puede pagar deuda o distribuir dividendos. Si FFL < 0: invierte más de lo que gana → necesita financiamiento externo (etapa de crecimiento).`
+    infoBoxes([['NOPAT', `$${fmt(nopat)}M`], ['ΔCI (ΔAct. Op. Neto)', `$${fmt(c.invNeta)}M`], ['CI ant.', `$${fmt(c.prevCI)}M`]]),
+    `<strong>FFL = EBIT − Impuesto Operativo − ΔActivo Operativo Neto = NOPAT − ΔCI.</strong> Si FFL > 0: genera más de lo que invierte → puede pagar deuda o distribuir dividendos. Si FFL < 0: etapa de crecimiento, necesita financiamiento externo.`
   );
 }
 function verifyFfl() {
@@ -2388,6 +2687,7 @@ function verifyFfl() {
     : `${sign} FFL negativo: ${c.name} invirtió $${fmt(Math.abs(c.ffl))}M más de lo que generó — etapa de crecimiento, necesita financiamiento.`;
   genericVerify({
     correct: c.ffl, tolerance: 10,
+    diagnose: diagnoseFfl, diagnose: val => diagnoseFfl(val, c),
     nbKey: 'ffl', nbVal: c.ffl,
     feedbackCorrect: `✅ FFL = $${fmt(c.ffl)}M. ${msg}`,
     feedbackWrong:   `Respuesta: $${fmt(c.ffl)}M → NOPAT − ΔCI = ${c.nopat} − ${c.invNeta}.`,
@@ -2462,7 +2762,7 @@ function stepRoa(c, sn, badge) {
   return baseStep(sn, badge,
     'ROA — Retorno sobre Activos Totales',
     `El ROA mide qué porcentaje del EBIT representa sobre los activos totales. Total Assets = $${fmt(c.totalAssets)}M (dato). Expresá en % con 1 decimal.`,
-    `ROA = EBIT / Total Assets × 100\n= $${fmt(ebit)}M / $${fmt(c.totalAssets)}M × 100 = ${c.roa}%`,
+    `ROA = EBIT / Activos × 100\n= $${fmt(ebit)}M / $${fmt(c.totalAssets)}M × 100 = ${c.roa}%`,
     `Dividí EBIT entre Total Assets y multiplicá por 100: ${fmt(ebit)} / ${fmt(c.totalAssets)} × 100.`,
     'ROA (%)', '%', 'verifyRoa',
     infoBoxes([['EBIT', `$${fmt(ebit)}M`], ['Total Assets', `$${fmt(c.totalAssets)}M`]]),
@@ -2484,7 +2784,7 @@ function stepRoe(c, sn, badge) {
   return baseStep(sn, badge,
     'ROE — Retorno sobre el Patrimonio Neto',
     `El ROE mide el retorno que obtuvieron los accionistas. Usa el Net Income (no NOPAT). Patrimonio Neto (PN) = $${fmt(c.pn)}M. Expresá en % con 1 decimal.`,
-    `ROE = Net Income / Patrimonio Neto × 100\n= $${fmt(c.netIncome)}M / $${fmt(c.pn)}M × 100 = ${c.roe}%`,
+    `ROE = Resultado Neto / Patrimonio Neto × 100\n= $${fmt(c.netIncome)}M / $${fmt(c.pn)}M × 100 = ${c.roe}%`,
     `Dividí el Net Income entre el PN: ${fmt(c.netIncome)} / ${fmt(c.pn)} × 100.`,
     'ROE (%)', '%', 'verifyRoe',
     infoBoxes([['Net Income', `$${fmt(c.netIncome)}M`], ['PN', `$${fmt(c.pn)}M`]]),
@@ -2777,6 +3077,7 @@ function verifyClassifyNofAfnAin() {
 // PANTALLA DE RESULTADOS
 // ═══════════════════════════════════════════════════════════
 function showResults() {
+  saveProgress();
   const c  = state.currentCase;
   const nb = state.notebook;
   const isCreadora = c.eva > 0; // EVA > 0 → crea valor
@@ -2824,6 +3125,7 @@ function showResults() {
 
   // Score y rank
   const maxScore = state.steps.length * 100 * state.difficulty.multiplier;
+  saveProgress(state.currentCase.id, state.diffKey, state.score, state.steps.length);
   const pct      = state.score / maxScore;
   const ranks    = [
     [0.0, '📊 Analista Jr.'],
@@ -2891,4 +3193,5 @@ function showResults() {
 // ═══════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════
+renderGlossary();
 renderHome();
