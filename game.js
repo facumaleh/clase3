@@ -1,16 +1,17 @@
+﻿const CASES = [
+
 // ═══════════════════════════════════════════════════════════
 // CASO 1 — PortoGroup S.A.
-// Alimentos & Bebidas · LatAm
-// Números diseñados para práctica (distintos a DigitalCo)
+// Alimentos & Bebidas · Consumo masivo · LatAm
+// Caso introductorio: ciclo operativo positivo, ROIC > WACC
 // ═══════════════════════════════════════════════════════════
-const CASES = [
 {
   id:0,
-  icon:'🥤', color:'#00D4C8', color2:'#4CC9F0',
-  name:'Empresa 1',
+  icon:'🏢', color:'#00D4C8', color2:'#4CC9F0',
+  name:'PortoGroup',
   sector:'Alimentos & Bebidas', sectorDetail:'Consumo masivo · LatAm',
-  tagline:'Grupo alimentario líder en LatAm con 3 marcas icónicas. ¿Crea valor operativo para sus accionistas? Hacé el análisis completo de principio a fin.',
-  stats:[{val:'$16,000M',lbl:'Revenue'},{val:'10.5%',lbl:'Margen NOPAT'},{val:'12%',lbl:'WACC'}],
+  tagline:'El grupo alimenticio líder de LatAm. Con márgenes sólidos y capital de trabajo positivo, ¿logra crear valor para sus accionistas? Calculá su ROIC y EVA.',
+  stats:[{val:'$16,000M',lbl:'Revenue'},{val:'21%',lbl:'ROIC'},{val:'12%',lbl:'WACC'}],
 
   // ── Estado de Resultados ────────────────────────────────
   revenue:16000, cogs:10400,
@@ -21,227 +22,109 @@ const CASES = [
   nopat:1680, nopatMargin:10.5,
 
   // ── Balance Operativo ────────────────────────────────────
-  ar:1600,          // Cuentas por Cobrar (AO corriente)
-  inventory:1280,   // Inventario         (AO corriente)
-  totalAO:2880,     // Total Activos Operativos corrientes
-
-  ap:1710,          // Cuentas por Pagar  (PO corriente)
-  accrued:570,      // Devengados / Otros PO
-  totalPO:2280,     // Total Pasivos Operativos corrientes
+  ar:1600, inventory:1280,
+  totalAO:2880,
+  ap:1710, accrued:570,
+  totalPO:2280,
 
   // ── Capital Invertido ────────────────────────────────────
-  nof:600,          // NOF = totalAO − totalPO
-  afn:6400,         // Activo Fijo Neto (PP&E neto)
-  ain:1000,         // Activo Intangible Neto
-  ci:8000,          // CI = NOF + AFN + AIN
-  prevCI:7000,      // CI año anterior
-  invNeta:1000,     // ΔCI = CI − prevCI
+  nof:600,
+  afn:6400, ain:1000,
+  ci:8000, prevCI:7000, invNeta:1000,
 
   // ── Retorno ─────────────────────────────────────────────
-  rotacion:2.0,     // Revenue / CI
-  roic:21.0,        // NOPAT / CI × 100
-  wacc:12,
-  spread:9.0,       // ROIC − WACC
-  eva:720,          // Spread × CI / 100
+  rotacion:2.0,
+  roic:21.0, wacc:12, spread:9.0, eva:720,
 
   // ── Ciclo de Conversión de Caja ─────────────────────────
-  dso:36.5,         // AR × 365 / Revenue
-  dio:44.9,         // Inv × 365 / COGS
-  dpo:60.0,         // AP × 365 / COGS
-  ccc:21.4,         // DSO + DIO − DPO
-
-  // ── Flujo de Fondos ──────────────────────────────────────
-  ffl:680,          // NOPAT − ΔCI
+  dso:36.5, dio:44.9, dpo:60.0, ccc:21.4,
+  ffl:680,
 
   // ── Estructura Financiera ────────────────────────────────
-  actFin:800,       // Activos financieros (Caja + Inversiones)
-  deudaFin:2400,    // Deuda financiera total
-  shares:100,       // Acciones en circulación
+  actFin:800, deudaFin:2400,
+  shares:100,
 
   verdict:'creadora'
 },
+
 // ═══════════════════════════════════════════════════════════
 // CASO 2 — NortelFab S.A.
-// Manufactura Industrial · Argentina
-// Números diseñados para clasificación de cuentas + análisis
+// Manufactura Industrial · Bienes de capital · Argentina
+// Alta intensidad de capital: clasificar cuentas + calcular EVA
 // ═══════════════════════════════════════════════════════════
 {
   id:1,
   icon:'🏭', color:'#F59E0B', color2:'#F97316',
-  name:'Empresa 2',
+  name:'NortelFab',
   sector:'Manufactura Industrial', sectorDetail:'Bienes de capital · Argentina',
-  tagline:'Fabricante industrial con estructura de capital compleja. Clasificá sus cuentas, separá lo operativo de lo financiero, y determiná si crea valor económico.',
-  stats:[{val:'$24,000M',lbl:'Revenue'},{val:'12.0%',lbl:'Margen NOPAT'},{val:'10%',lbl:'WACC'}],
+  tagline:'La fabricante de bienes de capital más grande de Argentina. Con alta intensidad de capital, ¿el ROIC justifica la inversión? Clasificá sus cuentas y calculá el EVA.',
+  stats:[{val:'$24,000M',lbl:'Revenue'},{val:'18%',lbl:'ROIC'},{val:'10%',lbl:'WACC'}],
 
   // ── Estado de Resultados ────────────────────────────────
   revenue:24000, cogs:15600,
   grossProfit:8400, grossMargin:35.0,
-  nomina:2400,      // Gastos de nómina (separado en P&L)
-  otrosSga:800,     // Otros gastos operativos
-  sga:3200,         // Total SG&A = nomina + otrosSga
-  da:1200,
+  sga:3200, da:1200,
   ebit:4000, ebitMargin:16.7,
   tax:28,
   nopat:2880, nopatMargin:12.0,
 
   // ── Balance Operativo ────────────────────────────────────
-  ar:3000,           // Cuentas por Cobrar (AO corriente)
-  inventory:2500,    // Inventario         (AO corriente)
-  anticipo:500,      // Anticipo a proveedores (AO corriente)
+  ar:3000, inventory:2500, anticipo:500,
   totalAO:6000,
-
-  ap:3000,           // Cuentas por Pagar  (PO corriente)
-  nominaPagar:800,   // Nómina a pagar     (PO corriente)
-  ingDif:1000,       // Ingresos diferidos (PO corriente)
+  ap:3000, nominaPagar:800, ingDif:1000,
   totalPO:4800,
-
-  // ── Activos de LP ────────────────────────────────────────
-  ppeBruto:18000, ppeAcumDep:6000, afn:12000,
-  ainBruto:3500,  ainAcumAmort:700, ain:2800,
-
-  // ── Activos / Pasivos Financieros ────────────────────────
-  caja:2000, invFinLP:800, actFin:2800,
-  deudaCP:500, deudaLP:2000, lease:1000, deudaFin:3500,
 
   // ── Capital Invertido ────────────────────────────────────
   nof:1200,
+  ppeBruto:18000, ppeAcumDep:6000, afn:12000,
+  ainBruto:3500, ainAcumAmort:700, ain:2800,
   ci:16000, prevCI:14500, invNeta:1500,
 
   // ── Retorno ─────────────────────────────────────────────
   rotacion:1.5,
-  roic:18.0,
-  wacc:10,
-  spread:8.0,
-  eva:1280,
+  roic:18.0, wacc:10, spread:8.0, eva:1280,
 
   // ── Ciclo de Conversión de Caja ─────────────────────────
   dso:45.6, dio:58.5, dpo:70.2, ccc:33.9,
-
-  // ── Flujo de Fondos ──────────────────────────────────────
   ffl:1380,
 
+  // ── Estructura Financiera ────────────────────────────────
+  caja:2000, invFinLP:800, actFin:2800,
+  deudaCP:500, deudaLP:2000, lease:1000, deudaFin:3500,
   shares:80,
+
   verdict:'creadora',
+
+  // ── Clasificación de cuentas (classifyAccounts step) ────
   classifyItems:[
-    {id:'cash',     label:'Caja y equivalentes',        val:'$2,000M',  correct:'AF', tricky:true,
-     tip:'El exceso de caja no surge del ciclo operativo: es un activo financiero, no operativo.'},
-    {id:'ar',       label:'Cuentas por Cobrar (CxC)',   val:'$3,000M',  correct:'AO', tricky:false, tip:''},
-    {id:'inv',      label:'Inventario',                 val:'$2,500M',  correct:'AO', tricky:false, tip:''},
-    {id:'anticipo', label:'Anticipo a proveedores',     val:'$500M',    correct:'AO', tricky:true,
-     tip:'Es parte del ciclo operativo: pagás antes para asegurarte materiales — activo operativo.'},
-    {id:'ppe',      label:'PP&E neto (Activo Fijo)',    val:'$12,000M', correct:'AO', tricky:false, tip:''},
-    {id:'ain',      label:'Intangibles netos',          val:'$2,800M',  correct:'AO', tricky:false, tip:''},
-    {id:'invfinlp', label:'Inversiones financieras LP', val:'$800M',    correct:'AF', tricky:true,
-     tip:'No genera resultado operativo. Es una inversión de excedentes — activo financiero.'},
-    {id:'ap',       label:'Cuentas por Pagar (CxP)',   val:'$3,000M',  correct:'PO', tricky:false, tip:''},
-    {id:'nompaG',   label:'Nómina a pagar',             val:'$800M',    correct:'PO', tricky:true,
-     tip:'Salarios devengados pero no pagados → obligación del ciclo operativo → pasivo operativo.'},
-    {id:'ingdif',   label:'Ingresos diferidos',         val:'$1,000M',  correct:'PO', tricky:true,
-     tip:'Obligación de entregar productos/servicios futuros. Surge del negocio → pasivo operativo.'},
-    {id:'deudacp',  label:'Deuda bancaria corto plazo', val:'$500M',    correct:'PF', tricky:false, tip:''},
-    {id:'deudalp',  label:'Deuda bancaria largo plazo', val:'$2,000M',  correct:'PF', tricky:false, tip:''},
-    {id:'lease',    label:'Lease financiero (IFRS 16)', val:'$1,000M',  correct:'PF', tricky:true,
-     tip:'Bajo IFRS 16, los arrendamientos se capitalizan como deuda financiera — pasivo financiero.'}
+    {id:'cxc',    label:'Cuentas por Cobrar',                    val:'$3,000M',  correct:'AO', tip:'Ingreso pendiente de cobro del ciclo operativo → AO.'},
+    {id:'inv',    label:'Inventarios (mat. prima + producto)',    val:'$2,500M',  correct:'AO', tip:'Existencias del ciclo productivo → AO.'},
+    {id:'ant',    label:'Anticipos a proveedores',               val:'$500M',    correct:'AO', tip:'Pago adelantado por insumos → ciclo operativo → AO.'},
+    {id:'cxp',    label:'Cuentas por Pagar (proveedores)',        val:'$3,000M',  correct:'PO', tip:'Deuda con proveedores del ciclo operativo → PO.'},
+    {id:'nom',    label:'Remuneraciones a pagar',                val:'$800M',    correct:'PO', tip:'Sueldos devengados no pagados → ciclo operativo → PO.'},
+    {id:'ingdif', label:'Ingresos diferidos (adelantos clientes)',val:'$1,000M',  correct:'PO', tip:'Obligación operativa de entregar bienes → PO.'},
+    {id:'ppe',    label:'PP&E neto (planta y equipo)',            val:'$12,000M', correct:'AF', tip:'Activos fijos productivos → AF (Activo Fijo Neto).'},
+    {id:'intang', label:'Intangibles netos (patentes)',           val:'$2,800M',  correct:'AF', tip:'Activos intangibles → AF (Activo Intangible Neto).'},
+    {id:'caja',   label:'Caja y equivalentes',                   val:'$2,000M',  correct:'PF', tip:'Caja excedente no operativa → Activo Financiero (PF positivo).'},
+    {id:'invfin', label:'Inversiones financieras LP',            val:'$800M',    correct:'PF', tip:'Inversión de portafolio → Activo Financiero.'},
+    {id:'dcp',    label:'Deuda bancaria corto plazo',            val:'$500M',    correct:'PF', tip:'Deuda con bancos → Pasivo Financiero.'},
+    {id:'dlp',    label:'Deuda bancaria largo plazo',            val:'$2,000M',  correct:'PF', tip:'Bono / préstamo LP → Pasivo Financiero.'},
+    {id:'lease',  label:'Pasivo por arrendamiento (IFRS 16)',    val:'$1,000M',  correct:'PF', tip:'Lease capitalizado → estructura de capital → Pasivo Financiero.'}
   ],
 
-  // Paso 2: clasificar cuentas operativas como NOF / AFN / AIN (componentes del CI)
+  // ── Clasificación NOF / AFN / AIN (classifyNofAfnAin step)
   classifyNofItems:[
-    {id:'ar_ci',       label:'Cuentas por Cobrar (CxC)',  val:'$3,000M',  correct:'NOF', tricky:false, tip:''},
-    {id:'inv_ci',      label:'Inventario',                val:'$2,500M',  correct:'NOF', tricky:false, tip:''},
-    {id:'anticipo_ci', label:'Anticipo a proveedores',    val:'$500M',    correct:'NOF', tricky:true,
-     tip:'AO corriente → entra en el bloque NOF. Como reduce el efectivo disponible antes de recibir los materiales, es capital de trabajo operativo.'},
-    {id:'ap_ci',       label:'Cuentas por Pagar (CxP)',   val:'$3,000M',  correct:'NOF', tricky:false, tip:''},
-    {id:'nompa_ci',    label:'Nómina a pagar',            val:'$800M',    correct:'NOF', tricky:true,
-     tip:'PO corriente → reduce el NOF que debemos fondear. Es financiamiento "gratuito" de los empleados.'},
-    {id:'ingdif_ci',   label:'Ingresos diferidos',        val:'$1,000M',  correct:'NOF', tricky:true,
-     tip:'PO corriente → reduce el capital operativo que la empresa debe financiar. Va al NOF.'},
-    {id:'ppe_ci',      label:'PP&E neto (Activo Fijo)',   val:'$12,000M', correct:'AFN', tricky:false, tip:''},
-    {id:'ain_ci',      label:'Intangibles netos',         val:'$2,800M',  correct:'AIN', tricky:false, tip:''}
+    {id:'cxc',    label:'Cuentas por Cobrar',       val:'$3,000M',  correct:'NOF', tip:'AO corriente → entra en el cálculo del NOF.'},
+    {id:'inv',    label:'Inventarios',              val:'$2,500M',  correct:'NOF', tip:'AO corriente → entra en el cálculo del NOF.'},
+    {id:'ant',    label:'Anticipos a proveedores',  val:'$500M',    correct:'NOF', tip:'AO corriente → entra en el cálculo del NOF.'},
+    {id:'cxp',    label:'Cuentas por Pagar',        val:'$3,000M',  correct:'NOF', tip:'PO corriente → se resta en el NOF.'},
+    {id:'nom',    label:'Remuneraciones a pagar',   val:'$800M',    correct:'NOF', tip:'PO corriente → se resta en el NOF.'},
+    {id:'ingdif', label:'Ingresos diferidos',       val:'$1,000M',  correct:'NOF', tip:'PO corriente → se resta en el NOF.'},
+    {id:'ppe',    label:'PP&E neto',                val:'$12,000M', correct:'AFN', tip:'Activo fijo tangible → AFN.'},
+    {id:'intang', label:'Intangibles netos',        val:'$2,800M',  correct:'AIN', tip:'Activo intangible → AIN.'}
   ]
 },
-// ═══════════════════════════════════════════════════════════
-// CASO 3 — Costco Wholesale FY2024
-// Real Capital IQ data · Análisis integrador completo
-// ¿Cuánto invirtió? → ¿En qué? → ¿Resultado? → ¿Rentabilidad? → ¿Flujo?
-// ═══════════════════════════════════════════════════════════
-{
-  id:2,
-  icon:'🛒', color:'#E63946', color2:'#FF6B6B',
-  name:'Costco',
-  sector:'Retail de Membresías', sectorDetail:'FY2024 · Datos reales Capital IQ',
-  tagline:'El retailer más eficiente del mundo con margen neto de 2.75%. ¿Cómo genera un ROIC del 25%? Clasificá sus cuentas, calculá el Capital Invertido y descubrí la paradoja de Costco.',
-  stats:[{val:'$254,453M',lbl:'Revenue'},{val:'2.75%',lbl:'Margen NOPAT'},{val:'9%',lbl:'WACC'}],
 
-  // ── Estado de Resultados ──────────────────────────
-  revenue:254453, cogs:222358,
-  grossProfit:32095, grossMargin:12.6,
-  sga:22810,         // D&A está embebido en COGS + SGA
-  ebit:9285, ebitMargin:3.6,
-  da:2431,           // D&A proporcionado por separado (para EBITDA)
-  ebitda:11716, ebitdaMargin:4.6,
-  tax:24.5,
-  nopat:7010, nopatMargin:2.75,
-  netIncome:7367,    // Resultado neto (para ROE)
-
-  // ── Balance Operativo ────────────────────────────────────
-  ar:2721,           // Cuentas por Cobrar (AO corriente)
-  inventory:18647,   // Inventario          (AO corriente)
-  totalAO:21368,
-
-  ap:19421,          // Cuentas por Pagar    (PO corriente)
-  accrued:7229,      // Gastos devengados    (PO corriente)
-  membershipFees:2501, // Cuotas diferidas   (PO corriente) ← clave pedagógica
-  totalPO:29151,
-
-  // ── Capital Invertido ────────────────────────────────────
-  nof:-7783,         // NOF = totalAO − totalPO (¡NEGATIVO! ventaja competitiva)
-  ppeBruto:51000, ppeAcumDep:17918, afn:33082,
-  ain:865,           // Goodwill e intangibles netos
-  otrosNeto:1836,    // Otros activos operativos netos
-  ci:28000,
-  prevCI:26000,      // CI año anterior (FY2023)
-  invNeta:2000,      // ΔCI = CI − prevCI
-
-  // ── Retorno ─────────────────────────────────────────────
-  rotacion:9.09,     // Revenue / CI = 254,453 / 28,000
-  roa:12.6,          // EBIT / Total Assets = 9,285 / 73,473
-  roe:31.2,          // Net Income / PN = 7,367 / 23,622
-  roic:25.0,         // NOPAT / CI = Margen × Rotación = 2.75% × 9.09x
-  wacc:9,
-  spread:16.0,
-  eva:4480,
-
-  // ── Ciclo de Conversión de Caja ─────────────────────────
-  dso:3.9,           // 2721×365/254453  ← casi cero (pago en caja/tarjeta)
-  dio:30.6,          // 18647×365/222358
-  dpo:31.9,          // 19421×365/222358
-  ccc:2.6,           // DSO + DIO − DPO  ← levemente positivo, pero NOF negativo!
-
-  // ── Flujo de Fondos ──────────────────────────────────────
-  ffl:5010,          // NOPAT − ΔCI = 7010 − 2000
-
-  // ── Balance Adicional ────────────────────────────────────
-  caja:9906, stInv:1488, actFin:11394,
-  deudaLP:5783, cpDebt:1081, deudaFin:6864,
-  totalAssets:73473, pn:23622,
-
-  verdict:'creadora',
-  classifyItems:[
-    {id:'cash',    label:'Caja y equivalentes',             val:'$9,906M',  correct:'AF', tricky:true,
-     tip:'Caja excedente: no surge del ciclo operativo. Es el "colchón" financiero de Costco para expansión.'},
-    {id:'ar',      label:'Cuentas por Cobrar (CxC)',        val:'$2,721M',  correct:'AO', tricky:false, tip:''},
-    {id:'inv',     label:'Inventario (mercadería)',         val:'$18,647M', correct:'AO', tricky:false, tip:''},
-    {id:'ppe',     label:'PP&E neto (tiendas + depósitos)', val:'$33,082M', correct:'AO', tricky:false, tip:''},
-    {id:'goodwill',label:'Goodwill e intangibles netos',   val:'$865M',    correct:'AO', tricky:true,
-     tip:'El goodwill surge de adquisiciones operativas → activo intangible operativo (AIN).'},
-    {id:'stinv',   label:'Inversiones financieras CP',     val:'$1,488M',  correct:'AF', tricky:false, tip:''},
-    {id:'ap',      label:'Cuentas por Pagar (CxP)',        val:'$19,421M', correct:'PO', tricky:false, tip:''},
-    {id:'accrued', label:'Gastos devengados (accrued)',    val:'$7,229M',  correct:'PO', tricky:false, tip:''},
-    {id:'member',  label:'Cuotas de membresía diferidas',  val:'$2,501M',  correct:'PO', tricky:true,
-     tip:'Ingresos cobrados por adelantado → obligación de dar acceso al club → pasivo operativo. Esta cuenta es la clave del modelo de negocio.'},
-    {id:'ltdebt',  label:'Deuda financiera LP',            val:'$5,783M',  correct:'PF', tricky:false, tip:''}
-  ]
-},
 // ═══════════════════════════════════════════════════════════
 // CASO 4 — LatiCommerce S.A.
 // E-Commerce · Latinoamérica
@@ -440,7 +323,91 @@ const CASES = [
   roe:27.1,       // Net Income / PN = 1900 / 7000
 
   verdict:'creadora'
+},
+
+// ═══════════════════════════════════════════════════════════
+// CASO 3 — Costco Integrador
+// VBM · Análisis Completo · FY2022–FY2024 · Datos reales Capital IQ
+// CASO INTEGRADOR: EEFF + CI + ROIC multi-período + EVA + Valuación
+// ═══════════════════════════════════════════════════════════
+{
+  id:2,
+  icon:'🛒', color:'#E63946', color2:'#FF6B6B',
+  name:'Costco Integrador',
+  sector:'VBM · Análisis Completo', sectorDetail:'FY2022–FY2024 · Datos reales Capital IQ',
+  tagline:'⭐ CASO INTEGRADOR — El análisis más completo del curso. Costco Wholesale con datos reales: 28 pasos que cubren EEFF, Capital Invertido, ROIC multi-período, EVA acumulado y valuación por perpetuidad. El caso definitivo de Finanzas Corporativas.',
+  stats:[{val:'$12,157M',lbl:'EVA acum. 3 años'},{val:'25%',lbl:'ROIC FY2024'},{val:'9%',lbl:'WACC'}],
+
+  // ── Estado de Resultados FY2024 ─────────────────────────
+  revenue:254453, cogs:222358,
+  grossProfit:32095, grossMargin:12.6,
+  sga:22810, da:2431,
+  ebit:9285, ebitMargin:3.6,
+  tax:24.4,
+  nopat:7010, nopatMargin:2.75,
+  netIncome:7367,
+
+  // ── Balance Operativo FY2024 ─────────────────────────────
+  ar:2721, inventory:18647,
+  totalAO:21368,
+  ap:19421, accrued:7229, membershipFees:2501,
+  totalPO:29151,
+
+  // ── Capital Invertido FY2024 ─────────────────────────────
+  nof:-7783,
+  ppeBruto:51000, ppeAcumDep:17918, afn:33082,
+  ain:865, otrosNeto:1836,
+  ci:28000, prevCI:26000, invNeta:2000,
+
+  // ── Retorno FY2024 ───────────────────────────────────────
+  rotacion:9.09,
+  roa:12.6, roe:31.2,
+  roic:25.0, wacc:9, spread:16.0, eva:4480,
+
+  // ── Ciclo de Conversión de Caja ──────────────────────────
+  dso:3.9, dio:30.6, dpo:31.9, ccc:2.6,
+  ffl:5010,
+
+  // ── Estructura Financiera ─────────────────────────────────
+  caja:9906, stInv:1488, actFin:11394,
+  deudaLP:5783, cpDebt:1081, deudaFin:6864,
+  totalAssets:73473, pn:23622,
+
+  // ── Histórico FY2022 ─────────────────────────────────────
+  revenue22:226954, ebit22:7911, tax22:24.6, da22:1900,
+  ar22:2241, inventory22:17907, ap22:17848, accrued22:6292,
+  membershipFees22:2174, afn22:29040, ain22:993,
+  nopat22:5964, nof22:-6166, ci22:25000, roic22:23.9, eva22:3725,
+
+  // ── Histórico FY2023 ─────────────────────────────────────
+  revenue23:242290, ebit23:8505, tax23:25.9, da23:2077,
+  ar23:2285, inventory23:16651, ap23:17483, accrued23:6428,
+  membershipFees23:2337, afn23:30722, ain23:994,
+  nopat23:6300, nof23:-7312, ci23:26000, roic23:24.2, eva23:3952,
+
+  // ── VBM KPIs ─────────────────────────────────────────────
+  memNopat:1890, memNopotPct:27.0, deltaNopat:710,
+  roicMarginal:35.5, evaMarginal:530, evaAcum:12157,
+  valuation0:77778, valuationG:102667, marketTEV:412000, impliedG:7.8,
+  specialDivTotal:6655, shares:444, specialDivPS:15.0,
+
+  verdict:'creadora',
+
+  // ── Clasificación de cuentas (classifyAccounts step) ────
+  classifyItems:[
+    {id:'cxc',    label:'Cuentas por Cobrar',                      val:'$2,721M',  correct:'AO', tip:'Cobros pendientes del ciclo de ventas → AO.'},
+    {id:'inv',    label:'Inventarios (mercadería en almacenes)',    val:'$18,647M', correct:'AO', tip:'Stock operativo → AO. Costco mantiene ~30 días de inventario.'},
+    {id:'otros',  label:'Otros activos operativos netos',          val:'$1,836M',  correct:'AO', tip:'Activos del ciclo operativo distintos a CxC e inventario → AO.'},
+    {id:'cxp',    label:'Cuentas por Pagar (proveedores)',          val:'$19,421M', correct:'PO', tip:'Deuda comercial con proveedores → PO. El motor del NOF negativo.'},
+    {id:'memfee', label:'Cuotas de membresía diferidas',           val:'$2,501M',  correct:'PO', tip:'Membresías cobradas pero aún no devengadas → obligación operativa → PO.'},
+    {id:'accrued',label:'Otros pasivos operativos accrued',        val:'$7,229M',  correct:'PO', tip:'Sueldos, impuestos y otros devengados → ciclo operativo → PO.'},
+    {id:'ppe',    label:'PP&E neto (almacenes + infraestructura)',  val:'$33,082M', correct:'AF', tip:'Activos fijos operativos → AF (Activo Fijo Neto).'},
+    {id:'intang', label:'Intangibles y otros activos LP netos',    val:'$865M',    correct:'AF', tip:'Activos intangibles operativos → AF (Activo Intangible Neto).'},
+    {id:'caja',   label:'Caja + inversiones de corto plazo',       val:'$11,394M', correct:'AF', tip:'Caja excedente y equivalentes → Activo Financiero (AF). No es deuda, es un activo.'},
+    {id:'deuda',  label:'Deuda financiera total (LP + CP)',         val:'$6,864M',  correct:'PF', tip:'Deuda bancaria y bonos → Pasivo Financiero.'}
+  ]
 }
+
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -485,9 +452,9 @@ function getDiffDesc(idx, caseId) {
     '17 pasos · Sin fórmulas ni pistas · 2 intentos · ×2 puntos'
   ][idx] || '';
   if (caseId === 2) return [
-    '21 pasos · Costco real · Clasificación + análisis integrador · Fórmulas visibles · 5 intentos',
-    '21 pasos · Costco real · Análisis integrador · Fórmulas al clic · 3 intentos',
-    '21 pasos · Sin fórmulas ni pistas · 2 intentos · ×2 puntos'
+    '28 pasos · Costco Integrador · Clasificación + ROIC 3 años + EVA + Valuación · Fórmulas visibles · 5 intentos',
+    '28 pasos · Costco Integrador · Análisis completo · Fórmulas al clic · 3 intentos',
+    '28 pasos · Sin fórmulas ni pistas · 2 intentos · ×2 puntos'
   ][idx] || '';
   if (caseId === 1) return [
     '18 pasos · Clasificación de cuentas + análisis · Fórmulas visibles · 5 intentos',
@@ -561,16 +528,26 @@ function getStepSequence(diffKey, caseId) {
     'ffl',
     'mc_lati_decision'       // ¿Expandirse?
   ];
-  // Caso 3 — Costco: 21 pasos, estructura temática (¿cuánto? ¿en qué? ¿resultado? ¿rentabilidad? ¿flujo?)
+  // Caso 3 — Costco Integrador: 28 pasos, análisis completo FY2022–FY2024
   if (caseId === 2) return [
-    'classifyAccounts',
-    'nof','ci','deltaAN',
-    'grossProfit','margenBruto',
-    'ebit','ebitda','nopat','margenNopat',
-    'rotacion','roa','roe','roic','spread','eva',
-    'dso','dio','dpo','ccc',
-    'ffl',
-    'mc_costco_paradoja','mc_costco_nof','mc_costco_modelo'
+    'classifyAccounts',          // Clasificar cuentas
+    'grossProfit', 'margenBruto',// Estado de resultados
+    'ebit', 'ebitda', 'nopat',   // Resultados completos
+    'nof', 'ci', 'deltaAN',      // Capital Invertido
+    'dso', 'dio', 'dpo', 'ccc',  // Ciclo de caja
+    'rotacion',                  // DuPont: base del ROIC
+    'vbm_roic22', 'vbm_roic23',  // ROIC histórico FY2022/2023
+    'roic', 'roa', 'roe',        // Rentabilidad FY2024
+    'spread', 'eva',             // Spread + EVA FY2024
+    'vbm_evaAcum',               // EVA acumulado 3 años
+    'vbm_roicMarginal',          // ROIC marginal
+    'vbm_evaMarginal',           // EVA marginal
+    'ffl',                       // FFL = NOPAT − ΔCI
+    'vbm_val0', 'vbm_valG',      // Valuación perpetuidad
+    'vbm_impliedG',              // g implícita del mercado
+    'vbm_specialDiv',            // Dividendo especial
+    'mc_vbm_decision',           // ¿Vale la pena pagar?
+    'mc_costco_paradoja',        // La paradoja de Costco
   ];
   // Caso 2 — NortelFab: siempre 18 pasos (la dificultad afecta intentos/fórmulas, no la secuencia)
   if (caseId === 1) return [
@@ -619,23 +596,45 @@ function getClassBadge(stepId) {
     classifyAccounts:'📚 Clase 4 · Clasificación',
     classifyNofAfnAin:'📚 Clase 4 · Capital Invertido'
   };
-  // Caso 3 — Costco: badges temáticos
+  // Caso 3 — Costco Integrador: badges temáticos
   if (state.currentCase && state.currentCase.id === 2) {
     const t3 = {
-      classifyAccounts: '🏗️ Estructura del negocio',
-      nof: '🧩 Bloque 1 · ¿En qué invirtió?',   ci: '🧩 Bloque 1 · ¿Cuánto invirtió?',
-      deltaAN: '🧩 Bloque 1 · Inversión del período',
-      grossProfit: '📊 Bloque 2 · ¿Cuál es el resultado?', margenBruto: '📊 Bloque 2 · ¿Cuál es el resultado?',
-      ebit: '📊 Bloque 2 · ¿Cuál es el resultado?',       ebitda: '📊 Bloque 2 · ¿Cuál es el resultado?',
-      nopat: '📊 Bloque 2 · ¿Cuál es el resultado?',      margenNopat: '📊 Bloque 2 · ¿Cuál es el resultado?',
-      rotacion: '💰 Bloque 3 · ¿Cuál es la rentabilidad?', roa: '💰 Bloque 3 · ¿Cuál es la rentabilidad?',
-      roe: '💰 Bloque 3 · ¿Cuál es la rentabilidad?',     roic: '💰 Bloque 3 · ¿Cuál es la rentabilidad?',
-      spread: '💰 Bloque 3 · ¿Cuál es la rentabilidad?',  eva: '💰 Bloque 3 · ¿Cuál es la rentabilidad?',
-      dso: '⏱️ Bloque 4 · Eficiencia del capital',        dio: '⏱️ Bloque 4 · Eficiencia del capital',
-      dpo: '⏱️ Bloque 4 · Eficiencia del capital',        ccc: '⏱️ Bloque 4 · Eficiencia del capital',
-      ffl: '💸 Bloque 5 · ¿Cuánto flujo generó?'
+      classifyAccounts:    '🏗️ Bloque 0 · Estructura del negocio',
+      grossProfit:         '📊 Bloque 1 · Estado de Resultados',
+      margenBruto:         '📊 Bloque 1 · Estado de Resultados',
+      ebit:                '📊 Bloque 1 · Estado de Resultados',
+      ebitda:              '📊 Bloque 1 · Estado de Resultados',
+      nopat:               '📊 Bloque 1 · Estado de Resultados',
+      margenNopat:         '📊 Bloque 1 · Estado de Resultados',
+      vbm_memNopat:        '🏷️ Bloque 2 · El motor de las membresías',
+      mc_vbm_memModel:     '🏷️ Bloque 2 · El motor de las membresías',
+      nof:                 '🧩 Bloque 3 · Capital Invertido',
+      ci:                  '🧩 Bloque 3 · Capital Invertido',
+      deltaAN:             '🧩 Bloque 3 · Capital Invertido',
+      dso:                 '⏱️ Bloque 4 · Ciclo de Caja',
+      dio:                 '⏱️ Bloque 4 · Ciclo de Caja',
+      dpo:                 '⏱️ Bloque 4 · Ciclo de Caja',
+      ccc:                 '⏱️ Bloque 4 · Ciclo de Caja',
+      rotacion:            '📈 Bloque 5 · ROIC Multi-período',
+      vbm_roic22:          '📈 Bloque 5 · ROIC Multi-período',
+      vbm_roic23:          '📈 Bloque 5 · ROIC Multi-período',
+      roic:                '📈 Bloque 5 · ROIC Multi-período',
+      roa:                 '📈 Bloque 5 · ROIC Multi-período',
+      roe:                 '📈 Bloque 5 · ROIC Multi-período',
+      spread:              '⭐ Bloque 6 · Creación de Valor (EVA)',
+      eva:                 '⭐ Bloque 6 · Creación de Valor (EVA)',
+      vbm_evaAcum:         '⭐ Bloque 6 · Creación de Valor (EVA)',
+      vbm_roicMarginal:    '⭐ Bloque 6 · Creación de Valor (EVA)',
+      vbm_evaMarginal:     '⭐ Bloque 6 · Creación de Valor (EVA)',
+      ffl:                 '💸 Bloque 7 · Flujo de Fondos',
+      vbm_val0:            '🔭 Bloque 8 · Valuación por EVA',
+      vbm_valG:            '🔭 Bloque 8 · Valuación por EVA',
+      vbm_impliedG:        '🔭 Bloque 8 · Valuación por EVA',
+      vbm_specialDiv:      '💰 Bloque 9 · Retorno al Accionista',
+      mc_vbm_decision:     '🎯 Bloque 10 · Decisión Estratégica',
+      mc_costco_paradoja:  '🎯 Bloque 10 · Decisión Estratégica',
     };
-    return t3[stepId] || '📚 Análisis Integrador · Costco FY2024';
+    return t3[stepId] || '📚 Análisis Integrador · Costco FY2022–FY2024';
   }
   // Caso 4 — LatiCommerce: badges por bloque temático
   if (state.currentCase && state.currentCase.id === 3) {
@@ -822,7 +821,7 @@ function startCase(id) {
   state.difficulty = DIFFICULTY[diffKey];
   state.diffKey    = diffKey;
   state.steps      = getStepSequence(diffKey, id);
-  state.currentCase= CASES[id];
+  state.currentCase= CASES.find(c => c.id === id);
   state.currentStep= 0;
   state.score      = 0;
   state.stepAttempts = state.steps.map(() => 0);
@@ -1242,6 +1241,82 @@ function verifyNuClassify() {
   }
 }
 
+function renderDataRoomVBM(c, sid) {
+  const hlER  = ['grossProfit','ebit','nopat','vbm_memNopat','mc_vbm_memModel'].includes(sid);
+  const hlWC  = ['nof','ci'].includes(sid);
+  const hlROIC = ['vbm_roic22','vbm_roic23','roic','rotacion'].includes(sid);
+  const hlEVA  = ['eva','vbm_evaAcum','vbm_roicMarginal','vbm_evaMarginal','spread'].includes(sid);
+  const hlFFL  = ['ffl'].includes(sid);
+  const hlVAL  = ['vbm_val0','vbm_valG','vbm_impliedG'].includes(sid);
+  const hlDiv  = ['vbm_specialDiv','mc_vbm_decision'].includes(sid);
+
+  const row = (lbl, val, given=false, extra='') =>
+    `<div class="dr-row"${extra}><span class="dr-row-label">${lbl}</span><span class="dr-row-val${given?' dr-given':''}">${val}</span></div>`;
+
+  document.getElementById('dataRoom').innerHTML =
+    `<div class="dr-title">📊 Data Room — Costco VBM · FY2022–FY2024</div>` +
+
+    // ── Estado de Resultados ──────────────────────────────────
+    `<div class="dr-section ${hlER?'highlight':''}">` +
+    `<div class="dr-section-title">📈 Estado de Resultados</div>` +
+    `<table style="width:100%;font-size:.7rem;border-collapse:collapse">` +
+    `<thead><tr><th style="text-align:left;padding:2px 4px;color:var(--muted)">Item</th><th style="text-align:right;padding:2px 4px;color:var(--muted)">FY2022</th><th style="text-align:right;padding:2px 4px;color:var(--muted)">FY2023</th><th style="text-align:right;padding:2px 4px;color:var(--teal)">FY2024</th></tr></thead>` +
+    `<tbody>` +
+    `<tr><td style="padding:2px 4px">Revenue</td><td style="text-align:right;padding:2px 4px">$${fmt(c.revenue22)}M</td><td style="text-align:right;padding:2px 4px">$${fmt(c.revenue23)}M</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">$${fmt(c.revenue)}M</td></tr>` +
+    `<tr><td style="padding:2px 4px">COGS</td><td style="text-align:right;padding:2px 4px">-</td><td style="text-align:right;padding:2px 4px">-</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">($${fmt(c.cogs)}M)</td></tr>` +
+    `<tr><td style="padding:2px 4px">SG&amp;A</td><td style="text-align:right;padding:2px 4px">-</td><td style="text-align:right;padding:2px 4px">-</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">($${fmt(c.sga)}M)</td></tr>` +
+    `<tr style="border-top:1px solid var(--border)"><td style="padding:2px 4px;font-weight:700">EBIT</td><td style="text-align:right;padding:2px 4px;font-weight:700">$${fmt(c.ebit22)}M</td><td style="text-align:right;padding:2px 4px;font-weight:700">$${fmt(c.ebit23)}M</td><td style="text-align:right;padding:2px 4px;font-weight:700;color:var(--teal)">$${fmt(c.ebit)}M</td></tr>` +
+    `<tr><td style="padding:2px 4px">Tax rate</td><td style="text-align:right;padding:2px 4px">${c.tax22}%</td><td style="text-align:right;padding:2px 4px">${c.tax23}%</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">${c.tax}%</td></tr>` +
+    `<tr><td style="padding:2px 4px">D&amp;A</td><td style="text-align:right;padding:2px 4px">$${fmt(c.da22)}M</td><td style="text-align:right;padding:2px 4px">$${fmt(c.da23)}M</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">$${fmt(c.da)}M</td></tr>` +
+    `<tr style="border-top:1px solid var(--border)"><td style="padding:2px 4px;color:var(--blue)">Cuotas membresía</td><td style="text-align:right;padding:2px 4px;color:var(--blue)">$${fmt(c.membershipFees22)}M</td><td style="text-align:right;padding:2px 4px;color:var(--blue)">$${fmt(c.membershipFees23)}M</td><td style="text-align:right;padding:2px 4px;color:var(--blue)">$${fmt(c.membershipFees)}M</td></tr>` +
+    `</tbody></table></div>` +
+
+    // ── Balance / Capital ─────────────────────────────────────
+    `<div class="dr-section ${hlWC?'highlight':''}">` +
+    `<div class="dr-section-title">💼 Capital Invertido</div>` +
+    `<table style="width:100%;font-size:.7rem;border-collapse:collapse">` +
+    `<thead><tr><th style="text-align:left;padding:2px 4px;color:var(--muted)">Item</th><th style="text-align:right;padding:2px 4px;color:var(--muted)">FY2022</th><th style="text-align:right;padding:2px 4px;color:var(--muted)">FY2023</th><th style="text-align:right;padding:2px 4px;color:var(--teal)">FY2024</th></tr></thead>` +
+    `<tbody>` +
+    `<tr><td style="padding:2px 4px">AR (Ctas. cobrar)</td><td style="text-align:right;padding:2px 4px">$${fmt(c.ar22)}M</td><td style="text-align:right;padding:2px 4px">$${fmt(c.ar23)}M</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">$${fmt(c.ar)}M</td></tr>` +
+    `<tr><td style="padding:2px 4px">Inventario</td><td style="text-align:right;padding:2px 4px">$${fmt(c.inventory22)}M</td><td style="text-align:right;padding:2px 4px">$${fmt(c.inventory23)}M</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">$${fmt(c.inventory)}M</td></tr>` +
+    `<tr><td style="padding:2px 4px">AP (Ctas. pagar)</td><td style="text-align:right;padding:2px 4px">($${fmt(c.ap22)}M)</td><td style="text-align:right;padding:2px 4px">($${fmt(c.ap23)}M)</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">($${fmt(c.ap)}M)</td></tr>` +
+    `<tr><td style="padding:2px 4px">Accrued + Membresías dif.</td><td style="text-align:right;padding:2px 4px">($${fmt(c.accrued22)}M)</td><td style="text-align:right;padding:2px 4px">($${fmt(c.accrued23)}M)</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">($${fmt(c.accrued)}M)</td></tr>` +
+    `<tr style="border-top:1px solid var(--border);font-weight:700"><td style="padding:2px 4px">NOF</td><td style="text-align:right;padding:2px 4px">($${fmt(Math.abs(c.nof22))}M)</td><td style="text-align:right;padding:2px 4px">($${fmt(Math.abs(c.nof23))}M)</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">($${fmt(Math.abs(c.nof))}M)</td></tr>` +
+    `<tr><td style="padding:2px 4px">PP&amp;E neto (AFN)</td><td style="text-align:right;padding:2px 4px">$${fmt(c.afn22)}M</td><td style="text-align:right;padding:2px 4px">$${fmt(c.afn23)}M</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">$${fmt(c.afn)}M</td></tr>` +
+    `<tr style="border-top:1px solid var(--border);font-weight:700"><td style="padding:2px 4px">CI total</td><td style="text-align:right;padding:2px 4px">$${fmt(c.ci22)}M</td><td style="text-align:right;padding:2px 4px">$${fmt(c.ci23)}M</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">$${fmt(c.ci)}M</td></tr>` +
+    `</tbody></table></div>` +
+
+    // ── ROIC histórico ────────────────────────────────────────
+    `<div class="dr-section ${hlROIC?'highlight':''}">` +
+    `<div class="dr-section-title">📈 ROIC Multi-período</div>` +
+    `<table style="width:100%;font-size:.7rem;border-collapse:collapse">` +
+    `<thead><tr><th style="text-align:left;padding:2px 4px;color:var(--muted)">Métrica</th><th style="text-align:right;padding:2px 4px;color:var(--muted)">FY2022</th><th style="text-align:right;padding:2px 4px;color:var(--muted)">FY2023</th><th style="text-align:right;padding:2px 4px;color:var(--teal)">FY2024</th></tr></thead>` +
+    `<tbody>` +
+    `<tr><td style="padding:2px 4px">NOPAT</td><td style="text-align:right;padding:2px 4px">$${fmt(c.nopat22)}M</td><td style="text-align:right;padding:2px 4px">$${fmt(c.nopat23)}M</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">$${fmt(c.nopat)}M</td></tr>` +
+    `<tr><td style="padding:2px 4px">CI</td><td style="text-align:right;padding:2px 4px">$${fmt(c.ci22)}M</td><td style="text-align:right;padding:2px 4px">$${fmt(c.ci23)}M</td><td style="text-align:right;padding:2px 4px;color:var(--teal)">$${fmt(c.ci)}M</td></tr>` +
+    `<tr style="border-top:1px solid var(--border)"><td style="padding:2px 4px">WACC</td><td colspan="3" style="text-align:right;padding:2px 4px" class="dr-given">${c.wacc}% (dado)</td></tr>` +
+    `</tbody></table></div>` +
+
+    // ── EVA y Valuación ───────────────────────────────────────
+    `<div class="dr-section ${(hlEVA||hlVAL)?'highlight':''}">` +
+    `<div class="dr-section-title">⭐ EVA &amp; Valuación</div>` +
+    `${row('EVA FY2022','$'+fmt(c.eva22)+'M',true)}` +
+    `${row('EVA FY2023','$'+fmt(c.eva23)+'M',true)}` +
+    `${row('TEV mercado (market cap adj.)','$'+fmt(c.marketTEV)+'M',true)}` +
+    `${row('Shares outstanding',fmt(c.shares)+'M',true)}` +
+    `${row('Dividendo especial FY2024 (total)','$'+fmt(c.specialDivTotal)+'M',true)}` +
+    `</div>` +
+
+    // ── Datos adicionales ─────────────────────────────────────
+    `<div class="dr-section ${(hlFFL||hlDiv)?'highlight':''}">` +
+    `<div class="dr-section-title">📋 Datos adicionales</div>` +
+    `${row('Total Assets FY2024','$'+fmt(c.totalAssets)+'M',true)}` +
+    `${row('Patrimonio Neto FY2024','$'+fmt(c.pn)+'M',true)}` +
+    `${row('Net Income FY2024','$'+fmt(c.netIncome)+'M',true)}` +
+    `${row('CapEx FY2024 (nuevas tiendas)','$4,710M',true)}` +
+    `</div>`;
+}
+
 function renderDataRoomCase6(c, sid) {
   const hlER = ['grossProfit','margenBruto','ebit','nopat','margenNopat'].includes(sid);
   const hlWC = ['nof','mc_nu_depositos'].includes(sid);
@@ -1497,6 +1572,12 @@ function renderDataRoomCase2(c, sid) {
 }
 
 function renderDataRoomCase3(c, sid) {
+  // VBM-specific steps: show the multi-period comparative view
+  const vbmSteps = ['vbm_roic22','vbm_roic23','vbm_evaAcum','vbm_roicMarginal','vbm_evaMarginal',
+                    'vbm_val0','vbm_valG','vbm_impliedG','vbm_specialDiv','mc_vbm_decision',
+                    'vbm_memNopat','mc_vbm_memModel'];
+  if (vbmSteps.includes(sid)) { renderDataRoomVBM(c, sid); return; }
+
   const hlER  = ['grossProfit','margenBruto','ebit','ebitda','nopat','margenNopat'].includes(sid);
   const hlWC  = ['nof','dso','dio','dpo','ccc'].includes(sid);
   const hlLP  = ['ci','deltaAN','rotacion','roic','spread','eva','ffl'].includes(sid);
@@ -1719,7 +1800,7 @@ function renderNotebook() {
 
   let html = '<div class="nb-title">📋 Tu análisis</div>';
 
-  // Case 3 — Costco: different notebook structure
+  // Case 3 — Costco Integrador: notebook completo
   if (c.id === 2) {
     html += '<div class="nb-section">CLASIFICACIÓN</div>';
     if (nb.classification) {
@@ -1730,31 +1811,42 @@ function renderNotebook() {
       html += row('PF', `${items.filter(i=>nb.classification[i.id]==='PF').length} ctas`, true);
     } else { html += row('Estado', null); }
 
-    html += '<div class="nb-section">¿EN QUÉ / CUÁNTO INVIRTIÓ?</div>';
-    html += row('NOF',  nb.nof      !== undefined ? `$${nb.nof}M`       : null);
-    html += row('CI',   nb.ci       !== undefined ? `$${nb.ci}M`        : null);
-    html += row('ΔCI',  nb.deltaAN  !== undefined ? `$${nb.deltaAN}M`   : null);
-
-    html += '<div class="nb-section">¿CUÁL ES EL RESULTADO?</div>';
+    html += '<div class="nb-section">RESULTADOS FY2024</div>';
     html += row('Gross Profit', nb.grossProfit !== undefined ? `$${nb.grossProfit}M` : null);
-    html += row('Margen Bruto', nb.margenBruto !== undefined ? `${nb.margenBruto}%`  : null);
     html += row('EBIT',     nb.ebit     !== undefined ? `$${nb.ebit}M`      : null);
     html += row('EBITDA',   nb.ebitda   !== undefined ? `$${nb.ebitda}M`    : null);
     html += row('NOPAT',    nb.nopat    !== undefined ? `$${nb.nopat}M`     : null);
-    html += row('Mg NOPAT', nb.margenNopat !== undefined ? `${nb.margenNopat}%` : null);
+    html += row('NOPAT membresías', nb.vbm_memNopat !== undefined ? `$${nb.vbm_memNopat}M` : null);
 
-    html += '<div class="nb-section">¿CUÁL ES LA RENTABILIDAD?</div>';
-    html += row('Rotación', nb.rotacion !== undefined ? `${nb.rotacion}x`  : null);
-    html += row('ROA',      nb.roa      !== undefined ? `${nb.roa}%`       : null);
-    html += row('ROE',      nb.roe      !== undefined ? `${nb.roe}%`       : null);
-    html += row('ROIC',     nb.roic     !== undefined ? `${nb.roic}%`      : null);
-    html += row('Spread',   nb.spread   !== undefined ? `${nb.spread}%`    : null);
-    html += row('EVA',      nb.eva      !== undefined ? `$${nb.eva}M`      : null);
+    html += '<div class="nb-section">CAPITAL INVERTIDO</div>';
+    html += row('NOF',   nb.nof     !== undefined ? `$${nb.nof}M`     : null);
+    html += row('CI',    nb.ci      !== undefined ? `$${nb.ci}M`      : null);
+    html += row('ΔCI',   nb.deltaAN !== undefined ? `$${nb.deltaAN}M` : null);
 
-    html += '<div class="nb-section">EFICIENCIA / FLUJO</div>';
-    html += row('DSO / DIO / DPO', (nb.dso&&nb.dio&&nb.dpo) ? `${nb.dso}d/${nb.dio}d/${nb.dpo}d` : null);
-    html += row('CCC',  nb.ccc !== undefined ? `${nb.ccc} días` : null);
-    html += row('FFL',  nb.ffl !== undefined ? `$${nb.ffl}M`    : null);
+    html += '<div class="nb-section">CICLO DE CAJA</div>';
+    html += row('DSO/DIO/DPO', (nb.dso&&nb.dio&&nb.dpo) ? `${nb.dso}d/${nb.dio}d/${nb.dpo}d` : null);
+    html += row('CCC', nb.ccc !== undefined ? `${nb.ccc} días` : null);
+
+    html += '<div class="nb-section">ROIC MULTI-PERÍODO</div>';
+    html += row('ROIC FY2022', nb.vbm_roic22 !== undefined ? `${nb.vbm_roic22}%` : null);
+    html += row('ROIC FY2023', nb.vbm_roic23 !== undefined ? `${nb.vbm_roic23}%` : null);
+    html += row('Rotación',    nb.rotacion   !== undefined ? `${nb.rotacion}x`   : null);
+    html += row('ROIC FY2024', nb.roic       !== undefined ? `${nb.roic}%`       : null);
+    html += row('ROA / ROE',   (nb.roa&&nb.roe) ? `${nb.roa}% / ${nb.roe}%`     : null);
+
+    html += '<div class="nb-section">CREACIÓN DE VALOR</div>';
+    html += row('Spread',        nb.spread          !== undefined ? `${nb.spread}%`           : null);
+    html += row('EVA FY2024',    nb.eva             !== undefined ? `$${nb.eva}M`             : null);
+    html += row('EVA acumulado', nb.vbm_evaAcum     !== undefined ? `$${nb.vbm_evaAcum}M`    : null);
+    html += row('ROIC marginal', nb.vbm_roicMarginal !== undefined ? `${nb.vbm_roicMarginal}%` : null);
+    html += row('EVA marginal',  nb.vbm_evaMarginal  !== undefined ? `$${nb.vbm_evaMarginal}M` : null);
+
+    html += '<div class="nb-section">FLUJO &amp; VALUACIÓN</div>';
+    html += row('FFL',             nb.ffl            !== undefined ? `$${nb.ffl}M`             : null);
+    html += row('V₀ (sin crec.)', nb.vbm_val0        !== undefined ? `$${nb.vbm_val0}M`        : null);
+    html += row('Vg (g=3%)',       nb.vbm_valG        !== undefined ? `$${nb.vbm_valG}M`        : null);
+    html += row('g implícita',     nb.vbm_impliedG    !== undefined ? `${nb.vbm_impliedG}%`     : null);
+    html += row('Div. espec./acc', nb.vbm_specialDiv  !== undefined ? `$${nb.vbm_specialDiv}`   : null);
 
     html += `<div class="nb-row" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">
       <span class="nb-label" style="font-size:.7rem;color:var(--yellow)">Puntaje</span>
@@ -2177,6 +2269,231 @@ function selectMC(chosenIdx) {
   }
 }
 
+// ═══════════════════════════════════════════════════════════
+// VBM STEP FUNCTIONS — Costco Multi-período (id:6)
+// ═══════════════════════════════════════════════════════════
+
+function stepVbmMemNopat(c, sn, badge) {
+  return baseStep(sn, badge,
+    'Contribución de Membresías al NOPAT',
+    `Las cuotas de membresía de Costco son casi 100% NOPAT porque tienen costo marginal ≈ 0. Usando las cuotas FY2024 y la tasa impositiva, calculá cuánto aportan al NOPAT total. Expresá en $M enteros.`,
+    'NOPAT membresías = Cuotas membresía × (1 − t)',
+    `Cuotas FY2024 = $${fmt(c.membershipFees)}M · Tasa impositiva = ${c.tax}%`,
+    'NOPAT de membresías ($M)',
+    'M USD',
+    'verifyVbmMemNopat',
+    infoBoxes([['Cuotas membresía FY2024', `$${fmt(c.membershipFees)}M`], ['Tasa impositiva', `${c.tax}%`], ['NOPAT total', `$${fmt(c.nopat)}M`]])
+  );
+}
+function verifyVbmMemNopat() {
+  const c = state.currentCase;
+  genericVerify({
+    correct: c.memNopat, tolerance: 50,
+    nbKey: 'vbm_memNopat', nbVal: c.memNopat,
+    feedbackCorrect: `✅ Correcto. $${fmt(c.membershipFees)}M × (1 − ${c.tax}%) = $${fmt(c.memNopat)}M ≈ ${c.memNopotPct}% del NOPAT total.`,
+    feedbackWrong:   `NOPAT membresías = $${fmt(c.membershipFees)}M × (1 − ${c.tax/100}) = $${fmt(c.memNopat)}M`,
+    tryAgain: `Fórmula: Cuotas × (1 − tasa impositiva)`
+  });
+}
+
+function stepVbmRoic22(c, sn, badge) {
+  return baseStep(sn, badge,
+    'ROIC FY2022',
+    'Calculá el ROIC de Costco para FY2022 usando el NOPAT y el Capital Invertido de ese año.',
+    'ROIC = NOPAT / CI × 100',
+    `NOPAT FY2022 = $${fmt(c.nopat22)}M; CI FY2022 = $${fmt(c.ci22)}M`,
+    'ROIC FY2022',
+    '%',
+    'verifyVbmRoic22'
+  );
+}
+function verifyVbmRoic22() {
+  const c = state.currentCase;
+  genericVerify({
+    correct: c.roic22, tolerance: 0.5,
+    nbKey: 'vbm_roic22', nbVal: c.roic22,
+    feedbackCorrect: `✅ ROIC FY2022 = ${c.roic22}%. Base del análisis de tendencia.`,
+    feedbackWrong:   `ROIC FY2022 = $${fmt(c.nopat22)}M / $${fmt(c.ci22)}M = ${c.roic22}%`,
+    tryAgain: `Fórmula: NOPAT / CI × 100`
+  });
+}
+
+function stepVbmRoic23(c, sn, badge) {
+  return baseStep(sn, badge,
+    'ROIC FY2023',
+    'Calculá el ROIC de Costco para FY2023.',
+    'ROIC = NOPAT / CI × 100',
+    `NOPAT FY2023 = $${fmt(c.nopat23)}M; CI FY2023 = $${fmt(c.ci23)}M`,
+    'ROIC FY2023',
+    '%',
+    'verifyVbmRoic23'
+  );
+}
+function verifyVbmRoic23() {
+  const c = state.currentCase;
+  genericVerify({
+    correct: c.roic23, tolerance: 0.5,
+    nbKey: 'vbm_roic23', nbVal: c.roic23,
+    feedbackCorrect: `✅ ROIC FY2023 = ${c.roic23}%. La tendencia FY22→FY23→FY24: ${c.roic22}% → ${c.roic23}% → ${c.roic}%`,
+    feedbackWrong:   `ROIC FY2023 = $${fmt(c.nopat23)}M / $${fmt(c.ci23)}M = ${c.roic23}%`,
+    tryAgain: `Fórmula: NOPAT / CI × 100`
+  });
+}
+
+function stepVbmEvaAcum(c, sn, badge) {
+  return baseStep(sn, badge,
+    'EVA Acumulado FY2022–FY2024',
+    'Sumá el EVA de los tres años para calcular cuánto valor total creó Costco en el período.',
+    'EVA acum. = EVA₂₂ + EVA₂₃ + EVA₂₄',
+    `EVA FY2022 = $${fmt(c.eva22)}M (dado); EVA FY2023 = $${fmt(c.eva23)}M (dado); EVA FY2024 = calculado en paso anterior`,
+    'EVA acumulado',
+    'M USD',
+    'verifyVbmEvaAcum'
+  );
+}
+function verifyVbmEvaAcum() {
+  const c = state.currentCase;
+  genericVerify({
+    correct: c.evaAcum, tolerance: 100,
+    nbKey: 'vbm_evaAcum', nbVal: c.evaAcum,
+    feedbackCorrect: `✅ EVA acumulado = $${fmt(c.eva22)}M + $${fmt(c.eva23)}M + $${fmt(c.eva)}M = $${fmt(c.evaAcum)}M en 3 años. Creación de valor consistente.`,
+    feedbackWrong:   `EVA acum. = $${fmt(c.eva22)}M + $${fmt(c.eva23)}M + $${fmt(c.eva)}M = $${fmt(c.evaAcum)}M`,
+    tryAgain: `Sumá los EVA de los tres años`
+  });
+}
+
+function stepVbmRoicMarginal(c, sn, badge) {
+  return baseStep(sn, badge,
+    'ROIC Marginal FY2023→FY2024',
+    'El ROIC marginal mide la rentabilidad del capital <em>incremental</em>. Calculá cuánto NOPAT adicional generó cada peso adicional de CI invertido entre FY2023 y FY2024.',
+    'ROIC marginal = ΔNOPAT / ΔCI × 100',
+    `NOPAT FY2024 = $${fmt(c.nopat)}M; NOPAT FY2023 = $${fmt(c.nopat23)}M<br>CI FY2024 = $${fmt(c.ci)}M; CI FY2023 = $${fmt(c.ci23)}M`,
+    'ROIC marginal',
+    '%',
+    'verifyVbmRoicMarginal'
+  );
+}
+function verifyVbmRoicMarginal() {
+  const c = state.currentCase;
+  genericVerify({
+    correct: c.roicMarginal, tolerance: 1,
+    nbKey: 'vbm_roicMarginal', nbVal: c.roicMarginal,
+    feedbackCorrect: `✅ ROIC marginal = ($${fmt(c.nopat)} − $${fmt(c.nopat23)}M) / ($${fmt(c.ci)} − $${fmt(c.ci23)}M) = $${fmt(c.deltaNopat)}M / $${fmt(c.invNeta)}M = ${c.roicMarginal}%. Mayor que el WACC → el crecimiento crea valor.`,
+    feedbackWrong:   `ROIC marg. = ΔNOPAT/ΔCI = $${fmt(c.deltaNopat)}M / $${fmt(c.invNeta)}M = ${c.roicMarginal}%`,
+    tryAgain: `ΔNOPAT = NOPAT₂₄ − NOPAT₂₃; ΔCI = CI₂₄ − CI₂₃`
+  });
+}
+
+function stepVbmEvaMarginal(c, sn, badge) {
+  return baseStep(sn, badge,
+    'EVA Marginal: ¿el último peso crea valor?',
+    'Calculá el EVA marginal: el valor creado por el capital incremental invertido en FY2024.',
+    'EVA marginal = (ROIC marginal − WACC) × ΔCI / 100',
+    `ROIC marginal = ${c.roicMarginal}%; WACC = ${c.wacc}%; ΔCI = $${fmt(c.invNeta)}M`,
+    'EVA marginal',
+    'M USD',
+    'verifyVbmEvaMarginal'
+  );
+}
+function verifyVbmEvaMarginal() {
+  const c = state.currentCase;
+  genericVerify({
+    correct: c.evaMarginal, tolerance: 30,
+    nbKey: 'vbm_evaMarginal', nbVal: c.evaMarginal,
+    feedbackCorrect: `✅ EVA marginal = (${c.roicMarginal}% − ${c.wacc}%) × $${fmt(c.invNeta)}M = $${fmt(c.evaMarginal)}M. Cada dollar nuevo de inversión crea valor.`,
+    feedbackWrong:   `EVA marg. = (${c.roicMarginal}% − ${c.wacc}%) × $${fmt(c.invNeta)}M = $${fmt(c.evaMarginal)}M`,
+    tryAgain: `(ROIC_marg − WACC) × ΔCI / 100`
+  });
+}
+
+function stepVbmVal0(c, sn, badge) {
+  return baseStep(sn, badge,
+    'Valuación por Perpetuidad — Sin Crecimiento',
+    'Usando el modelo EVA, el valor de una empresa es igual al Capital Invertido más el valor presente de los EVA futuros. Calculá V₀ asumiendo que el EVA de FY2024 se mantiene como perpetuidad (sin crecimiento).',
+    'V₀ = CI + EVA / WACC',
+    `CI FY2024 = $${fmt(c.ci)}M; EVA FY2024 = $${fmt(c.eva)}M; WACC = ${c.wacc}%`,
+    'V₀ (sin crecimiento)',
+    'M USD',
+    'verifyVbmVal0'
+  );
+}
+function verifyVbmVal0() {
+  const c = state.currentCase;
+  genericVerify({
+    correct: c.valuation0, tolerance: 500,
+    nbKey: 'vbm_val0', nbVal: c.valuation0,
+    feedbackCorrect: `✅ V₀ = $${fmt(c.ci)}M + $${fmt(c.eva)}M / ${c.wacc}% = $${fmt(c.valuation0)}M. El TEV de mercado es $${fmt(c.marketTEV)}M → el mercado premia el crecimiento.`,
+    feedbackWrong:   `V₀ = $${fmt(c.ci)}M + $${fmt(c.eva)}M / 0.${c.wacc} = $${fmt(c.valuation0)}M`,
+    tryAgain: `V₀ = CI + EVA/WACC`
+  });
+}
+
+function stepVbmValG(c, sn, badge) {
+  return baseStep(sn, badge,
+    'Valuación por Perpetuidad — Con Crecimiento (g = 3%)',
+    'Recalculá el valor asumiendo que el EVA crece al 3% anual para siempre (perpetuidad con crecimiento de Gordon).',
+    'Vg = CI + EVA / (WACC − g)',
+    `CI = $${fmt(c.ci)}M; EVA = $${fmt(c.eva)}M; WACC = ${c.wacc}%; g = 3%`,
+    'Vg (g = 3%)',
+    'M USD',
+    'verifyVbmValG'
+  );
+}
+function verifyVbmValG() {
+  const c = state.currentCase;
+  genericVerify({
+    correct: c.valuationG, tolerance: 1000,
+    nbKey: 'vbm_valG', nbVal: c.valuationG,
+    feedbackCorrect: `✅ Vg = $${fmt(c.ci)}M + $${fmt(c.eva)}M / (${c.wacc}% − 3%) = $${fmt(c.valuationG)}M. El TEV de mercado ($${fmt(c.marketTEV)}M) sigue siendo mayor → el mercado descuenta crecimiento aún más alto.`,
+    feedbackWrong:   `Vg = $${fmt(c.ci)}M + $${fmt(c.eva)}M / (0.${c.wacc} − 0.03) = $${fmt(c.valuationG)}M`,
+    tryAgain: `Vg = CI + EVA/(WACC − g); WACC − g = ${c.wacc}% − 3% = ${c.wacc-3}%`
+  });
+}
+
+function stepVbmImpliedG(c, sn, badge) {
+  return baseStep(sn, badge,
+    'Tasa de Crecimiento Implícita del Mercado',
+    'El TEV de mercado de Costco es $412,000M. Despejá g de la fórmula de valuación para encontrar qué tasa de crecimiento descuenta el mercado.',
+    'TEV = CI + EVA/(WACC − g)  →  g = WACC − EVA/(TEV − CI)',
+    `TEV = $${fmt(c.marketTEV)}M; CI = $${fmt(c.ci)}M; EVA = $${fmt(c.eva)}M; WACC = ${c.wacc}%`,
+    'g implícita',
+    '%',
+    'verifyVbmImpliedG'
+  );
+}
+function verifyVbmImpliedG() {
+  const c = state.currentCase;
+  genericVerify({
+    correct: c.impliedG, tolerance: 0.3,
+    nbKey: 'vbm_impliedG', nbVal: c.impliedG,
+    feedbackCorrect: `✅ g = ${c.wacc}% − $${fmt(c.eva)}M / ($${fmt(c.marketTEV)}M − $${fmt(c.ci)}M) = ${c.impliedG}%. El mercado descuenta un crecimiento del EVA del ~${c.impliedG}% anual. ¿Es razonable?`,
+    feedbackWrong:   `g = WACC − EVA/(TEV − CI) = ${c.wacc}% − $${fmt(c.eva)}M/${fmt(c.marketTEV-c.ci)}M = ${c.impliedG}%`,
+    tryAgain: `Despejá g: g = WACC − EVA / (TEV − CI)`
+  });
+}
+
+function stepVbmSpecialDiv(c, sn, badge) {
+  return baseStep(sn, badge,
+    'Dividendo Especial por Acción',
+    'En FY2024 Costco pagó un dividendo especial de $6,655M. Calculá el valor por acción.',
+    'Dividendo/acc = Total dividendo / Shares outstanding',
+    `Dividendo total = $${fmt(c.specialDivTotal)}M; Acciones = ${fmt(c.shares)}M`,
+    'Dividendo especial por acción',
+    'USD/acc',
+    'verifyVbmSpecialDiv'
+  );
+}
+function verifyVbmSpecialDiv() {
+  const c = state.currentCase;
+  genericVerify({
+    correct: c.specialDivPS, tolerance: 0.5,
+    nbKey: 'vbm_specialDiv', nbVal: c.specialDivPS,
+    feedbackCorrect: `✅ $${fmt(c.specialDivTotal)}M / ${fmt(c.shares)}M acciones = $${c.specialDivPS}/acción. Señal de confianza: la empresa retorna capital porque el mercado ya paga una g implícita muy alta.`,
+    feedbackWrong:   `$${fmt(c.specialDivTotal)}M / ${fmt(c.shares)}M = $${c.specialDivPS}/acc`,
+    tryAgain: `Dividendo / Shares outstanding`
+  });
+}
+
 // Returns the MC definition object for a given step id
 function getMCDef(sid, c) {
   const all = getAllMCDefs(c);
@@ -2229,7 +2546,7 @@ function getAllMCDefs(c) {
     // ── COSTCO (id=2) ─────────────────────────────────
     mc_costco_paradoja: {
       title: '🔍 La Paradoja de Costco',
-      task: `Costco tiene un margen NOPAT de solo ${c.nopatMargin}% — el más bajo de los tres casos — pero un ROIC del ${c.roic}%. ¿Cómo es posible?`,
+      task: `Costco tiene un margen NOPAT de solo ${c.nopatMargin}%  pero un ROIC del ${c.roic}%. ¿Cómo es posible?`,
       concept: `Margen NOPAT = ${c.nopatMargin}% · Rotación = ${c.rotacion}x · CI = $${fmt(c.ci)}M · NOF = $${fmt(c.nof)}M`,
       correctIdx: 2,
       feedbackCorrect: `La identidad DuPont: ROIC = ${c.nopatMargin}% × ${c.rotacion}x = ${roic}%. La rotación altísima compensa el margen mínimo.`,
@@ -2460,6 +2777,45 @@ function getAllMCDefs(c) {
         '✅ Total Assets = $68,000M incluye $28,300M de depósitos. CI = $4,300M los excluye. Ratio = 68,000 / 4,300 ≈ 16x, similar a la diferencia ROIC/ROA = 28% / 2.6% ≈ 11x.'
       ]
     },
+    // ── VBM / Costco (id:6) ──────────────────────────────────
+    mc_vbm_memModel: {
+      title: '🏷️ El Modelo de Membresía como Ventaja Competitiva',
+      task: `Las membresías de Costco aportaron $${c.membershipFees||2501}M en FY2024. ¿Por qué este ingreso es estratégicamente diferente al revenue por ventas?`,
+      concept: `Revenue total: $254,453M · Membresías: $2,501M (≈1% del revenue) · NOPAT total: $7,010M · NOPAT membresías: ~$1,890M (≈27%) · Margen neto de ventas de mercancía: ≈0.1%`,
+      correctIdx: 2,
+      feedbackCorrect: 'Las membresías son una línea de ingreso casi pura NOPAT: costo marginal ≈ 0, cobradas por adelantado (mejoran NOF), y con tasa de renovación >90%. Permiten vender mercancía casi al costo para atraer volumen. Es el "flywheel" del modelo.',
+      options: [
+        'A) Porque las membresías crecen más rápido que las ventas de mercancía',
+        'B) Porque son ingresos recurrentes que reducen la volatilidad estacional del negocio',
+        'C) Porque tienen costo marginal cercano a cero, se cobran adelantadas (mejoran NOF) y cubren gran parte del NOPAT, permitiendo vender mercancía casi al costo',
+        'D) Porque diversifican el modelo de negocio hacia servicios financieros'
+      ],
+      explanations: [
+        '❌ El crecimiento relativo no es lo clave; lo importante es el margen y el impacto en NOF.',
+        '❌ La recurrencia ayuda, pero no explica por qué son estratégicamente distintas al revenue de mercancía.',
+        '✅ Exacto. Con margen ≈100% sobre membresías y cobro adelantado, Costco puede vender a márgenes mínimos en mercancía y aun así generar ROIC >25%. Es la lógica del "loss leader" amplificada.',
+        '❌ Las membresías son de acceso al warehouse, no un servicio financiero.'
+      ]
+    },
+    mc_vbm_decision: {
+      title: '🎯 ¿Vale la Pena Pagar el Precio de Mercado por Costco?',
+      task: `El TEV de mercado es $412,000M. Usando el análisis VBM completado (ROIC ${c.roic||25}%, g implícita ${c.impliedG||7.8}%, EVA acum. $${fmt(c.evaAcum||12157)}M), ¿cuál es la evaluación más rigurosa?`,
+      concept: `V₀ (sin crec.) = $77,778M · Vg(3%) = $102,667M · TEV mercado = $412,000M · g implícita = ${c.impliedG||7.8}% · ROIC FY22-24: 23.9%→24.2%→25.0% · WACC = ${c.wacc||9}%`,
+      correctIdx: 1,
+      feedbackCorrect: `El mercado descuenta una g implícita del ${c.impliedG||7.8}% perpetua, que es ambiciosa pero no irracional para Costco dado su expansión internacional (29 nuevas tiendas en FY2024) y el modelo de membresías. El ROIC marginal (35.5%) > WACC (9%) justifica el crecimiento. La inversión es cara en términos absolutos pero tiene fundamentos VBM sólidos.`,
+      options: [
+        'A) El TEV de $412,000M es imposible de justificar: ninguna empresa puede crecer al 7.8% para siempre',
+        'B) El precio es exigente pero razonable: el ROIC marginal (35.5%) >> WACC (9%), el modelo de membresías es un "moat" duradero, y la expansión internacional justifica una g implícita elevada por varios años',
+        'C) Conviene comprar porque el modelo de membresías garantiza flujos predecibles y el dividendo especial demuestra solidez financiera',
+        'D) El precio es irracional porque la g implícita (7.8%) supera el WACC (9%), lo que matemáticamente hace la valuación indefinida'
+      ],
+      explanations: [
+        '❌ La g implícita es para el EVA (no el revenue), y solo necesita sostenerse mientras el ROIC > WACC — no en perpetuidad estricta.',
+        '✅ Correcto. El análisis VBM muestra que el negocio crea valor de forma consistente y el crecimiento marginal destruye valor positivo (ROIC marg. 35.5%). La g implícita (7.8%) es alta pero no irracional en el horizonte de expansión internacional. El inversor paga un "premium" por la calidad del modelo.',
+        '❌ Un análisis correcto no recomienda comprar sin comparar precio vs. valor. Los flujos predecibles son una ventaja pero no justifican automáticamente el precio.',
+        '❌ La g implícita (7.8%) < WACC (9%), por lo que el denominador (WACC − g) = 1.2% > 0. No hay problema matemático.'
+      ]
+    },
     mc_nu_expansion: {
       title: '🔄 Banco Digital vs. Costco — Dos NOF Negativos Distintos',
       task: 'Banco Digital y Costco tienen NOF muy negativos, pero por razones distintas. ¿Cuál es la diferencia clave?',
@@ -2509,8 +2865,18 @@ function buildStep(sid, c) {
     case 'dpo':          return stepDpo(c, sn, badge);
     case 'ccc':          return stepCcc(c, sn, badge);
     case 'ffl':          return stepFfl(c, sn, badge);
-    case 'lati_classify': return stepLatiClassify(c, sn, badge);
-    case 'nu_classify':   return stepNuClassify(c, sn, badge);
+    case 'lati_classify':       return stepLatiClassify(c, sn, badge);
+    case 'nu_classify':         return stepNuClassify(c, sn, badge);
+    case 'vbm_memNopat':        return stepVbmMemNopat(c, sn, badge);
+    case 'vbm_roic22':          return stepVbmRoic22(c, sn, badge);
+    case 'vbm_roic23':          return stepVbmRoic23(c, sn, badge);
+    case 'vbm_evaAcum':         return stepVbmEvaAcum(c, sn, badge);
+    case 'vbm_roicMarginal':    return stepVbmRoicMarginal(c, sn, badge);
+    case 'vbm_evaMarginal':     return stepVbmEvaMarginal(c, sn, badge);
+    case 'vbm_val0':            return stepVbmVal0(c, sn, badge);
+    case 'vbm_valG':            return stepVbmValG(c, sn, badge);
+    case 'vbm_impliedG':        return stepVbmImpliedG(c, sn, badge);
+    case 'vbm_specialDiv':      return stepVbmSpecialDiv(c, sn, badge);
     // MC steps — multiple choice
     default: {
       if (sid.startsWith('mc_')) {
@@ -2743,22 +3109,22 @@ function verifyMargenNopat() {
 // ═══════════════════════════════════════════════════════════
 function stepNof(c, sn, badge) {
   const taskExtra = c.id === 2
-    ? ` AO = CxC ($${fmt(c.ar)}M) + Inv ($${fmt(c.inventory)}M) = $${fmt(c.totalAO)}M. PO = CxP ($${fmt(c.ap)}M) + Gastos devengados ($${fmt(c.accrued)}M) + Cuotas membresía ($${fmt(c.membershipFees)}M) = $${fmt(c.totalPO)}M. ¡Las cuotas de membresía son la clave!`
+    ? ` Sumá los AO corrientes (CxC + Inventario) y los PO corrientes (CxP + Gastos devengados + Cuotas membresía diferidas). ¡Las cuotas de membresía son la clave!`
     : c.id === 3
-    ? ` Ya clasificaste las cuentas: AO corriente = CxC ($${fmt(c.ar)}M). PO corriente = CxP vendedores ($${fmt(c.ap)}M) + Devoluciones/cuotas diferidas ($${fmt(c.accrued)}M) = $${fmt(c.totalPO)}M. Ahora calculá la diferencia.`
+    ? ` Ya clasificaste las cuentas. Identificá los AO y PO corrientes en el Data Room y calculá la diferencia.`
     : c.id === 1
-    ? ` Los AO corrientes son CxC + Inv + Anticipo = $${fmt(c.totalAO)}M. Los PO son CxP + Nómina a pagar + Ing. diferidos = $${fmt(c.totalPO)}M.`
+    ? ` Los AO corrientes y PO corrientes están en el Data Room. Calculá los totales y restalos.`
     : '';
   const conceptNOF = c.id === 2
-    ? `<strong>NOF negativo</strong> en Costco: los proveedores ($${fmt(c.ap)}M) y miembros (cuotas diferidas $${fmt(c.membershipFees)}M) financian el inventario ($${fmt(c.inventory)}M). Este "subsidio" libera capital enorme y explica por qué Costco tiene ROIC tan alto con márgenes tan bajos.`
+    ? `<strong>NOF negativo</strong> en Costco: los proveedores y los miembros (cuotas diferidas cobradas por adelantado) financian el inventario. Este "subsidio" libera capital enorme y explica por qué Costco tiene ROIC tan alto con márgenes tan bajos.`
     : `<strong>NOF positivo</strong> → la empresa financia su ciclo con capital propio/deuda. <strong>NOF negativo</strong> → los proveedores financian el negocio (ventaja competitiva de capital de trabajo).`;
   return baseStep(sn, badge,
     'NOF — Necesidades Operativas de Fondos',
-    `Las NOF son el capital "atrapado" en el ciclo operativo.${taskExtra} Total AO corriente = $${fmt(c.totalAO)}M · Total PO corriente = $${fmt(c.totalPO)}M. Puede ser negativo.`,
-    `NOF = Total AO corriente − Total PO corriente\n= ${fmt(c.totalAO)} − ${fmt(c.totalPO)} = $${fmt(c.nof)}M`,
-    `Restá el total de pasivos operativos del total de activos operativos: ${fmt(c.totalAO)} − ${fmt(c.totalPO)}.`,
+    `Las NOF son el capital "atrapado" en el ciclo operativo.${taskExtra} El resultado puede ser negativo.`,
+    `NOF = Total Activos Operativos corrientes − Total Pasivos Operativos corrientes`,
+    `Primero calculá ΣAO (CxC + Inventario + otros AO) y ΣPO (CxP + Devengados + otros PO), luego restá.`,
     'NOF ($M, puede ser negativo)', '$M', 'verifyNof',
-    infoBoxes([['Total AO', `$${fmt(c.totalAO)}M`], ['Total PO', `$${fmt(c.totalPO)}M`]]),
+    '',
     conceptNOF
   );
 }
@@ -2781,16 +3147,16 @@ function stepCi(c, sn, badge) {
   const nof = state.notebook.nof !== undefined ? state.notebook.nof : c.nof;
   let task, formula, hint, boxes, concept;
   if (c.otrosNeto !== undefined) {
-    task    = `CI = NOF + AFN (PP&E neto) + AIN (intangibles) + Otros activos op. netos. NOF = $${fmt(nof)}M · AFN = $${fmt(c.afn)}M · AIN = $${fmt(c.ain)}M · Otros = $${fmt(c.otrosNeto)}M.`;
-    formula = `CI = NOF + AFN + AIN + Otros\n= (${fmt(nof)}) + ${fmt(c.afn)} + ${fmt(c.ain)} + ${fmt(c.otrosNeto)} = $${fmt(c.ci)}M`;
-    hint    = `NOF + AFN + AIN + Otros: ${fmt(nof)} + ${fmt(c.afn)} + ${fmt(c.ain)} + ${fmt(c.otrosNeto)}.`;
-    boxes   = infoBoxes([['NOF',`$${fmt(nof)}M`],['AFN',`$${fmt(c.afn)}M`],['AIN',`$${fmt(c.ain)}M`],['Otros',`$${fmt(c.otrosNeto)}M`]]);
-    concept = `Costco tiene CI = $${fmt(c.ci)}M pero Total Assets = $${fmt(c.totalAssets)}M. La diferencia es enorme: Caja+Inversiones ($${fmt(c.actFin)}M) se excluyen porque son activos financieros, y el <strong>NOF negativo</strong> reduce el CI. Esto amplifica el ROIC vs ROA.`;
+    task    = `Calculá el Capital Invertido sumando NOF (ya calculado), PP&E neto (AFN), intangibles (AIN) y otros activos operativos netos. Los valores están en el Data Room.`;
+    formula = `CI = NOF + AFN (PP&E neto) + AIN (intangibles) + Otros activos op. netos`;
+    hint    = `Usá el NOF que calculaste antes y buscá AFN, AIN y Otros en la sección de Activos No Corrientes del Data Room.`;
+    boxes   = infoBoxes([['NOF (calculado)', `$${fmt(nof)}M`]]);
+    concept = `Costco tiene CI mucho menor que Total Assets porque: 1) la Caja ($${fmt(c.actFin)}M) se excluye (activo financiero) y 2) el NOF <strong>negativo</strong> reduce el denominador. Esto amplifica el ROIC vs ROA.`;
   } else {
-    task    = `El CI suma todo el capital que la empresa necesita para operar. NOF = $${fmt(nof)}M · AFN = $${fmt(c.afn)}M · AIN = $${fmt(c.ain)}M.`;
-    formula = `CI = NOF + AFN + AIN\n= ${fmt(nof)} + ${fmt(c.afn)} + ${fmt(c.ain)} = $${fmt(c.ci)}M`;
-    hint    = `Sumar NOF + AFN + AIN: ${fmt(nof)} + ${fmt(c.afn)} + ${fmt(c.ain)}.`;
-    boxes   = infoBoxes([['NOF',`$${fmt(nof)}M`],['AFN',`$${fmt(c.afn)}M`],['AIN',`$${fmt(c.ain)}M`]]);
+    task    = `El CI suma todo el capital que la empresa necesita para operar. Buscá NOF (calculado), PP&E neto (AFN) e intangibles (AIN) en el Data Room.`;
+    formula = `CI = NOF + AFN (PP&E neto) + AIN (intangibles)`;
+    hint    = `Usá el NOF ya calculado y buscá AFN e AIN en la sección de Activos No Corrientes del Data Room.`;
+    boxes   = infoBoxes([['NOF (calculado)', `$${fmt(nof)}M`]]);
     concept = c.id === 1
       ? `El <strong>Capital Invertido</strong> excluye activos/pasivos financieros. Por eso Caja ($${fmt(c.caja)}M) e Inversiones Fin. ($${fmt(c.invFinLP)}M) no entran.`
       : `El <strong>Capital Invertido</strong> es el denominador del ROIC y la base del EVA. Solo incluye lo que genera resultado operativo.`;
@@ -3469,6 +3835,37 @@ function showResults() {
       ? `EVA = +$${fmt(c.eva)}M · ROIC ${c.roic}% > WACC ${c.wacc}% · Spread = +${c.spread}%`
       : `EVA = $${fmt(c.eva)}M · ROIC ${c.roic}% < WACC ${c.wacc}% · Spread = ${c.spread}%`;
 
+  // ── Costco Integrador: custom results table ──────────────────────────
+  if (c.id === 2) {
+    const vbmRows = [
+      ['Gross Profit FY2024',   `$${fmt(c.grossProfit)}M`,    `Margen Bruto = ${c.grossMargin}%`],
+      ['EBIT FY2024',           `$${fmt(c.ebit)}M`,           `Margen EBIT = ${c.ebitMargin}%`],
+      ['NOPAT FY2024',          `$${fmt(c.nopat)}M`,          `EBIT × (1 − ${c.tax}%) · Margen ${c.nopatMargin}%`],
+      ['NOPAT membresías',      `$${fmt(c.memNopat)}M`,       `${c.memNopotPct}% del NOPAT total — margen ≈100%`],
+      ['NOF FY2024',            `$${fmt(c.nof)}M`,            `NOF negativo: proveedores + cuotas adelantadas financian el ciclo`],
+      ['CI FY2024',             `$${fmt(c.ci)}M`,             `NOF + AFN + AIN`],
+      ['ROIC FY2022',           `${c.roic22}%`,               `NOPAT $${fmt(c.nopat22)}M / CI $${fmt(c.ci22)}M`],
+      ['ROIC FY2023',           `${c.roic23}%`,               `NOPAT $${fmt(c.nopat23)}M / CI $${fmt(c.ci23)}M`],
+      ['ROIC FY2024',           `${c.roic}%`,                 `Tendencia: ${c.roic22}% → ${c.roic23}% → ${c.roic}% ✅`],
+      ['WACC',                  `${c.wacc}%`,                 `Costo de capital (dado)`],
+      ['Spread',                `+${c.spread}%`,              `ROIC − WACC = ${c.roic}% − ${c.wacc}%`],
+      ['EVA FY2024',            `+$${fmt(c.eva)}M`,           `Spread × CI / 100`],
+      ['EVA Acumulado 3 años',  `$${fmt(c.evaAcum)}M`,        `FY2022+FY2023+FY2024: $${fmt(c.eva22)}M+$${fmt(c.eva23)}M+$${fmt(c.eva)}M`],
+      ['ROIC Marginal',         `${c.roicMarginal}%`,         `ΔNOPAT/ΔCI = $${fmt(c.deltaNopat)}M/$${fmt(c.invNeta)}M — mayor que WACC ✅`],
+      ['EVA Marginal',          `$${fmt(c.evaMarginal)}M`,    `(ROIC_marg − WACC) × ΔCI = (${c.roicMarginal}%−${c.wacc}%) × $${fmt(c.invNeta)}M`],
+      ['FFL',                   `$${fmt(c.ffl)}M`,            `NOPAT − ΔCI = $${fmt(c.nopat)}M − $${fmt(c.invNeta)}M`],
+      ['V₀ (sin crecimiento)',  `$${fmt(c.valuation0)}M`,     `CI + EVA/WACC`],
+      ['Vg (g = 3%)',           `$${fmt(c.valuationG)}M`,     `CI + EVA/(WACC−3%)`],
+      ['TEV mercado',           `$${fmt(c.marketTEV)}M`,      `Market cap ajustada (referencia)`],
+      ['g implícita mercado',   `${c.impliedG}%`,             `WACC − EVA/(TEV−CI) — el mercado descuenta crecimiento alto`],
+      ['Dividendo esp./acción', `$${c.specialDivPS}`,         `$${fmt(c.specialDivTotal)}M / ${fmt(c.shares)}M acciones`],
+    ];
+    document.getElementById('resultsBody').innerHTML = vbmRows.map(([n,v,d]) =>
+      `<tr><td class="metric-name">${n}</td><td class="metric-val">${v}</td><td class="metric-clase">${d}</td></tr>`
+    ).join('');
+    // (fall through to score/rank code)
+  } else {
+
   // Tabla de resultados
   const baseRows = [
     ['Gross Profit',    `$${fmt(c.grossProfit)}M`,  `Margen Bruto = ${c.grossMargin}%`],
@@ -3497,6 +3894,7 @@ function showResults() {
       <td class="metric-clase">${d}</td>
     </tr>`
   ).join('');
+  } // end else (non-VBM cases)
 
   // Score y rank
   const maxScore = state.steps.length * 100 * state.difficulty.multiplier;
