@@ -105,8 +105,8 @@
     {id:'ingdif', label:'Ingresos diferidos (adelantos clientes)',val:'$1,000M',  correct:'PO', tip:'Obligación operativa de entregar bienes → PO.'},
     {id:'ppe',    label:'PP&E neto (planta y equipo)',            val:'$12,000M', correct:'AF', tip:'Activos fijos productivos → AF (Activo Fijo Neto).'},
     {id:'intang', label:'Intangibles netos (patentes)',           val:'$2,800M',  correct:'AF', tip:'Activos intangibles → AF (Activo Intangible Neto).'},
-    {id:'caja',   label:'Caja y equivalentes',                   val:'$2,000M',  correct:'PF', tip:'Caja excedente no operativa → Activo Financiero (PF positivo).'},
-    {id:'invfin', label:'Inversiones financieras LP',            val:'$800M',    correct:'PF', tip:'Inversión de portafolio → Activo Financiero.'},
+    {id:'caja',   label:'Caja y equivalentes',                   val:'$2,000M',  correct:'AF', tip:'Caja excedente no operativa → Activo Financiero (AF). No es del ciclo operativo ni deuda.'},
+    {id:'invfin', label:'Inversiones financieras LP',            val:'$800M',    correct:'AF', tip:'Inversión de portafolio → Activo Financiero (AF). No genera valor operativo.'},
     {id:'dcp',    label:'Deuda bancaria corto plazo',            val:'$500M',    correct:'PF', tip:'Deuda con bancos → Pasivo Financiero.'},
     {id:'dlp',    label:'Deuda bancaria largo plazo',            val:'$2,000M',  correct:'PF', tip:'Bono / préstamo LP → Pasivo Financiero.'},
     {id:'lease',  label:'Pasivo por arrendamiento (IFRS 16)',    val:'$1,000M',  correct:'PF', tip:'Lease capitalizado → estructura de capital → Pasivo Financiero.'}
@@ -1143,8 +1143,8 @@ function stepNuClassify(c, sn, badge) {
     {id:'creditos',  label:'Creditos a clientes (tarjetas + prestamos)',   val:'$17,600M', correct:'AO', tip:'El dinero que presta el banco genera ingresos -> AO principal.'},
     {id:'depositos', label:'Depositos de clientes (cuentas digitales)',      val:'$28,300M', correct:'PO', tip:'Los clientes depositan -> el banco les debe ese dinero. Surge del negocio bancario -> PO. Es el motor del NOF negativo.'},
     {id:'caja',      label:'Caja + inversiones financieras del holding',     val:'$9,200M',  correct:'AF', tip:'Excedente de capital, no del ciclo operativo de creditos -> AF.'},
-    {id:'ppe',       label:'PP&E neto (oficinas minimas, sin sucursales)',   val:'$30M',     correct:'AO', tip:'Activo fijo operativo aunque minimo. El AFN mas bajo de todos los casos.'},
-    {id:'intang',    label:'Plataforma tecnologica + goodwill',              val:'$800M',    correct:'AO', tip:'El activo mas valioso: plataforma tech + adquisiciones -> AIN operativo.'},
+    {id:'ppe',       label:'PP&E neto (oficinas minimas, sin sucursales)',   val:'$30M',     correct:'AF', tip:'Activo fijo neto (AFN) → no es del ciclo operativo corriente → AF.'},
+    {id:'intang',    label:'Plataforma tecnologica + goodwill',              val:'$800M',    correct:'AF', tip:'Activo intangible neto (AIN): plataforma tech + goodwill → AF.'},
     {id:'deuda',     label:'Deuda financiera emitida (bonos)',               val:'$800M',    correct:'PF', tip:'Financiamiento elegido por la empresa, no del ciclo operativo -> PF.'}
   ];
   state._nuClsItems = items;
