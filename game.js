@@ -105,21 +105,21 @@
     {id:'ingdif', label:'Ingresos diferidos (adelantos clientes)',val:'$1,000M',  correct:'NOF',          tip:'Obligación operativa de entregar bienes → NOF.'},
     {id:'ppe',    label:'PP&E neto (planta y equipo)',            val:'$12,000M', correct:'AFN',          tip:'Activos fijos tangibles → AFN.'},
     {id:'intang', label:'Intangibles netos (patentes)',           val:'$2,800M',  correct:'AIN',          tip:'Activos intangibles → AIN.'},
-    {id:'caja',   label:'Caja y equivalentes',                   val:'$2,000M',  correct:'A.Financiero', tip:'Caja excedente no operativa → A.Financiero. No entra en el Capital Invertido operativo.'},
-    {id:'invfin', label:'Inversiones financieras LP',            val:'$800M',    correct:'A.Financiero', tip:'Inversión de portafolio → A.Financiero.'},
-    {id:'dcp',    label:'Deuda bancaria corto plazo',            val:'$500M',    correct:'P.Financiero', tip:'Deuda con bancos → P.Financiero.'},
-    {id:'dlp',    label:'Deuda bancaria largo plazo',            val:'$2,000M',  correct:'P.Financiero', tip:'Bono / préstamo LP → P.Financiero.'},
-    {id:'lease',  label:'Pasivo por arrendamiento (IFRS 16)',    val:'$1,000M',  correct:'P.Financiero', tip:'Lease capitalizado → estructura de capital → P.Financiero.'}
+    {id:'caja',   label:'Caja y equivalentes',                   val:'$2,000M',  correct:'Deuda.Fin', tip:'Caja y equivalentes reducen la Deuda Financiera Neta → Deuda Fin. Neta.'},
+    {id:'invfin', label:'Inversiones financieras LP',            val:'$800M',    correct:'Deuda.Fin', tip:'Inversiones financieras reducen la Deuda Financiera Neta → Deuda Fin. Neta.'},
+    {id:'dcp',    label:'Deuda bancaria corto plazo',            val:'$500M',    correct:'Deuda.Fin', tip:'Deuda bancaria forma parte de la Deuda Financiera Neta → Deuda Fin. Neta.'},
+    {id:'dlp',    label:'Deuda bancaria largo plazo',            val:'$2,000M',  correct:'Deuda.Fin', tip:'Bono / préstamo LP → Deuda Financiera Neta.'},
+    {id:'lease',  label:'Pasivo por arrendamiento (IFRS 16)',    val:'$1,000M',  correct:'Deuda.Fin', tip:'Lease capitalizado (IFRS 16) → Deuda Financiera Neta.'}
   ],
 
   // ── Clasificación NOF / AFN / AIN (classifyNofAfnAin step)
   classifyNofItems:[
-    {id:'cxc',    label:'Cuentas por Cobrar',       val:'$3,000M',  correct:'NOF', tip:'AO corriente → entra en el cálculo del NOF.'},
-    {id:'inv',    label:'Inventarios',              val:'$2,500M',  correct:'NOF', tip:'AO corriente → entra en el cálculo del NOF.'},
-    {id:'ant',    label:'Anticipos a proveedores',  val:'$500M',    correct:'NOF', tip:'AO corriente → entra en el cálculo del NOF.'},
-    {id:'cxp',    label:'Cuentas por Pagar',        val:'$3,000M',  correct:'NOF', tip:'PO corriente → se resta en el NOF.'},
-    {id:'nom',    label:'Remuneraciones a pagar',   val:'$800M',    correct:'NOF', tip:'PO corriente → se resta en el NOF.'},
-    {id:'ingdif', label:'Ingresos diferidos',       val:'$1,000M',  correct:'NOF', tip:'PO corriente → se resta en el NOF.'},
+    {id:'cxc',    label:'Cuentas por Cobrar',       val:'$3,000M',  correct:'NOF', tip:'Activo operativo corriente → entra en el cálculo del NOF.'},
+    {id:'inv',    label:'Inventarios',              val:'$2,500M',  correct:'NOF', tip:'Activo operativo corriente → entra en el cálculo del NOF.'},
+    {id:'ant',    label:'Anticipos a proveedores',  val:'$500M',    correct:'NOF', tip:'Activo operativo corriente → entra en el cálculo del NOF.'},
+    {id:'cxp',    label:'Cuentas por Pagar',        val:'$3,000M',  correct:'NOF', tip:'Pasivo operativo corriente → se resta en el NOF.'},
+    {id:'nom',    label:'Remuneraciones a pagar',   val:'$800M',    correct:'NOF', tip:'Pasivo operativo corriente → se resta en el NOF.'},
+    {id:'ingdif', label:'Ingresos diferidos',       val:'$1,000M',  correct:'NOF', tip:'Pasivo operativo corriente → se resta en el NOF.'},
     {id:'ppe',    label:'PP&E neto',                val:'$12,000M', correct:'AFN', tip:'Activo fijo tangible → AFN.'},
     {id:'intang', label:'Intangibles netos',        val:'$2,800M',  correct:'AIN', tip:'Activo intangible → AIN.'}
   ]
@@ -403,8 +403,8 @@
     {id:'accrued',label:'Otros pasivos operativos accrued',        val:'$7,229M',  correct:'NOF',          tip:'Sueldos, impuestos y otros devengados → ciclo operativo → NOF.'},
     {id:'ppe',    label:'PP&E neto (almacenes + infraestructura)',  val:'$33,082M', correct:'AFN',          tip:'Activos fijos tangibles → AFN.'},
     {id:'intang', label:'Intangibles y otros activos LP netos',    val:'$865M',    correct:'AIN',          tip:'Activos intangibles → AIN.'},
-    {id:'caja',   label:'Caja + inversiones de corto plazo',       val:'$11,394M', correct:'A.Financiero', tip:'Caja excedente y equivalentes → A.Financiero. No entra en el Capital Invertido operativo.'},
-    {id:'deuda',  label:'Deuda financiera total (LP + CP)',         val:'$6,864M',  correct:'P.Financiero', tip:'Deuda bancaria y bonos → P.Financiero.'}
+    {id:'caja',   label:'Caja + inversiones de corto plazo',       val:'$11,394M', correct:'Deuda.Fin', tip:'Caja y equivalentes reducen la Deuda Financiera Neta → Deuda Fin. Neta.'},
+    {id:'deuda',  label:'Deuda financiera total (LP + CP)',         val:'$6,864M',  correct:'Deuda.Fin', tip:'Deuda bancaria y bonos → Deuda Financiera Neta.'}
   ]
 }
 
@@ -551,7 +551,7 @@ function getStepSequence(diffKey, caseId) {
   ];
   // Caso 2 — NortelFab: siempre 18 pasos (la dificultad afecta intentos/fórmulas, no la secuencia)
   if (caseId === 1) return [
-    'classifyAccounts', 'classifyNofAfnAin',
+    'classifyAccounts',
     'grossProfit','margenBruto',
     'ebit','margenEbit',
     'nopat','margenNopat',
@@ -874,8 +874,8 @@ function stepLatiClassify(c, sn, badge) {
      tip:'Obligación operativa de devolver o acreditar dinero → NOF corriente.'},
     {id:'datactr',label:'Data centers y logística propia (PP&E neto)',      val:'$2,800M', correct:'AFN',
      tip:'Activo fijo tangible → AFN.'},
-    {id:'deuda',  label:'Deuda financiera (bonos emitidos)',                val:'$2,800M', correct:'P.Financiero',
-     tip:'Decisión de financiamiento, no del ciclo operativo → P.Financiero.'}
+    {id:'deuda',  label:'Deuda financiera (bonos emitidos)',                val:'$2,800M', correct:'Deuda.Fin',
+     tip:'Decisión de financiamiento, no del ciclo operativo → Deuda Financiera Neta.'}
   ];
 
   const rows = items.map(it => `
@@ -885,9 +885,10 @@ function stepLatiClassify(c, sn, badge) {
         <span class="cls-amount">${it.val}</span>
       </div>
       <div class="cls-btns">
-        <button class="cls-cat-btn sel-NOF"  data-cat="NOF"          onclick="selectLatiCls('${it.id}','NOF')">NOF</button>
-        <button class="cls-cat-btn sel-AFN"  data-cat="AFN"          onclick="selectLatiCls('${it.id}','AFN')">AFN</button>
-        <button class="cls-cat-btn sel-PFin" data-cat="P.Financiero" onclick="selectLatiCls('${it.id}','P.Financiero')">P.Fin</button>
+        <button class="cls-cat-btn sel-NOF"    data-cat="NOF"        onclick="selectLatiCls('${it.id}','NOF')">NOF</button>
+        <button class="cls-cat-btn sel-AFN"    data-cat="AFN"        onclick="selectLatiCls('${it.id}','AFN')">AFN</button>
+        <button class="cls-cat-btn sel-DFin"   data-cat="Deuda.Fin"  onclick="selectLatiCls('${it.id}','Deuda.Fin')">Deu.Fin.N.</button>
+        <button class="cls-cat-btn sel-OtrosN" data-cat="Otros.Neto" onclick="selectLatiCls('${it.id}','Otros.Neto')">Otros netos</button>
       </div>
       <div class="cls-tip" id="lticlstip_${it.id}"></div>
     </div>`).join('');
@@ -899,7 +900,7 @@ function stepLatiClassify(c, sn, badge) {
       <div class="step-number">${sn}</div>
       <div class="step-badge">${badge}</div>
       <div class="step-title">¿Qué financia a quién?</div>
-      <div class="step-task">En un marketplace, la magia está en <strong>quién paga primero y quién cobra después</strong>. Clasificá estas 5 cuentas clave de LatiCommerce en AO (Activo Operativo), PO (Pasivo Operativo) o PF (Pasivo Financiero).</div>
+      <div class="step-task">En un marketplace, la magia está en <strong>quién paga primero y quién cobra después</strong>. Clasificá estas 5 cuentas clave de LatiCommerce en <strong>NOF</strong> (Nec. Operativas de Fondos), <strong>AFN</strong> (Activo Fijo Neto) o <strong>Deu.Fin.N.</strong> (Deuda Financiera y Equiv. Neta).</div>
     </div>
     <div class="concept-box">
       <strong>Clave del modelo marketplace:</strong> LatiCommerce cobra a los usuarios <em>antes</em> de pagarle a los vendedores. Eso crea pasivos operativos enormes → el NOF se vuelve negativo → los proveedores financian el negocio.
@@ -907,7 +908,8 @@ function stepLatiClassify(c, sn, badge) {
     <div class="cls-legend">
       <span class="cls-leg-item sel-NOF">NOF = Nec. Operativas de Fondos</span>
       <span class="cls-leg-item sel-AFN">AFN = Activo Fijo Neto</span>
-      <span class="cls-leg-item sel-PFin">P.Fin = Pasivo Financiero</span>
+      <span class="cls-leg-item sel-DFin">Deu.Fin.N. = Deuda Financiera y Equiv. Neta</span>
+      <span class="cls-leg-item sel-OtrosN">Otros netos = Def. Tax + Other LT/NC</span>
     </div>
     <div class="classify-container">${rows}</div>
     <div class="cls-progress" id="ltiClsProgress">0 / ${items.length} clasificadas</div>
@@ -916,7 +918,7 @@ function stepLatiClassify(c, sn, badge) {
       ${state.difficulty.hints ? '<button class="btn-hint" onclick="toggleHint()">💡 Pista</button>' : ''}
     </div>
     <div class="attempts-row" id="attemptsRow">${fmtDots()}</div>
-    <div class="hint-box" id="hintBox">Preguntate: ¿esta cuenta surge del ciclo cobrar-producir-pagar? → Operativa. ¿Es deuda bancaria o financiera? → PF. En el marketplace, la CxP con vendedores es enorme porque LatiCommerce los hace esperar.</div>
+    <div class="hint-box" id="hintBox">Preguntate: ¿esta cuenta surge del ciclo cobrar-producir-pagar? → NOF. ¿Es deuda financiera o bonos emitidos? → Deu.Fin.N. En el marketplace, la CxP con vendedores es enorme porque LatiCommerce los hace esperar.</div>
     <div class="feedback-box" id="feedbackBox"></div>
     <button class="btn-next" id="btnNext" onclick="nextStep()">Siguiente paso →</button>`;
 }
@@ -1142,21 +1144,22 @@ function stepNuClassify(c, sn, badge) {
   const items = [
     {id:'creditos',  label:'Creditos a clientes (tarjetas + prestamos)',   val:'$17,600M', correct:'NOF',          tip:'El dinero que presta el banco genera ingresos → NOF principal.'},
     {id:'depositos', label:'Depositos de clientes (cuentas digitales)',      val:'$28,300M', correct:'NOF',          tip:'Los clientes depositan → el banco les debe ese dinero. Surge del negocio bancario → NOF. Motor del NOF negativo.'},
-    {id:'caja',      label:'Caja + inversiones financieras del holding',     val:'$9,200M',  correct:'A.Financiero', tip:'Excedente de capital, no del ciclo operativo de creditos → A.Financiero.'},
+    {id:'caja',      label:'Caja + inversiones financieras del holding',     val:'$9,200M',  correct:'Deuda.Fin', tip:'Caja y equivalentes reducen la Deuda Financiera Neta → Deuda Fin. Neta.'},
     {id:'ppe',       label:'PP&E neto (oficinas minimas, sin sucursales)',   val:'$30M',     correct:'AFN',          tip:'Activo fijo tangible → AFN. El mas bajo de todos los casos.'},
     {id:'intang',    label:'Plataforma tecnologica + goodwill',              val:'$800M',    correct:'AIN',          tip:'Activo intangible: plataforma tech + goodwill → AIN.'},
-    {id:'deuda',     label:'Deuda financiera emitida (bonos)',               val:'$800M',    correct:'P.Financiero', tip:'Financiamiento elegido por la empresa, no del ciclo operativo → P.Financiero.'}
+    {id:'deuda',     label:'Deuda financiera emitida (bonos)',               val:'$800M',    correct:'Deuda.Fin', tip:'Financiamiento elegido por la empresa → Deuda Financiera Neta.'}
   ];
   state._nuClsItems = items;
   const rows = items.map(it =>
     '<div class="classify-row" id="nucls_' + it.id + '">' +
     '<div class="cls-info"><span class="cls-label">' + it.label + '</span><span class="cls-amount">' + it.val + '</span></div>' +
     '<div class="cls-btns">' +
-    '<button class="cls-cat-btn sel-NOF"  data-cat="NOF"          onclick="selectNuCls(\'' + it.id + '\',\'NOF\')">NOF</button>' +
-    '<button class="cls-cat-btn sel-AFN"  data-cat="AFN"          onclick="selectNuCls(\'' + it.id + '\',\'AFN\')">AFN</button>' +
-    '<button class="cls-cat-btn sel-AIN"  data-cat="AIN"          onclick="selectNuCls(\'' + it.id + '\',\'AIN\')">AIN</button>' +
-    '<button class="cls-cat-btn sel-AFin" data-cat="A.Financiero" onclick="selectNuCls(\'' + it.id + '\',\'A.Financiero\')">A.Fin</button>' +
-    '<button class="cls-cat-btn sel-PFin" data-cat="P.Financiero" onclick="selectNuCls(\'' + it.id + '\',\'P.Financiero\')">P.Fin</button>' +
+    '<button class="cls-cat-btn sel-NOF"   data-cat="NOF"        onclick="selectNuCls(\'' + it.id + '\',\'NOF\')">NOF</button>' +
+    '<button class="cls-cat-btn sel-AFN"   data-cat="AFN"        onclick="selectNuCls(\'' + it.id + '\',\'AFN\')">AFN</button>' +
+    '<button class="cls-cat-btn sel-AIN"   data-cat="AIN"        onclick="selectNuCls(\'' + it.id + '\',\'AIN\')">AIN</button>' +
+    '<button class="cls-cat-btn sel-DFin"   data-cat="Deuda.Fin"  onclick="selectNuCls(\'' + it.id + '\',\'Deuda.Fin\')">Deu.Fin.N.</button>' +
+    '<button class="cls-cat-btn sel-CProp"  data-cat="Cap.Propio" onclick="selectNuCls(\'' + it.id + '\',\'Cap.Propio\')">Cap.Propio</button>' +
+    '<button class="cls-cat-btn sel-OtrosN" data-cat="Otros.Neto" onclick="selectNuCls(\'' + it.id + '\',\'Otros.Neto\')">Otros netos</button>' +
     '</div><div class="cls-tip" id="nuclstip_' + it.id + '"></div></div>'
   ).join('');
 
@@ -1164,22 +1167,23 @@ function stepNuClassify(c, sn, badge) {
     '<div class="step-number">' + sn + '</div>' +
     '<div class="step-badge">' + badge + '</div>' +
     '<div class="step-title">Como funciona un banco digital?</div>' +
-    '<div class="step-task">Este banco no tiene sucursales, casi no tiene activos fisicos, pero tiene $68,000M en activos. Clasifica estas 6 cuentas clave en AO, PO, AF o PF.</div>' +
+    '<div class="step-task">Este banco no tiene sucursales, casi no tiene activos fisicos, pero tiene $68,000M en activos. Clasifica estas 6 cuentas clave en <strong>NOF</strong>, <strong>AFN</strong>, <strong>AIN</strong>, <strong>Deu.Fin.N.</strong> (Deuda Financiera y Equiv. Neta) o <strong>Cap.Propio</strong>.</div>' +
     '</div>' +
-    '<div class="concept-box"><strong>El modelo bancario digital:</strong> El banco toma depositos de clientes (PO barato) y los presta como creditos (AO que genera ingresos). Sin sucursales, el costo es minimo. Los depositos PO > creditos AO = NOF negativo enorme.</div>' +
+    '<div class="concept-box"><strong>El modelo bancario digital:</strong> El banco toma depositos de clientes (obligacion operativa → NOF) y los presta como creditos (activo operativo → NOF). Sin sucursales, el costo es minimo. Los depositos NOF > creditos NOF = NOF negativo enorme.</div>' +
     '<div class="cls-legend">' +
     '<span class="cls-leg-item sel-NOF">NOF = Nec. Operativas de Fondos</span>' +
     '<span class="cls-leg-item sel-AFN">AFN = Activo Fijo Neto</span>' +
     '<span class="cls-leg-item sel-AIN">AIN = Activo Intangible Neto</span>' +
-    '<span class="cls-leg-item sel-AFin">A.Fin = Activo Financiero</span>' +
-    '<span class="cls-leg-item sel-PFin">P.Fin = Pasivo Financiero</span></div>' +
+    '<span class="cls-leg-item sel-DFin">Deu.Fin.N. = Deuda Financiera y Equiv. Neta</span>' +
+    '<span class="cls-leg-item sel-CProp">Cap.Propio = Capital Propio / Patrimonio</span>' +
+    '<span class="cls-leg-item sel-OtrosN">Otros netos = Def. Tax + Other LT/NC</span></div>' +
     '<div class="classify-container">' + rows + '</div>' +
     '<div class="cls-progress" id="nuClsProgress">0 / ' + items.length + ' clasificadas</div>' +
     '<div class="answer-row" style="margin-top:4px"><button class="btn-verify" onclick="verifyNuClassify()">Verificar &rarr;</button>' +
     (state.difficulty.hints ? '<button class="btn-hint" onclick="toggleHint()">&#128161; Pista</button>' : '') +
     '</div>' +
     '<div class="attempts-row" id="attemptsRow">' + fmtDots() + '</div>' +
-    '<div class="hint-box" id="hintBox">Los depositos son PO (obligaciones del ciclo bancario). Los creditos otorgados son AO (activos que generan ingresos). La caja excedente del holding es AF.</div>' +
+    '<div class="hint-box" id="hintBox">Los depositos son NOF (obligaciones del ciclo bancario). Los creditos otorgados son NOF (activos que generan ingresos). La caja excedente del holding es Deu.Fin.N. (reduce la deuda financiera neta).</div>' +
     '<div class="feedback-box" id="feedbackBox"></div>' +
     '<button class="btn-next" id="btnNext" onclick="nextStep()">Siguiente paso &rarr;</button>';
 }
@@ -1340,16 +1344,16 @@ function renderDataRoomCase6(c, sid) {
 
     '<div class="dr-section ' + (hlWC ? 'highlight' : '') + '">' +
     '<div class="dr-section-title">&#128201; Activos Operativos Corrientes</div>' +
-    '<div class="dr-row"><span class="dr-row-label">Creditos a clientes (AO principal)</span><span class="dr-row-val">$' + fmt(c.ar) + 'M</span></div>' +
+    '<div class="dr-row"><span class="dr-row-label">Creditos a clientes (activo operativo principal)</span><span class="dr-row-val">$' + fmt(c.ar) + 'M</span></div>' +
     '<div class="dr-row"><span class="dr-row-label">Inventario fisico</span><span class="dr-row-val">$0M <span style="font-size:.65rem;color:var(--muted)">(banco digital)</span></span></div>' +
-    '<div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px"><span class="dr-row-label" style="font-weight:700">Total AO corriente</span><span class="dr-row-val" style="color:var(--text)">$' + fmt(c.totalAO) + 'M</span></div>' +
+    '<div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px"><span class="dr-row-label" style="font-weight:700">Total Activos Operativos corrientes</span><span class="dr-row-val" style="color:var(--text)">$' + fmt(c.totalAO) + 'M</span></div>' +
     '</div>' +
 
     '<div class="dr-section ' + (hlWC ? 'highlight' : '') + '">' +
     '<div class="dr-section-title">&#128203; Pasivos Operativos Corrientes</div>' +
-    '<div class="dr-row"><span class="dr-row-label">Depositos de clientes (PO clave)</span><span class="dr-row-val">$' + fmt(c.ap) + 'M</span></div>' +
+    '<div class="dr-row"><span class="dr-row-label">Depositos de clientes (pasivo operativo clave)</span><span class="dr-row-val">$' + fmt(c.ap) + 'M</span></div>' +
     '<div class="dr-row"><span class="dr-row-label">Otros pasivos operativos</span><span class="dr-row-val">$' + fmt(c.accrued) + 'M</span></div>' +
-    '<div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px"><span class="dr-row-label" style="font-weight:700">Total PO corriente</span><span class="dr-row-val" style="color:var(--text)">$' + fmt(c.totalPO) + 'M</span></div>' +
+    '<div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px"><span class="dr-row-label" style="font-weight:700">Total Pasivos Operativos corrientes</span><span class="dr-row-val" style="color:var(--text)">$' + fmt(c.totalPO) + 'M</span></div>' +
     '</div>' +
 
     '<div class="dr-section ' + (hlLP ? 'highlight' : '') + '">' +
@@ -1468,7 +1472,7 @@ function renderDataRoom() {
       <div class="dr-row"><span class="dr-row-label">Cuentas por Cobrar (CxC)</span><span class="dr-row-val">$${fmt(c.ar)}M ↑</span></div>
       <div class="dr-row"><span class="dr-row-label">Inventario</span><span class="dr-row-val">$${fmt(c.inventory)}M ↑</span></div>
       <div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px">
-        <span class="dr-row-label" style="font-weight:700">Total AO corriente</span>
+        <span class="dr-row-label" style="font-weight:700">Total Activos Operativos corrientes</span>
         <span class="dr-row-val" style="color:var(--text)">$${fmt(c.totalAO)}M</span>
       </div>
     </div>
@@ -1478,7 +1482,7 @@ function renderDataRoom() {
       <div class="dr-row"><span class="dr-row-label">Cuentas por Pagar (CxP)</span><span class="dr-row-val">$${fmt(c.ap)}M ↓</span></div>
       <div class="dr-row"><span class="dr-row-label">Devengados / Otros PO</span><span class="dr-row-val">$${fmt(c.accrued)}M ↓</span></div>
       <div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px">
-        <span class="dr-row-label" style="font-weight:700">Total PO corriente</span>
+        <span class="dr-row-label" style="font-weight:700">Total Pasivos Operativos corrientes</span>
         <span class="dr-row-val" style="color:var(--text)">$${fmt(c.totalPO)}M</span>
       </div>
     </div>
@@ -1612,7 +1616,7 @@ function renderDataRoomCase3(c, sid) {
       <div class="dr-row"><span class="dr-row-label">Cuentas por Cobrar (CxC)</span><span class="dr-row-val">$${fmt(c.ar)}M</span></div>
       <div class="dr-row"><span class="dr-row-label">Inventario</span><span class="dr-row-val">$${fmt(c.inventory)}M</span></div>
       <div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px">
-        <span class="dr-row-label" style="font-weight:700">Total AO corriente</span>
+        <span class="dr-row-label" style="font-weight:700">Total Activos Operativos corrientes</span>
         <span class="dr-row-val" style="color:var(--text)">$${fmt(c.totalAO)}M</span>
       </div>
     </div>
@@ -1623,7 +1627,7 @@ function renderDataRoomCase3(c, sid) {
       <div class="dr-row"><span class="dr-row-label">Gastos devengados</span><span class="dr-row-val">$${fmt(c.accrued)}M</span></div>
       <div class="dr-row"><span class="dr-row-label">Cuotas membresía diferidas</span><span class="dr-row-val">$${fmt(c.membershipFees)}M</span></div>
       <div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px">
-        <span class="dr-row-label" style="font-weight:700">Total PO corriente</span>
+        <span class="dr-row-label" style="font-weight:700">Total Pasivos Operativos corrientes</span>
         <span class="dr-row-val" style="color:var(--text)">$${fmt(c.totalPO)}M</span>
       </div>
     </div>
@@ -1688,7 +1692,7 @@ function renderDataRoomCase4(c, sid) {
       <div class="dr-row"><span class="dr-row-label">Cuentas por Cobrar (CxC)</span><span class="dr-row-val">$${fmt(c.ar)}M</span></div>
       <div class="dr-row"><span class="dr-row-label">Inventario propio</span><span class="dr-row-val">$0M <span style="font-size:.65rem;color:var(--muted)">(marketplace puro)</span></span></div>
       <div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px">
-        <span class="dr-row-label" style="font-weight:700">Total AO corriente</span>
+        <span class="dr-row-label" style="font-weight:700">Total Activos Operativos corrientes</span>
         <span class="dr-row-val" style="color:var(--text)">$${fmt(c.totalAO)}M</span>
       </div>
     </div>
@@ -1698,7 +1702,7 @@ function renderDataRoomCase4(c, sid) {
       <div class="dr-row"><span class="dr-row-label">CxP (vendedores del marketplace)</span><span class="dr-row-val">$${fmt(c.ap)}M</span></div>
       <div class="dr-row"><span class="dr-row-label">Devoluciones + cuotas diferidas</span><span class="dr-row-val">$${fmt(c.accrued)}M</span></div>
       <div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px">
-        <span class="dr-row-label" style="font-weight:700">Total PO corriente</span>
+        <span class="dr-row-label" style="font-weight:700">Total Pasivos Operativos corrientes</span>
         <span class="dr-row-val" style="color:var(--text)">$${fmt(c.totalPO)}M</span>
       </div>
     </div>
@@ -1747,7 +1751,7 @@ function renderDataRoomCase5(c, sid) {
       <div class="dr-row"><span class="dr-row-label">CxC (hospitales + distribuidores)</span><span class="dr-row-val">$${fmt(c.ar)}M</span></div>
       <div class="dr-row"><span class="dr-row-label">Inventario (MP + prod. terminado)</span><span class="dr-row-val">$${fmt(c.inventory)}M</span></div>
       <div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px">
-        <span class="dr-row-label" style="font-weight:700">Total AO corriente</span>
+        <span class="dr-row-label" style="font-weight:700">Total Activos Operativos corrientes</span>
         <span class="dr-row-val" style="color:var(--text)">$${fmt(c.totalAO)}M</span>
       </div>
     </div>
@@ -1757,7 +1761,7 @@ function renderDataRoomCase5(c, sid) {
       <div class="dr-row"><span class="dr-row-label">CxP (proveedores)</span><span class="dr-row-val">$${fmt(c.ap)}M</span></div>
       <div class="dr-row"><span class="dr-row-label">Devengados (royalties + I+D)</span><span class="dr-row-val">$${fmt(c.accrued)}M</span></div>
       <div class="dr-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px">
-        <span class="dr-row-label" style="font-weight:700">Total PO corriente</span>
+        <span class="dr-row-label" style="font-weight:700">Total Pasivos Operativos corrientes</span>
         <span class="dr-row-val" style="color:var(--text)">$${fmt(c.totalPO)}M</span>
       </div>
     </div>
@@ -1807,10 +1811,12 @@ function renderNotebook() {
     html += '<div class="nb-section">CLASIFICACIÓN</div>';
     if (nb.classification) {
       const items = c.classifyItems;
-      html += row('AO', `${items.filter(i=>nb.classification[i.id]==='AO').length} ctas`, true);
-      html += row('PO', `${items.filter(i=>nb.classification[i.id]==='PO').length} ctas`, true);
-      html += row('AF', `${items.filter(i=>nb.classification[i.id]==='AF').length} ctas`, true);
-      html += row('PF', `${items.filter(i=>nb.classification[i.id]==='PF').length} ctas`, true);
+      html += row('NOF',         `${items.filter(i=>nb.classification[i.id]==='NOF').length} ctas`, true);
+      html += row('AFN',         `${items.filter(i=>nb.classification[i.id]==='AFN').length} ctas`, true);
+      html += row('AIN',         `${items.filter(i=>nb.classification[i.id]==='AIN').length} ctas`, true);
+      html += row('Deu.Fin.N.', `${items.filter(i=>nb.classification[i.id]==='Deuda.Fin').length} ctas`, true);
+      html += row('Cap.Propio',  `${items.filter(i=>nb.classification[i.id]==='Cap.Propio').length} ctas`, true);
+      html += row('Otros netos', `${items.filter(i=>nb.classification[i.id]==='Otros.Neto').length} ctas`, true);
     } else { html += row('Estado', null); }
 
     html += '<div class="nb-section">RESULTADOS FY2024</div>';
@@ -1862,27 +1868,20 @@ function renderNotebook() {
     html += '<div class="nb-section">CLASIFICACIÓN DE CUENTAS</div>';
     if (nb.classification) {
       const items = c.classifyItems;
-      const aoN = items.filter(i => nb.classification[i.id] === 'AO').length;
-      const poN = items.filter(i => nb.classification[i.id] === 'PO').length;
-      const afN = items.filter(i => nb.classification[i.id] === 'AF').length;
-      const pfN = items.filter(i => nb.classification[i.id] === 'PF').length;
-      html += row('AO (Activos Op.)',  `${aoN} ctas`, true);
-      html += row('PO (Pasivos Op.)',  `${poN} ctas`, true);
-      html += row('AF (Activos Fin.)', `${afN} ctas`, true);
-      html += row('PF (Pasivos Fin.)', `${pfN} ctas`, true);
+      const nofN  = items.filter(i => nb.classification[i.id] === 'NOF').length;
+      const afnN  = items.filter(i => nb.classification[i.id] === 'AFN').length;
+      const ainN  = items.filter(i => nb.classification[i.id] === 'AIN').length;
+      const dfnN  = items.filter(i => nb.classification[i.id] === 'Deuda.Fin').length;
+      const cpN   = items.filter(i => nb.classification[i.id] === 'Cap.Propio').length;
+      html += row('NOF',         `${nofN} ctas`, true);
+      html += row('AFN',         `${afnN} ctas`, true);
+      html += row('AIN',         `${ainN} ctas`, true);
+      const onN  = items.filter(i => nb.classification[i.id] === 'Otros.Neto').length;
+      html += row('Deu.Fin.N.', `${dfnN} ctas`, true);
+      html += row('Cap.Propio',  `${cpN} ctas`, true);
+      html += row('Otros netos', `${onN} ctas`, true);
     } else {
-      html += row('AO/PO/AF/PF', null);
-    }
-    if (nb.classificationNof) {
-      const nofItems = c.classifyNofItems;
-      const nofN = nofItems.filter(i => nb.classificationNof[i.id] === 'NOF').length;
-      const afnN = nofItems.filter(i => nb.classificationNof[i.id] === 'AFN').length;
-      const ainN = nofItems.filter(i => nb.classificationNof[i.id] === 'AIN').length;
-      html += row('NOF (Ctes. Op.)',  `${nofN} ctas`, true);
-      html += row('AFN (Activo Fijo)',`${afnN} ctas`, true);
-      html += row('AIN (Intangibles)',`${ainN} ctas`, true);
-    } else {
-      html += row('NOF/AFN/AIN', null);
+      html += row('NOF/AFN/AIN/D.Fin/CP/ON', null);
     }
   }
 
@@ -3111,11 +3110,11 @@ function verifyMargenNopat() {
 // ═══════════════════════════════════════════════════════════
 function stepNof(c, sn, badge) {
   const taskExtra = c.id === 2
-    ? ` Sumá los AO corrientes (CxC + Inventario) y los PO corrientes (CxP + Gastos devengados + Cuotas membresía diferidas). ¡Las cuotas de membresía son la clave!`
+    ? ` Sumá los Activos Operativos corrientes (CxC + Inventario) y los Pasivos Operativos corrientes (CxP + Gastos devengados + Cuotas membresía diferidas). ¡Las cuotas de membresía son la clave!`
     : c.id === 3
-    ? ` Ya clasificaste las cuentas. Identificá los AO y PO corrientes en el Data Room y calculá la diferencia.`
+    ? ` Ya clasificaste las cuentas. Identificá los activos y pasivos operativos corrientes en el Data Room y calculá la diferencia.`
     : c.id === 1
-    ? ` Los AO corrientes y PO corrientes están en el Data Room. Calculá los totales y restalos.`
+    ? ` Los activos y pasivos operativos corrientes están en el Data Room. Calculá los totales y restalos.`
     : '';
   const conceptNOF = c.id === 2
     ? `<strong>NOF negativo</strong> en Costco: los proveedores y los miembros (cuotas diferidas cobradas por adelantado) financian el inventario. Este "subsidio" libera capital enorme y explica por qué Costco tiene ROIC tan alto con márgenes tan bajos.`
@@ -3124,7 +3123,7 @@ function stepNof(c, sn, badge) {
     'NOF — Necesidades Operativas de Fondos',
     `Las NOF son el capital "atrapado" en el ciclo operativo.${taskExtra} El resultado puede ser negativo.`,
     `NOF = Total Activos Operativos corrientes − Total Pasivos Operativos corrientes`,
-    `Primero calculá ΣAO (CxC + Inventario + otros AO) y ΣPO (CxP + Devengados + otros PO), luego restá.`,
+    `Primero calculá los activos operativos corrientes (CxC + Inventario + otros) y los pasivos operativos corrientes (CxP + Devengados + otros), luego restá.`,
     'NOF ($M, puede ser negativo)', '$M', 'verifyNof',
     '',
     conceptNOF
@@ -3559,11 +3558,12 @@ function stepClassifyAccounts(c, sn, badge) {
         <span class="cls-amount">${it.val}</span>
       </div>
       <div class="cls-btns">
-        <button class="cls-cat-btn sel-NOF"  data-cat="NOF"          onclick="selectCls('${it.id}','NOF')">NOF</button>
-        <button class="cls-cat-btn sel-AFN"  data-cat="AFN"          onclick="selectCls('${it.id}','AFN')">AFN</button>
-        <button class="cls-cat-btn sel-AIN"  data-cat="AIN"          onclick="selectCls('${it.id}','AIN')">AIN</button>
-        <button class="cls-cat-btn sel-AFin" data-cat="A.Financiero" onclick="selectCls('${it.id}','A.Financiero')">A.Fin</button>
-        <button class="cls-cat-btn sel-PFin" data-cat="P.Financiero" onclick="selectCls('${it.id}','P.Financiero')">P.Fin</button>
+        <button class="cls-cat-btn sel-NOF"   data-cat="NOF"          onclick="selectCls('${it.id}','NOF')">NOF</button>
+        <button class="cls-cat-btn sel-AFN"   data-cat="AFN"          onclick="selectCls('${it.id}','AFN')">AFN</button>
+        <button class="cls-cat-btn sel-AIN"   data-cat="AIN"          onclick="selectCls('${it.id}','AIN')">AIN</button>
+        <button class="cls-cat-btn sel-DFin"   data-cat="Deuda.Fin"   onclick="selectCls('${it.id}','Deuda.Fin')">Deu.Fin.N.</button>
+        <button class="cls-cat-btn sel-CProp"  data-cat="Cap.Propio"  onclick="selectCls('${it.id}','Cap.Propio')">Cap.Propio</button>
+        <button class="cls-cat-btn sel-OtrosN" data-cat="Otros.Neto"  onclick="selectCls('${it.id}','Otros.Neto')">Otros netos</button>
       </div>
       <div class="cls-tip" id="clstip_${it.id}"></div>
     </div>`).join('');
@@ -3573,17 +3573,18 @@ function stepClassifyAccounts(c, sn, badge) {
       <div class="step-number">${sn}</div>
       <div class="step-badge">${badge}</div>
       <div class="step-title">Clasificación de Cuentas del Balance</div>
-      <div class="step-task">Clasificá cada cuenta en su categoría: <strong>NOF</strong> (Nec. Operativas de Fondos), <strong>AFN</strong> (Activo Fijo Neto), <strong>AIN</strong> (Activo Intangible Neto), <strong>A.Fin</strong> (Activo Financiero) o <strong>P.Fin</strong> (Pasivo Financiero). Atención: algunas cuentas son tramposas.</div>
+      <div class="step-task">Clasificá cada cuenta: <strong>NOF</strong> (Nec. Operativas de Fondos), <strong>AFN</strong> (Activo Fijo Neto), <strong>AIN</strong> (Activo Intangible Neto), <strong>Deu.Fin.N.</strong> (Deuda Financiera y Equiv. Neta), <strong>Cap.Propio</strong> (Capital Propio) u <strong>Otros netos</strong> (Deferred Tax Assets LP, Other LT Assets, Def. Tax Liability NC, Other Non-Current Liabilities).</div>
     </div>
     <div class="concept-box">
-      <strong>Regla de oro:</strong> Una cuenta es <strong>operativa</strong> si surge directamente del ciclo de negocio (cobrar, producir, pagar a proveedores, devengar salarios). Es <strong>financiera</strong> si surge de decisiones de estructura de capital: deuda bancaria, caja excedente, inversiones de portafolio, leases capitalizados (IFRS 16). Esta distinción define qué entra en el Capital Invertido.
+      <strong>Regla de oro:</strong> Cuentas del ciclo operativo → <strong>NOF</strong>, <strong>AFN</strong> o <strong>AIN</strong>. Estructura de financiamiento → <strong>Deu.Fin.N.</strong> (deuda, bonos, leases IFRS 16, caja excedente) o <strong>Cap. Propio</strong>. Solo van a <strong>Otros netos</strong>: Deferred Tax Assets LP, Other Long-Term Assets, Def. Tax Liability NC y Other Non-Current Liabilities.
     </div>
     <div class="cls-legend">
       <span class="cls-leg-item sel-NOF">NOF = Nec. Operativas de Fondos</span>
       <span class="cls-leg-item sel-AFN">AFN = Activo Fijo Neto</span>
       <span class="cls-leg-item sel-AIN">AIN = Activo Intangible Neto</span>
-      <span class="cls-leg-item sel-AFin">A.Fin = Activo Financiero</span>
-      <span class="cls-leg-item sel-PFin">P.Fin = Pasivo Financiero</span>
+      <span class="cls-leg-item sel-DFin">Deu.Fin.N. = Deuda Financiera y Equiv. Neta</span>
+      <span class="cls-leg-item sel-CProp">Cap.Propio = Capital Propio / Patrimonio</span>
+      <span class="cls-leg-item sel-OtrosN">Otros netos = Def. Tax + Other LT/NC</span>
     </div>
     <div class="classify-container">${rows}</div>
     <div class="cls-progress" id="clsProgress">0 / ${c.classifyItems.length} clasificadas</div>
@@ -3592,7 +3593,7 @@ function stepClassifyAccounts(c, sn, badge) {
       ${state.difficulty.hints ? `<button class="btn-hint" onclick="toggleHint()">💡 Pista</button>` : ''}
     </div>
     <div class="attempts-row" id="attemptsRow">${fmtDots()}</div>
-    <div class="hint-box" id="hintBox">Las cuentas más tramposas: <strong>Caja excedente</strong> → A.Financiero (no es operativa). <strong>Anticipos a proveedores</strong> → NOF (ciclo operativo). <strong>Ingresos diferidos</strong> → NOF (obligación operativa). <strong>Lease IFRS 16</strong> → P.Financiero (es deuda). PP&amp;E → AFN. Patentes/Goodwill → AIN.</div>
+    <div class="hint-box" id="hintBox">Las cuentas más tramposas: <strong>Caja excedente</strong> → Deu.Fin.N. <strong>Anticipos a proveedores</strong> → NOF. <strong>Ingresos diferidos</strong> → NOF. <strong>Lease IFRS 16</strong> → Deu.Fin.N. PP&amp;E → AFN. Patentes/Goodwill → AIN. Patrimonio → Cap.Propio. <strong>Deferred Tax Assets LP, Other LT Assets, Def. Tax Liability NC, Other Non-Current Liabilities</strong> → Otros netos.</div>
     <div class="feedback-box" id="feedbackBox"></div>
     <button class="btn-next" id="btnNext" onclick="nextStep()">Siguiente paso →</button>`;
 }
@@ -3711,15 +3712,15 @@ function stepClassifyNofAfnAin(c, sn, badge) {
       <div class="step-number">${sn}</div>
       <div class="step-badge">${badge}</div>
       <div class="step-title">¿NOF, AFN o AIN?</div>
-      <div class="step-task">Ahora que clasificaste las cuentas como AO/PO/AF/PF, agrupá cada cuenta operativa en el bloque del Capital Invertido al que pertenece: <strong>NOF</strong> (capital de trabajo operativo neto), <strong>AFN</strong> (activos fijos netos) o <strong>AIN</strong> (activos intangibles netos).</div>
+      <div class="step-task">Agrupá cada cuenta en el bloque del Capital Invertido al que pertenece: <strong>NOF</strong> (capital de trabajo operativo neto), <strong>AFN</strong> (activos fijos netos) o <strong>AIN</strong> (activos intangibles netos).</div>
     </div>
     <div class="concept-box">
-      <strong>CI = NOF + AFN + AIN.</strong> El <strong>NOF</strong> = AO corrientes − PO corrientes: el capital atrapado en el ciclo de cobro y pago. El <strong>AFN</strong> es el PP&amp;E neto: las máquinas, plantas y equipos. El <strong>AIN</strong> son los intangibles: patentes, marcas, software activado.
+      <strong>CI = NOF + AFN + AIN.</strong> El <strong>NOF</strong> = Activos Operativos corrientes − Pasivos Operativos corrientes: el capital atrapado en el ciclo de cobro y pago. El <strong>AFN</strong> es el PP&amp;E neto: las máquinas, plantas y equipos. El <strong>AIN</strong> son los intangibles: patentes, marcas, software activado.
     </div>
     <div class="cls-legend">
-      <span class="cls-leg-item sel-AO">NOF = Capital de trabajo operativo</span>
-      <span class="cls-leg-item sel-AF">AFN = Activo Fijo Neto</span>
-      <span class="cls-leg-item sel-PF">AIN = Activo Intangible Neto</span>
+      <span class="cls-leg-item sel-NOF">NOF = Capital de trabajo operativo</span>
+      <span class="cls-leg-item sel-AFN">AFN = Activo Fijo Neto</span>
+      <span class="cls-leg-item sel-AIN">AIN = Activo Intangible Neto</span>
     </div>
     <div class="classify-container">${rows}</div>
     <div class="cls-progress" id="clsNofProgress">0 / ${c.classifyNofItems.length} clasificadas</div>
@@ -3728,7 +3729,7 @@ function stepClassifyNofAfnAin(c, sn, badge) {
       ${state.difficulty.hints ? `<button class="btn-hint" onclick="toggleHint()">💡 Pista</button>` : ''}
     </div>
     <div class="attempts-row" id="attemptsRow">${fmtDots()}</div>
-    <div class="hint-box" id="hintBox">Los AO y PO corrientes (CxC, Inventario, Anticipo, CxP, Nómina a pagar, Ingresos diferidos) van al <strong>NOF</strong>. Las máquinas y planta van al <strong>AFN</strong>. Las patentes e intangibles van al <strong>AIN</strong>.</div>
+    <div class="hint-box" id="hintBox">Los activos y pasivos operativos corrientes (CxC, Inventario, Anticipo, CxP, Nómina a pagar, Ingresos diferidos) van al <strong>NOF</strong>. Las máquinas y planta van al <strong>AFN</strong>. Las patentes e intangibles van al <strong>AIN</strong>.</div>
     <div class="feedback-box" id="feedbackBox"></div>
     <button class="btn-next" id="btnNext" onclick="nextStep()">Siguiente paso →</button>`;
 }

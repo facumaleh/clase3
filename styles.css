@@ -224,6 +224,12 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .cls-cat-btn.active.sel-AIN{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.55);color:#8b5cf6}
 .cls-cat-btn.active.sel-AFin{background:rgba(76,201,240,.14);border-color:rgba(76,201,240,.5);color:var(--blue)}
 .cls-cat-btn.active.sel-PFin{background:rgba(245,197,24,.14);border-color:rgba(245,197,24,.5);color:var(--yellow)}
+.cls-leg-item.sel-DFin{background:rgba(251,146,60,.1);color:#f97316;border:1px solid rgba(251,146,60,.3)}
+.cls-leg-item.sel-CProp{background:rgba(236,72,153,.1);color:#ec4899;border:1px solid rgba(236,72,153,.3)}
+.cls-cat-btn.active.sel-DFin{background:rgba(251,146,60,.15);border-color:rgba(251,146,60,.55);color:#f97316}
+.cls-cat-btn.active.sel-CProp{background:rgba(236,72,153,.15);border-color:rgba(236,72,153,.55);color:#ec4899}
+.cls-leg-item.sel-OtrosN{background:rgba(148,163,184,.1);color:#94a3b8;border:1px solid rgba(148,163,184,.3)}
+.cls-cat-btn.active.sel-OtrosN{background:rgba(148,163,184,.15);border-color:rgba(148,163,184,.55);color:#94a3b8}
 .cls-cat-btn:disabled{opacity:.45;cursor:not-allowed}
 .cls-tip{font-size:.72rem;color:var(--yellow);line-height:1.4;margin-top:4px;width:100%;display:none}
 .cls-progress{font-size:.78rem;color:var(--muted);margin-bottom:10px}
