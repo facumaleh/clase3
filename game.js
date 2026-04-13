@@ -105,7 +105,7 @@
     {id:'ingdif', label:'Ingresos diferidos (adelantos clientes)',val:'$1,000M',  correct:'NOF',          tip:'Obligación operativa de entregar bienes → NOF.'},
     {id:'ppe',    label:'PP&E neto (planta y equipo)',            val:'$12,000M', correct:'AFN',          tip:'Activos fijos tangibles → AFN.'},
     {id:'intang', label:'Intangibles netos (patentes)',           val:'$2,800M',  correct:'AIN',          tip:'Activos intangibles → AIN.'},
-    {id:'caja',   label:'Caja y equivalentes',                   val:'$2,000M',  correct:'Deuda.Fin', tip:'Caja y equivalentes reducen la Deuda Financiera Neta → Deuda Fin. Neta.'},
+    {id:'caja',   label:'Caja y equivalentes',                   val:'$2,000M',  correct:'Deuda.Fin', tip:'En este ejercicio la tratamos como no operativa: reduce la Deuda Financiera Neta → Deuda Fin. Neta. Atención: el enunciado puede pedir que se asuma como operativa (integraría el NOF/CI), según el caso analizado.'},
     {id:'invfin', label:'Inversiones financieras LP',            val:'$800M',    correct:'Deuda.Fin', tip:'Inversiones financieras reducen la Deuda Financiera Neta → Deuda Fin. Neta.'},
     {id:'dcp',    label:'Deuda bancaria corto plazo',            val:'$500M',    correct:'Deuda.Fin', tip:'Deuda bancaria forma parte de la Deuda Financiera Neta → Deuda Fin. Neta.'},
     {id:'dlp',    label:'Deuda bancaria largo plazo',            val:'$2,000M',  correct:'Deuda.Fin', tip:'Bono / préstamo LP → Deuda Financiera Neta.'},
@@ -397,13 +397,13 @@
   classifyItems:[
     {id:'cxc',    label:'Cuentas por Cobrar',                      val:'$2,721M',  correct:'NOF',          tip:'Cobros pendientes del ciclo de ventas → NOF.'},
     {id:'inv',    label:'Inventarios (mercadería en almacenes)',    val:'$18,647M', correct:'NOF',          tip:'Stock operativo → NOF. Costco mantiene ~30 días de inventario.'},
-    {id:'otros',  label:'Otros activos operativos netos',          val:'$1,836M',  correct:'NOF',          tip:'Activos del ciclo operativo → NOF.'},
+    {id:'otros',  label:'Otros activos operativos netos',          val:'$1,836M',  correct:'NOF',          tip:'Son de corto plazo → integran el NOF (ciclo operativo). Atención: si el enunciado los clasifica como largo plazo, van por afuera del NOF como Otros AO LP / Otras DO LP (junto a AFN/AIN).'},
     {id:'cxp',    label:'Cuentas por Pagar (proveedores)',          val:'$19,421M', correct:'NOF',          tip:'Deuda comercial con proveedores → NOF. El motor del NOF negativo.'},
     {id:'memfee', label:'Cuotas de membresía diferidas',           val:'$2,501M',  correct:'NOF',          tip:'Membresías cobradas pero aún no devengadas → obligación operativa → NOF.'},
     {id:'accrued',label:'Otros pasivos operativos accrued',        val:'$7,229M',  correct:'NOF',          tip:'Sueldos, impuestos y otros devengados → ciclo operativo → NOF.'},
     {id:'ppe',    label:'PP&E neto (almacenes + infraestructura)',  val:'$33,082M', correct:'AFN',          tip:'Activos fijos tangibles → AFN.'},
     {id:'intang', label:'Intangibles y otros activos LP netos',    val:'$865M',    correct:'AIN',          tip:'Activos intangibles → AIN.'},
-    {id:'caja',   label:'Caja + inversiones de corto plazo',       val:'$11,394M', correct:'Deuda.Fin', tip:'Caja y equivalentes reducen la Deuda Financiera Neta → Deuda Fin. Neta.'},
+    {id:'caja',   label:'Caja + inversiones de corto plazo',       val:'$11,394M', correct:'Deuda.Fin', tip:'En este ejercicio la tratamos como no operativa: reduce la Deuda Financiera Neta → Deuda Fin. Neta. Atención: el enunciado puede pedir que se asuma como operativa (integraría el NOF/CI), según el caso analizado.'},
     {id:'deuda',  label:'Deuda financiera total (LP + CP)',         val:'$6,864M',  correct:'Deuda.Fin', tip:'Deuda bancaria y bonos → Deuda Financiera Neta.'}
   ]
 }
@@ -621,15 +621,15 @@ function getClassBadge(stepId) {
       roic:                '📈 Bloque 5 · ROIC Multi-período',
       roa:                 '📈 Bloque 5 · ROIC Multi-período',
       roe:                 '📈 Bloque 5 · ROIC Multi-período',
-      spread:              '⭐ Bloque 6 · Creación de Valor (EVA)',
-      eva:                 '⭐ Bloque 6 · Creación de Valor (EVA)',
-      vbm_evaAcum:         '⭐ Bloque 6 · Creación de Valor (EVA)',
-      vbm_roicMarginal:    '⭐ Bloque 6 · Creación de Valor (EVA)',
-      vbm_evaMarginal:     '⭐ Bloque 6 · Creación de Valor (EVA)',
+      spread:              '⭐ Bloque 6 · Creación de Valor (EVA / CVE)',
+      eva:                 '⭐ Bloque 6 · Creación de Valor (EVA / CVE)',
+      vbm_evaAcum:         '⭐ Bloque 6 · Creación de Valor (EVA / CVE)',
+      vbm_roicMarginal:    '⭐ Bloque 6 · Creación de Valor (EVA / CVE)',
+      vbm_evaMarginal:     '⭐ Bloque 6 · Creación de Valor (EVA / CVE)',
       ffl:                 '💸 Bloque 7 · Flujo de Fondos',
-      vbm_val0:            '🔭 Bloque 8 · Valuación por EVA',
-      vbm_valG:            '🔭 Bloque 8 · Valuación por EVA',
-      vbm_impliedG:        '🔭 Bloque 8 · Valuación por EVA',
+      vbm_val0:            '🔭 Bloque 8 · Valuación por EVA / CVE',
+      vbm_valG:            '🔭 Bloque 8 · Valuación por EVA / CVE',
+      vbm_impliedG:        '🔭 Bloque 8 · Valuación por EVA / CVE',
       vbm_specialDiv:      '💰 Bloque 9 · Retorno al Accionista',
       mc_vbm_decision:     '🎯 Bloque 10 · Decisión Estratégica',
       mc_costco_paradoja:  '🎯 Bloque 10 · Decisión Estratégica',
@@ -1066,7 +1066,7 @@ const GLOSSARY = [
   { term: 'ROIC', def: 'Return on Invested Capital = NOPAT / CI × 100 = Margen NOPAT × Rotación (DuPont). Rentabilidad real del negocio operativo.' },
   { term: 'WACC', def: 'Weighted Average Cost of Capital. Costo promedio del capital (deuda + equity). Si ROIC > WACC → la empresa crea valor.' },
   { term: 'Spread', def: 'ROIC − WACC. Exceso de rentabilidad sobre el costo de capital. Positivo = crea valor. Negativo = destruye valor aunque tenga ganancias.' },
-  { term: 'EVA', def: 'Economic Value Added = Spread × CI / 100. Valor económico creado en el período. Es el veredicto final sobre si la empresa enriquece a sus accionistas.' },
+  { term: 'EVA / CVE', def: 'Economic Value Added / Creación de Valor Económico = Spread × CI / 100. Valor económico creado en el período. Es el veredicto final sobre si la empresa enriquece a sus accionistas.' },
   { term: 'DSO', def: 'Días de Cobranzas = (Cuentas por Cobrar − Ingresos Diferidos) × 365 / Ventas. Días promedio que tarda la empresa en cobrar. Menor = mejor (cobra más rápido). Si no hay ingresos diferidos en CxC, se usa CxC × 365 / Ventas.' },
   { term: 'DIO', def: 'Days Inventory Outstanding = Inventario × 365 / COGS. Días que el inventario permanece en stock. Menor = menos capital inmovilizado.' },
   { term: 'DPO', def: 'Days Payable Outstanding = CxP × 365 / COGS. Días que tarda la empresa en pagar a proveedores. Mayor = mejor (retiene más caja).' },
@@ -1144,7 +1144,7 @@ function stepNuClassify(c, sn, badge) {
   const items = [
     {id:'creditos',  label:'Creditos a clientes (tarjetas + prestamos)',   val:'$17,600M', correct:'NOF',          tip:'El dinero que presta el banco genera ingresos → NOF principal.'},
     {id:'depositos', label:'Depositos de clientes (cuentas digitales)',      val:'$28,300M', correct:'NOF',          tip:'Los clientes depositan → el banco les debe ese dinero. Surge del negocio bancario → NOF. Motor del NOF negativo.'},
-    {id:'caja',      label:'Caja + inversiones financieras del holding',     val:'$9,200M',  correct:'Deuda.Fin', tip:'Caja y equivalentes reducen la Deuda Financiera Neta → Deuda Fin. Neta.'},
+    {id:'caja',      label:'Caja + inversiones financieras del holding',     val:'$9,200M',  correct:'Deuda.Fin', tip:'En este ejercicio la tratamos como no operativa: reduce la Deuda Financiera Neta → Deuda Fin. Neta. Atención: el enunciado puede pedir que se asuma como operativa (integraría el NOF/CI), según el caso analizado.'},
     {id:'ppe',       label:'PP&E neto (oficinas minimas, sin sucursales)',   val:'$30M',     correct:'AFN',          tip:'Activo fijo tangible → AFN. El mas bajo de todos los casos.'},
     {id:'intang',    label:'Plataforma tecnologica + goodwill',              val:'$800M',    correct:'AIN',          tip:'Activo intangible: plataforma tech + goodwill → AIN.'},
     {id:'deuda',     label:'Deuda financiera emitida (bonos)',               val:'$800M',    correct:'Deuda.Fin', tip:'Financiamiento elegido por la empresa → Deuda Financiera Neta.'}
@@ -1842,7 +1842,7 @@ function renderNotebook() {
     html += row('ROIC FY2024', nb.roic       !== undefined ? `${nb.roic}%`       : null);
     html += row('ROA / ROE',   (nb.roa&&nb.roe) ? `${nb.roa}% / ${nb.roe}%`     : null);
 
-    html += '<div class="nb-section">CREACIÓN DE VALOR</div>';
+    html += '<div class="nb-section">CREACIÓN DE VALOR (EVA / CVE)</div>';
     html += row('Spread',        nb.spread          !== undefined ? `${nb.spread}%`           : null);
     html += row('EVA FY2024',    nb.eva             !== undefined ? `$${nb.eva}M`             : null);
     html += row('EVA acumulado', nb.vbm_evaAcum     !== undefined ? `$${nb.vbm_evaAcum}M`    : null);
@@ -3277,8 +3277,8 @@ function stepEva(c, sn, badge) {
     ? `EVA = (ROIC − WACC) × CI\n= (${c.roic}% − ${c.wacc}%) × $${fmt(ci)}M\n= ${c.spread}% × ${fmt(ci)} = $${fmt(c.eva)}M`
     : `EVA = (ROIC − WACC) × Capital Invertido = Spread × CI\n= ${spread}% × $${fmt(ci)}M / 100 = $${fmt(c.eva)}M`;
   return baseStep(sn, badge,
-    'EVA — Economic Value Added',
-    `El EVA es el veredicto final de creación de valor: ¿${c.name} generó riqueza para sus accionistas este año? CI = $${fmt(ci)}M. Expresá en $M.`,
+    'EVA / CVE — Economic Value Added / Creación de Valor Económico',
+    `El EVA (también llamado CVE — Creación de Valor Económico) es el veredicto final de creación de valor: ¿${c.name} generó riqueza para sus accionistas este año? CI = $${fmt(ci)}M. Expresá en $M.`,
     formulaText,
     `EVA = (ROIC − WACC) × CI / 100 = (${c.roic} − ${c.wacc}) × ${fmt(ci)} / 100.`,
     'EVA ($M)', '$M', 'verifyEva',
